@@ -1,1 +1,8 @@
 @import "tailwindcss";
+  
+.Cormorant {
+  font-family: "Cormorant", sans-serif;
+}
+.Parisienne{
+  font-family: "Parisienne", sans-serif;
+}

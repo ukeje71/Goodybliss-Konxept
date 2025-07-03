@@ -1,9 +1,9 @@
 import React from 'react'
-
+import Header from "./components/Layouts/Header"
 const App = () => {
   return (
     <div>
-      <h1>Hello world</h1>
+      <Header/>
     </div>
   )
 }
