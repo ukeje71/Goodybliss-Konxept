@@ -1,8 +1,13 @@
 @import "tailwindcss";
-  
+body {
+  font-family: "Poppins", sans-serif;
+}
 .Cormorant {
   font-family: "Cormorant", sans-serif;
 }
-.Parisienne{
+.Parisienne {
   font-family: "Parisienne", sans-serif;
+}
+.space {
+  letter-spacing: 3px;
 }

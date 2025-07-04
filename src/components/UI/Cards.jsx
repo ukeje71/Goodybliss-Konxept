@@ -1,11 +1,14 @@
-import React from 'react'
+import React from "react";
+// import img from "./src/assets/images/Abstract.jpeg";
 
-const Cards = () => {
+const Cards = ({ images }) => {
   return (
-    <div>
-      
+    <div className="w-80 h-80">
+      {images.map((images) => (
+        <img src={images} alt="img1" className="h-full  w-full" />
+      ))}
     </div>
-  )
-}
+  );
+};
 
-export default Cards
+export default Cards;
