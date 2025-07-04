@@ -1,5 +1,4 @@
 import React from "react";
-// import img from "./src/assets/images/Abstract.jpeg";
 
 const Cards = ({ images }) => {
   return (

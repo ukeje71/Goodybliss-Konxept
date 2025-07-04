@@ -8,6 +8,9 @@ body {
 .Parisienne {
   font-family: "Parisienne", sans-serif;
 }
+.goudy{
+  font-family: "Goudy Bookletter 1911", serif;
+}
 .space {
   letter-spacing: 3px;
 }
