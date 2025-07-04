@@ -4,11 +4,11 @@ import { FreeMode, Mousewheel } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/free-mode";
 // Imgs
-import img1 from "../assets/images/Abstract.jpeg";
-import img2 from "../assets/images/Abstract.jpeg";
-import img3 from "../assets/images/Abstract.jpeg";
-import img4 from "../assets/images/Abstract.jpeg";
-import img5 from "../assets/images/Abstract.jpeg";
+import img1 from "../assets/Images/Abstract.jpeg";
+import img2 from "../assets/Images/Abstract.jpeg";
+import img3 from "../assets/Images/Abstract.jpeg";
+import img4 from "../assets/Images/Abstract.jpeg";
+import img5 from "../assets/Images/Abstract.jpeg";
 
 const artworks = [
   { id: 1, image: img1, title: "Artwork 1" },

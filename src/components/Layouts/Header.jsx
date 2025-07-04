@@ -1,8 +1,8 @@
 import { Menu, Search, ShoppingBag, User, X } from "lucide-react";
 import React, { useState } from "react";
 import Marquee from "react-fast-marquee";
-// import img1 from "../assets/images/Abstract.jpeg";
-// import img2 from "../assets/images/Fine.jpeg";
+// import img1 from "../assets/Images/Abstract.jpeg";
+// import img2 from "../assets/Images/Fine.jpeg";
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -36,7 +36,7 @@ const Header = () => {
       price: 1200,
       size: "24 × 36 in",
       quantity: 1,
-      image: "../assets/images/abstract.jpeg" 
+      image: "../assets/Images/abstract.jpeg",
     },
     {
       id: 2,
@@ -44,12 +44,15 @@ const Header = () => {
       price: 950,
       size: "18 × 24 in",
       quantity: 1,
-      image: "../assets/images/fine-art.jpeg"
-    }
+      image: "../assets/Images/fine-art.jpeg",
+    },
   ];
 
   // Static calculations
-  const subtotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+  const subtotal = cartItems.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
   const itemCount = cartItems.reduce((count, item) => count + item.quantity, 0);
 
   return (
@@ -131,7 +134,9 @@ const Header = () => {
         } transition-transform duration-300 ease-in-out z-50 border-l border-[#846C3B]`}
       >
         <div className="p-4 flex justify-between items-center border-b border-[#846C3B] bg-white/30">
-          <h2 className="text-lg font-medium text-[#846C3B]">Your Cart ({itemCount})</h2>
+          <h2 className="text-lg font-medium text-[#846C3B]">
+            Your Cart ({itemCount})
+          </h2>
           <button
             onClick={() => setIsCartOpen(false)}
             className="text-[#846C3B] hover:text-amber-800 transition-colors"
@@ -144,11 +149,14 @@ const Header = () => {
           {cartItems.length > 0 ? (
             <ul className="space-y-4">
               {cartItems.map((item) => (
-                <li key={item.id} className="flex gap-3 py-3 border-b border-[#846C3B]/20">
+                <li
+                  key={item.id}
+                  className="flex gap-3 py-3 border-b border-[#846C3B]/20"
+                >
                   <div className="w-16 h-16 bg-gray-100 rounded-md overflow-hidden">
                     {/* Replace with your actual Image component */}
-                    <img 
-                      src={item.image} 
+                    <img
+                      src={item.image}
                       alt={item.title}
                       className="w-full h-full object-cover"
                     />
@@ -157,16 +165,18 @@ const Header = () => {
                     <h3 className="text-[#846C3B] font-medium">{item.title}</h3>
                     <p className="text-sm text-[#846C3B]/80">{item.size}</p>
                     <div className="flex justify-between items-center mt-1">
-                      <span className="text-[#C47E20] font-medium">${item.price.toFixed(2)}</span>
+                      <span className="text-[#C47E20] font-medium">
+                        ${item.price.toFixed(2)}
+                      </span>
                       <div className="flex items-center gap-2">
-                        <button 
+                        <button
                           className="text-xs px-1.5 border rounded hover:bg-gray-100"
                           onClick={() => {}}
                         >
                           -
                         </button>
                         <span className="text-sm">{item.quantity}</span>
-                        <button 
+                        <button
                           className="text-xs px-1.5 border rounded hover:bg-gray-100"
                           onClick={() => {}}
                         >
@@ -182,7 +192,7 @@ const Header = () => {
             <div className="h-full flex flex-col items-center justify-center text-[#846C3B]/60">
               <ShoppingBag size={48} className="mb-4 opacity-40" />
               <p>Your cart is empty</p>
-              <button 
+              <button
                 className="mt-4 px-4 py-2 bg-[#C47E20] text-white rounded-md hover:bg-[#a56d1a] transition-colors"
                 onClick={() => setIsCartOpen(false)}
               >
@@ -196,11 +206,11 @@ const Header = () => {
           <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-[#846C3B] bg-white/80">
             <div className="flex justify-between mb-4">
               <span className="text-[#846C3B]">Subtotal</span>
-              <span className="text-[#C47E20] font-medium">${subtotal.toFixed(2)}</span>
+              <span className="text-[#C47E20] font-medium">
+                ${subtotal.toFixed(2)}
+              </span>
             </div>
-            <button
-              className="w-full py-2 bg-[#C47E20] text-white rounded-md hover:bg-[#a56d1a] transition-colors"
-            >
+            <button className="w-full py-2 bg-[#C47E20] text-white rounded-md hover:bg-[#a56d1a] transition-colors">
               Checkout
             </button>
           </div>

@@ -5,10 +5,10 @@ import "swiper/css";
 import "swiper/css/pagination";
 
 // Replace these with your actual images
-import img1 from "../assets/images/Abstract.jpeg";
-import img2 from "../assets/images/Fine.jpeg";
-import img3 from "../assets/images/Abstract.jpeg";
-import img4 from "../assets/images/Fine.jpeg";
+import img1 from "../assets/Images/Abstract.jpeg";
+import img2 from "../assets/Images/Fine.jpeg";
+import img3 from "../assets/Images/Abstract.jpeg";
+import img4 from "../assets/Images/Fine.jpeg";
 
 const Homepage = () => {
   // Cart state

@@ -11,3 +11,6 @@ body {
 .space {
   letter-spacing: 3px;
 }
+button,input,textarea {
+ outline: none;
+}
