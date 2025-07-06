@@ -1,11 +1,46 @@
 import { Menu, Search, ShoppingBag, User, X } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Marquee from "react-fast-marquee";
 import { Link } from "react-router";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const [showHeader, setShowHeader] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Scroll event handler
+  useEffect(() => {
+    const handleScroll = () => {
+      if (isMobile) return;
+      
+      const currentScrollY = window.scrollY;
+      
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        // Scrolling down
+        setShowHeader(false);
+      } else if (currentScrollY < lastScrollY) {
+        // Scrolling up
+        setShowHeader(true);
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY, isMobile]);
+
+  // Check mobile viewport
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Static data
   const announcements = [
@@ -16,7 +51,6 @@ const Header = () => {
     "Sign up for exclusive early access",
   ];
 
-  // Menu items with proper routes
   const menuItems = [
     { name: "Home", path: "/" },
     { name: "Art Classes", path: "/art-classes" },
@@ -29,7 +63,6 @@ const Header = () => {
     { name: "Log in", path: "/login" },
   ];
 
-  // Static cart data
   const cartItems = [
     {
       id: 1,
@@ -49,7 +82,6 @@ const Header = () => {
     },
   ];
 
-  // Calculate subtotal and item count
   const subtotal = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,
     0
@@ -58,7 +90,7 @@ const Header = () => {
 
   return (
     <div className="relative">
-      {/* Announcement Marquee */}
+      {/* Announcement Marquee - Always visible */}
       <Marquee
         speed={40}
         gradient={false}
@@ -75,42 +107,57 @@ const Header = () => {
         ))}
       </Marquee>
 
-      {/* Main Header */}
-      <div className="flex justify-between items-center p-4 text-[#C47E20] bg-white shadow-md">
-        <span className="flex flex-row gap-4">
-          <button onClick={() => setIsMenuOpen(true)} aria-label="Open menu">
-            <Menu />
-          </button>
-          <button aria-label="Search">
-            <Search />
-          </button>
-        </span>
+      {/* Main Header - Now scroll aware */}
+      <div className={`fixed top-0 left-0 right-0 z-30 transition-transform duration-300 ${
+        showHeader || isMobile ? 'translate-y-0 shadow-md' : '-translate-y-full'
+      }`}>
+        <div className="flex justify-between items-center p-4 text-[#C47E20] bg-white">
+          <span className="flex flex-row gap-4">
+            <button 
+              onClick={() => setIsMenuOpen(true)} 
+              aria-label="Open menu"
+              className="hover:text-amber-800 transition-colors"
+            >
+              <Menu />
+            </button>
+            <button 
+              aria-label="Search"
+              className="hover:text-amber-800 transition-colors"
+            >
+              <Search />
+            </button>
+          </span>
 
-        <Link
-          to="/"
-          className="Parisienne md:text-3xl hover:text-amber-800 transition-colors"
-          aria-label="Home"
-        >
-          Goodybliss Konxept
-        </Link>
-
-        <span className="flex flex-row gap-4 relative">
-          <Link to="/account" aria-label="Account">
-            <User />
-          </Link>
-          <button
-            onClick={() => setIsCartOpen(true)}
-            className="relative"
-            aria-label="Cart"
+          <Link
+            to="/"
+            className="Parisienne md:text-3xl hover:text-amber-800 transition-colors"
+            aria-label="Home"
           >
-            <ShoppingBag />
-            {itemCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-[#C47E20] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                {itemCount}
-              </span>
-            )}
-          </button>
-        </span>
+            Goodybliss Konxept
+          </Link>
+
+          <span className="flex flex-row gap-4 relative">
+            <Link 
+              to="/account" 
+              aria-label="Account"
+              className="hover:text-amber-800 transition-colors"
+            >
+              <User />
+            </Link>
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="relative hover:text-amber-800 transition-colors"
+              aria-label="Cart"
+            >
+              <ShoppingBag />
+              {itemCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-[#C47E20] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {itemCount}
+                </span>
+              )}
+            </button>
+          </span>
+        </div>
       </div>
 
       {/* Mobile Menu */}
@@ -190,7 +237,6 @@ const Header = () => {
                       <div className="flex items-center gap-2">
                         <button
                           className="text-xs px-1.5 border rounded hover:bg-gray-100"
-                          onClick={() => {}}
                           aria-label="Decrease quantity"
                         >
                           -
@@ -198,7 +244,6 @@ const Header = () => {
                         <span className="text-sm">{item.quantity}</span>
                         <button
                           className="text-xs px-1.5 border rounded hover:bg-gray-100"
-                          onClick={() => {}}
                           aria-label="Increase quantity"
                         >
                           +

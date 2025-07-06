@@ -1,17 +1,17 @@
-import React, { useState } from "react";
+import React, { useRef} from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
-import { Navigate, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
+import { ChevronLeft, ChevronRight, Star, Mail, MoveRight, ArrowRight } from "lucide-react";
 
 // Assets
 import abstractImage from "../assets/Images/Abstract.jpeg";
 import fineArtImage from "../assets/Images/Fine.jpeg";
 import Watercolor1 from "../assets/Images/Face2.jpeg";
 import Impressionist1 from "../assets/Images/Face1.jpeg";
-import Photos from "../components/UI/Photos";
-import { Phone } from "lucide-react";
+
 const SLIDES = [
   {
     image: abstractImage,
@@ -77,7 +77,25 @@ const TESTIMONIALS = [
     name: "Emma L.",
     location: "Sydney",
     text: "I've purchased three pieces now and each one brings me so much joy. The colors are even more vibrant in person.",
+    rating: 3,
+  },
+   {
+    name: "Sarah J.",
+    location: "New York",
+    text: "The artwork arrived beautifully packaged and exceeded my expectations. It's the centerpiece of my living room now!",
     rating: 4,
+  },
+  {
+    name: "Michael T.",
+    location: "London",
+    text: "Exceptional quality and the artist's attention to detail is remarkable. Will definitely purchase again.",
+    rating: 5,
+  },
+  {
+    name: "Emma L.",
+    location: "Sydney",
+    text: "I've purchased three pieces now and each one brings me so much joy. The colors are even more vibrant in person.",
+    rating: 6,
   },
 ];
 
@@ -113,9 +131,32 @@ const FEATURED_PRODUCTS = [
   },
 ];
 
+const SliderNavigation = ({ swiperRef, className = '' }) => {
+  return (
+    <div className={`flex justify-between w-full pointer-events-none ${className}`}>
+      <button
+        onClick={() => swiperRef.current?.slidePrev()}
+        className="w-12 h-12 rounded-full bg-white/80 text-[#74541e] flex items-center justify-center hover:bg-white transition-all duration-300 shadow-lg border border-[#d4c9b5] pointer-events-auto"
+        aria-label="Previous slide"
+      >
+        <ChevronLeft size={24} className="stroke-[1.5]" />
+      </button>
+      <button
+        onClick={() => swiperRef.current?.slideNext()}
+        className="w-12 h-12 rounded-full bg-white/80 text-[#74541e] flex items-center justify-center hover:bg-white transition-all duration-300 shadow-lg border border-[#d4c9b5] pointer-events-auto"
+        aria-label="Next slide"
+      >
+        <ChevronRight size={24} className="stroke-[1.5]" />
+      </button>
+    </div>
+  );
+};
+
 const Homepage = () => {
-  const [isCartOpen, setIsCartOpen] = useState(false);
-const navigate =useNavigate();
+  const navigate = useNavigate();
+  const heroSwiperRef = useRef(null);
+  const testimonialSwiperRef = useRef(null);
+
   const renderHeroSlide = ({ image, title, subtitle, quote }) => (
     <SwiperSlide className="relative">
       <div className="absolute inset-0 bg-black/50 z-10" />
@@ -151,9 +192,9 @@ const navigate =useNavigate();
       <div className="p-4">
         <h3 className="font-serif text-2xl font-medium">{title}</h3>
         <p className="text-sm text-[#918172]">{description}</p>
-        <p className="mt-2 text-[#74541e] font-medium hover:underline lg:uppercase">
-          {cta}
-        </p>
+        <div className="flex items-center mt-2 text-[#74541e] font-medium hover:underline lg:uppercase">
+          {cta} <MoveRight className="ml-1 w-4 h-4" />
+        </div>
       </div>
     </div>
   );
@@ -162,16 +203,11 @@ const navigate =useNavigate();
     return (
       <div className="flex justify-center mt-2">
         {[...Array(5)].map((_, i) => (
-          <svg
+          <Star
             key={i}
-            className={`w-4 h-4 ${
-              i < rating ? "text-amber-400" : "text-gray-300"
-            }`}
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-          </svg>
+            className={`w-4 h-4 ${i < rating ? "text-amber-400 fill-amber-400" : "text-gray-300"}`}
+            strokeWidth={1.5}
+          />
         ))}
       </div>
     );
@@ -179,13 +215,6 @@ const navigate =useNavigate();
 
   return (
     <div className="overflow-hidden relative">
-      {isCartOpen && (
-        <div
-          onClick={() => setIsCartOpen(false)}
-          className="fixed inset-0 bg-black/30 z-30"
-        />
-      )}
-
       {/* Hero Slider Section */}
       <section className="relative h-[80vh] w-screen">
         <Swiper
@@ -200,6 +229,7 @@ const navigate =useNavigate();
           }}
           loop
           className="h-full w-full"
+          onSwiper={(swiper) => (heroSwiperRef.current = swiper)}
         >
           {SLIDES.map((slide, index) => (
             <React.Fragment key={index}>
@@ -208,9 +238,17 @@ const navigate =useNavigate();
           ))}
         </Swiper>
 
+        <SliderNavigation 
+          swiperRef={heroSwiperRef}
+          className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-between px-4 z-20 pointer-events-none"
+        />
+
         <div className="absolute bottom-8 left-0 right-0 z-30 flex justify-center">
-          <button className="text-white text-sm tracking-widest">
-            VIEW COLLECTION →
+          <button 
+            onClick={() => navigate("/gallery")}
+            className="text-white text-sm tracking-widest hover:underline flex items-center"
+          >
+            VIEW COLLECTION <ArrowRight className="ml-1 w-4 h-4" />
           </button>
         </div>
       </section>
@@ -225,8 +263,11 @@ const navigate =useNavigate();
             moving to <strong>Melbourne!</strong> For the first time, original
             pieces are available at a generous discount.
           </p>
-          <button className="text-gray-400 text-sm md:text-xl border border-[#74541e] hover:bg-[#74551e52] hover:text-white w-fit px-5 py-2.5 lg:py-3 rounded-sm transition-colors uppercase">
-            Welcome your favourite Painting Home
+          <button 
+            onClick={() => navigate("/gallery")}
+            className="text-gray-400 text-sm md:text-xl border border-[#74541e] hover:bg-[#74551e52] hover:text-white w-fit px-5 py-2.5 lg:py-3 rounded-sm transition-colors uppercase flex items-center mx-auto"
+          >
+            Welcome your favourite Painting Home <MoveRight className="ml-2 w-4 h-4" />
           </button>
         </div>
 
@@ -241,17 +282,14 @@ const navigate =useNavigate();
         </div>
 
         <div className="flex flex-col lg:flex-row h-[90vh] w-full">
-          {/* Video*/}
-          <div className="hidden  md:flex w-full lg:w-1/2 h-1/2 lg:h-full relative">
+          <div className="hidden md:flex w-full lg:w-1/2 h-1/2 lg:h-full relative">
             <img
               className="object-cover w-full h-full"
               src={fineArtImage}
-              type="video/mp4"
               alt="Art gallery video"
             />
           </div>
 
-          {/*Overlay */}
           <div className="w-full lg:w-1/2 h-1/2 lg:h-full relative">
             <img
               src={abstractImage}
@@ -259,8 +297,6 @@ const navigate =useNavigate();
               className="object-cover w-full h-full"
               loading="lazy"
             />
-
-            {/* Enhanced Text Overlay */}
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center p-8">
               <div className="text-white text-center max-w-md">
                 <h1 className="text-3xl md:text-5xl font-serif mb-4 uppercase tracking-wider">
@@ -290,11 +326,7 @@ const navigate =useNavigate();
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {FEATURED_PRODUCTS.map((product) => {
               const discountPercent = product.discountPrice
-                ? Math.round(
-                    ((product.regularPrice - product.discountPrice) /
-                      product.regularPrice) *
-                      100
-                  )
+                ? Math.round(((product.price - product.discountPrice) / product.price) * 100)
                 : 0;
 
               return (
@@ -338,8 +370,8 @@ const navigate =useNavigate();
                         </span>
                       )}
                     </div>
-                    <button className="mt-4 w-full py-2 bg-[#C47E20] text-white rounded hover:bg-[#a86d1a] transition-colors">
-                      Add to Cart
+                    <button className="mt-4 w-full py-2 bg-[#C47E20] text-white rounded hover:bg-[#a86d1a] transition-colors flex items-center justify-center">
+                      Add to Cart <MoveRight className="ml-2 w-4 h-4" />
                     </button>
                   </div>
                 </div>
@@ -347,43 +379,87 @@ const navigate =useNavigate();
             })}
           </div>
           <div className="text-center mt-10">
-            <button 
-            onClick={()=>navigate('/gallery')}
-            className="px-6 py-3 border border-[#74541e] text-[#74541e] rounded hover:bg-[#74541e] hover:text-white transition-colors">
-              View All Artworks
+            <button
+              onClick={() => navigate("/gallery")}
+              className="px-6 py-3 border border-[#74541e] text-[#74541e] rounded hover:bg-[#74541e] hover:text-white transition-colors flex items-center mx-auto"
+            >
+              View All Artworks <MoveRight className="ml-2 w-4 h-4" />
             </button>
           </div>
         </div>
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-white relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-serif text-center text-[#74541e] mb-12">
             Collector Stories
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+          <Swiper
+            modules={[Pagination, Autoplay]}
+            spaceBetween={30}
+            slidesPerView={1}
+            centeredSlides={true}
+            loop={true}
+            autoplay={{
+              delay: 5000,
+              disableOnInteraction: false,
+            }}
+            pagination={{
+              clickable: true,
+              el: ".testimonial-pagination",
+              renderBullet: (index, className) => {
+                return `<span class="${className} !w-2 !h-2 !bg-[#C47E20] !opacity-30 !mx-1"></span>`;
+              },
+            }}
+            breakpoints={{
+              640: {
+                slidesPerView: 1.2,
+              },
+              768: {
+                slidesPerView: 1.5,
+              },
+              1024: {
+                slidesPerView: 2.5,
+              },
+            }}
+            className="pb-12"
+            onSwiper={(swiper) => (testimonialSwiperRef.current = swiper)}
+          >
             {TESTIMONIALS.map((testimonial, index) => (
-              <div
-                key={index}
-                className="bg-[#f9f7f3] p-6 rounded-lg shadow-sm"
-              >
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 rounded-full bg-[#e8ddd0] flex items-center justify-center text-[#74541e] font-bold">
-                    {testimonial.name.charAt(0)}
+              <SwiperSlide key={index}>
+                {({ isActive }) => (
+                  <div
+                    className={`bg-[#f9f7f3] p-6 rounded-lg shadow-sm transition-all duration-300 ${
+                      isActive ? "scale-110" : "scale-90 opacity-80"
+                    }`}
+                  >
+                    <div className="flex items-center mb-4">
+                      <div className="w-12 h-12 rounded-full bg-[#e8ddd0] flex items-center justify-center text-[#74541e] font-bold">
+                        {testimonial.name.charAt(0)}
+                      </div>
+                      <div className="ml-4">
+                        <h4 className="font-medium">{testimonial.name}</h4>
+                        <p className="text-sm text-gray-500">
+                          {testimonial.location}
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-gray-700 mb-4">"{testimonial.text}"</p>
+                    {renderStarRating(testimonial.rating)}
                   </div>
-                  <div className="ml-4">
-                    <h4 className="font-medium">{testimonial.name}</h4>
-                    <p className="text-sm text-gray-500">
-                      {testimonial.location}
-                    </p>
-                  </div>
-                </div>
-                <p className="text-gray-700 mb-4">"{testimonial.text}"</p>
-                {renderStarRating(testimonial.rating)}
-              </div>
+                )}
+              </SwiperSlide>
             ))}
-          </div>
+          </Swiper>
+
+          <SliderNavigation 
+            swiperRef={testimonialSwiperRef}
+            className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-between px-4 z-10 pointer-events-none"
+          />
+
+          <div className="testimonial-pagination flex justify-center gap-1 mt-4" />
         </div>
       </section>
 
@@ -420,8 +496,10 @@ const navigate =useNavigate();
                 emotions at that moment in time. I hope they bring as much joy
                 to collectors as they brought me in creating them."
               </p>
-              <button className="px-6 py-3 bg-[#74541e] text-white rounded hover:bg-[#5a4218] transition-colors">
-                Read Full Biography
+              <button 
+              onClick={() => navigate("/about")}
+              className="px-6 py-3 bg-[#74541e] text-white rounded hover:bg-[#5a4218] transition-colors flex items-center w-fit">
+                Read Full Biography <MoveRight className="ml-2 w-4 h-4" />
               </button>
             </div>
           </div>
@@ -439,13 +517,16 @@ const navigate =useNavigate();
             updates, and special offers.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
-            <input
-              type="email"
-              placeholder="Your email address"
-              className="flex-grow px-4 py-3 border border-[#d4c9b5] rounded focus:outline-none focus:ring-2 focus:ring-[#C47E20]"
-            />
-            <button className="px-6 py-3 bg-[#74541e] text-white rounded hover:bg-[#5a4218] transition-colors whitespace-nowrap">
-              Subscribe
+            <div className="relative flex-grow">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-[#74541e]" size={20} />
+              <input
+                type="email"
+                placeholder="Your email address"
+                className="w-full pl-10 pr-4 py-3 border border-[#d4c9b5] rounded focus:outline-none focus:ring-2 focus:ring-[#C47E20]"
+              />
+            </div>
+            <button className="px-6 py-3 bg-[#74541e] text-white rounded hover:bg-[#5a4218] transition-colors whitespace-nowrap flex items-center justify-center">
+              Subscribe <MoveRight className="ml-2 w-4 h-4" />
             </button>
           </div>
           <p className="text-xs text-gray-400 mt-4">
