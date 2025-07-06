@@ -16,6 +16,9 @@ export const product = [
     regularPrice: 1200,
     discountPrice: 899,
     image: Abstract1,
+    category: "abstract",
+    inStock: true,
+    tags: ["modern", "contemporary"]
   },
   {
     id: 2,
@@ -26,6 +29,9 @@ export const product = [
     regularPrice: 1800,
     discountPrice: 1500,
     image: Landscape1,
+    category: "landscape",
+    inStock: true,
+    tags: ["nature", "outdoors"]
   },
   {
     id: 3,
@@ -34,8 +40,11 @@ export const product = [
     year: 2024,
     size: "18×24 in",
     regularPrice: 950,
-    discountPrice: null, // No discount
+    discountPrice: null,
     image: Portrait1,
+    category: "portrait",
+    inStock: false, // Sold out
+    tags: ["figurative", "people"]
   },
   {
     id: 4,
@@ -46,6 +55,9 @@ export const product = [
     regularPrice: 650,
     discountPrice: 550,
     image: StillLife1,
+    category: "still-life",
+    inStock: true,
+    tags: ["flowers", "objects"]
   },
   {
     id: 5,
@@ -56,6 +68,9 @@ export const product = [
     regularPrice: 2200,
     discountPrice: 1800,
     image: ModernArt1,
+    category: "modern",
+    inStock: true,
+    tags: ["abstract", "experimental"]
   },
   {
     id: 6,
@@ -66,6 +81,9 @@ export const product = [
     regularPrice: 850,
     discountPrice: 750,
     image: Watercolor1,
+    category: "seascape",
+    inStock: true,
+    tags: ["water", "nature"]
   },
   {
     id: 7,
@@ -74,7 +92,22 @@ export const product = [
     year: 2023,
     size: "20×24 in",
     regularPrice: 1200,
-    discountPrice: null, // No discount
+    discountPrice: null,
     image: Impressionist1,
-  },
+    category: "impressionist",
+    inStock: true,
+    tags: ["landscape", "light"]
+  }
+];
+
+// Export categories separately for easy use in filters
+export const categories = [
+  { id: "all", name: "All Works" },
+  { id: "abstract", name: "Abstract" },
+  { id: "landscape", name: "Landscape" },
+  { id: "portrait", name: "Portrait" },
+  { id: "still-life", name: "Still Life" },
+  { id: "modern", name: "Modern" },
+  { id: "seascape", name: "Seascape" },
+  { id: "impressionist", name: "Impressionist" }
 ];

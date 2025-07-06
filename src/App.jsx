@@ -11,8 +11,10 @@ const App = () => {
       <Header />
       <Routes>
         <Route path="/" element={<Homepage />} />
-        <Route path="gallery" element={<Gallerypage/>}/>
-        <Route path="*" element={<Error/>} />
+        <Route path="gallery" element={<Gallerypage />}>
+          <Route path=":categoryId" element={<Gallerypage />} />
+        </Route>
+        <Route path="*" element={<Error />} />
       </Routes>
     </div>
   );

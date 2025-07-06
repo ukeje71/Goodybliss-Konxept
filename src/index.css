@@ -1,4 +1,7 @@
 @import "tailwindcss";
+html {
+  scroll-behavior: auto !important;
+}
 body {
   font-family: "Poppins", sans-serif;
 }
@@ -8,14 +11,15 @@ body {
 .Parisienne {
   font-family: "Parisienne", sans-serif;
 }
-.goudy{
+.goudy {
   font-family: "Goudy Bookletter 1911", serif;
 }
 .space {
   letter-spacing: 3px;
 }
-button,input,textarea {
- outline: none;
- /* background-image: url(./data/product.js); */
+button,
+input,
+textarea {
+  outline: none;
+  /* background-image: url(./data/product.js); */
 }
-

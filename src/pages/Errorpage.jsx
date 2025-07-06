@@ -30,7 +30,7 @@ const Error = () => {
             </Link>
 
             <Link
-              to="/collections"
+              to="/gallery"
               className="bg-white/80 border border-[#846C3B]/20 rounded-lg p-6 hover:bg-white transition-all hover:shadow-md flex flex-col items-center"
             >
               <Image className="w-8 h-8 text-[#C47E20] mb-3" />
