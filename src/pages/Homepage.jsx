@@ -8,6 +8,10 @@ import "swiper/css/pagination";
 import abstractImage from "../assets/Images/Abstract.jpeg";
 import fineArtImage from "../assets/Images/Fine.jpeg";
 
+import Watercolor1 from "../assets/Images/Face2.jpeg";
+import Impressionist1 from "../assets/Images/Face1.jpeg";
+import Photos from "../components/UI/Photos";
+
 const SLIDES = [
   {
     image: abstractImage,
@@ -22,13 +26,13 @@ const SLIDES = [
     quote: "Color is my day-long obsession, joy and torment",
   },
   {
-    image: abstractImage,
+    image: Watercolor1,
     title: "Silent Echoes",
     subtitle: "Charcoal & Gold Leaf • 2024",
     quote: "In art, truth and reality begin when one no longer understands",
   },
   {
-    image: fineArtImage,
+    image: Impressionist1,
     title: "The Doors are Open",
     subtitle: "Acrylic & Resin • 2023",
     quote: "The artist is a receptacle for emotions that come from everywhere",
@@ -61,7 +65,7 @@ const Homepage = () => {
 
   const renderHeroSlide = ({ image, title, subtitle, quote }) => (
     <SwiperSlide className="relative">
-      <div className="absolute inset-0 bg-black/30 z-10" />
+      <div className="absolute inset-0 bg-black/50 z-10" />
       <img
         src={image}
         alt={title}
@@ -139,7 +143,7 @@ const Homepage = () => {
         </div>
       </section>
 
-      {/* Products Section */}
+      {/* Products Category */}
       <section className="py-12">
         <div className="text-[#74541e] text-center max-w-[80vw] mx-auto space-y-5">
           <h2>Onto the next adventure...</h2>
@@ -203,6 +207,12 @@ const Homepage = () => {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Product display */}
+      <section>
+        {/* <Photos/> */}
+
       </section>
     </div>
   );

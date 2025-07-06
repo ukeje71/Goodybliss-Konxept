@@ -1,8 +1,7 @@
 import { Menu, Search, ShoppingBag, User, X } from "lucide-react";
 import React, { useState } from "react";
 import Marquee from "react-fast-marquee";
-// import img1 from "../assets/Images/Abstract.jpeg";
-// import img2 from "../assets/Images/Fine.jpeg";
+
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -65,7 +64,7 @@ const Header = () => {
         className="overflow-hidden bg-[#C47E20] text-amber-50 p-2 Cormorant"
       >
         {announcements.map((text, index) => (
-          <span key={index} className="mx-8 flex items-center">
+          <span key={index} className="mx-8 flex items-center text-sm">
             {text}
             {index !== announcements.length - 1 && (
               <span className="mx-4 text-amber-200">•</span>
@@ -82,7 +81,7 @@ const Header = () => {
           </button>
           <Search />
         </span>
-        <h1 className="Parisienne md:text-3xl">Goodybiss Koncept</h1>
+        <h1 className="Parisienne md:text-3xl">Goodybliss Konxept</h1>
         <span className="flex flex-row gap-4 relative">
           <User />
           <button onClick={() => setIsCartOpen(true)} className="relative">
