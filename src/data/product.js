@@ -18,7 +18,7 @@ export const product = [
     image: Abstract1,
     category: "abstract",
     inStock: true,
-    tags: ["modern", "contemporary"]
+    tags: ["modern", "contemporary"],
   },
   {
     id: 2,
@@ -31,7 +31,7 @@ export const product = [
     image: Landscape1,
     category: "landscape",
     inStock: true,
-    tags: ["nature", "outdoors"]
+    tags: ["nature", "outdoors"],
   },
   {
     id: 3,
@@ -44,7 +44,7 @@ export const product = [
     image: Portrait1,
     category: "portrait",
     inStock: false, // Sold out
-    tags: ["figurative", "people"]
+    tags: ["figurative", "people"],
   },
   {
     id: 4,
@@ -57,7 +57,7 @@ export const product = [
     image: StillLife1,
     category: "still-life",
     inStock: true,
-    tags: ["flowers", "objects"]
+    tags: ["flowers", "objects"],
   },
   {
     id: 5,
@@ -70,7 +70,7 @@ export const product = [
     image: ModernArt1,
     category: "modern",
     inStock: true,
-    tags: ["abstract", "experimental"]
+    tags: ["abstract", "experimental"],
   },
   {
     id: 6,
@@ -83,7 +83,7 @@ export const product = [
     image: Watercolor1,
     category: "seascape",
     inStock: true,
-    tags: ["water", "nature"]
+    tags: ["water", "nature"],
   },
   {
     id: 7,
@@ -96,8 +96,23 @@ export const product = [
     image: Impressionist1,
     category: "impressionist",
     inStock: true,
-    tags: ["landscape", "light"]
-  }
+    tags: ["landscape", "light"],
+  },
+
+  // Add more products as needed
+  {
+    id: 7,
+    title: "Sunset Fields",
+    medium: "Impressionist Oil",
+    year: 2023,
+    size: "20×24 in",
+    regularPrice: 1200,
+    discountPrice: null,
+    image: Impressionist1,
+    category: "impressionist",
+    inStock: true,
+    tags: ["landscape", "light"],
+  },
 ];
 
 // Export categories separately for easy use in filters
@@ -109,5 +124,5 @@ export const categories = [
   { id: "still-life", name: "Still Life" },
   { id: "modern", name: "Modern" },
   { id: "seascape", name: "Seascape" },
-  { id: "impressionist", name: "Impressionist" }
+  { id: "impressionist", name: "Impressionist" },
 ];

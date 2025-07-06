@@ -1,51 +1,51 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useParams, useLocation } from 'react-router';
-import Artist from '../assets/Images/Face1.jpeg';
-import Photos from '../components/UI/Photos';
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useParams, useLocation } from "react-router";
+import Artist from "../assets/Images/Face1.jpeg";
+import Photos from "../components/UI/Photos";
 
 const GalleryPage = () => {
   const { category } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [stockFilter, setStockFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('alphabetical');
+  const [stockFilter, setStockFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("alphabetical");
   const [currentPage, setCurrentPage] = useState(1);
   const photosPerPage = 8;
 
   useEffect(() => {
-    setStockFilter(category || 'all');
+    setStockFilter(category || "all");
   }, [category]);
 
   const stockFilters = [
-    { id: 'all', label: 'All Items' },
-    { id: 'in-stock', label: 'In Stock' },
-    { id: 'out-of-stock', label: 'Out of Stock' },
+    { id: "all", label: "All Items" },
+    { id: "in-stock", label: "In Stock" },
+    { id: "out-of-stock", label: "Out of Stock" },
   ];
 
   const sortOptions = [
-    { id: 'alphabetical', label: 'Alphabetical (A-Z)' },
-    { id: 'price-low-high', label: 'Price (Low to High)' },
-    { id: 'price-high-low', label: 'Price (High to Low)' },
-    { id: 'date-new-old', label: 'Date (Newest First)' },
-    { id: 'date-old-new', label: 'Date (Oldest First)' },
+    { id: "alphabetical", label: "Alphabetical (A-Z)" },
+    { id: "price-low-high", label: "Price (Low to High)" },
+    { id: "price-high-low", label: "Price (High to Low)" },
+    { id: "date-new-old", label: "Date (Newest First)" },
+    { id: "date-old-new", label: "Date (Oldest First)" },
   ];
 
   const categories = [
-    { id: 'all', name: 'All Works', path: '/gallery' },
-    { id: 'oils', name: 'Oil Paintings', path: '/products/oils' },
-    { id: 'watercolors', name: 'Watercolors', path: '/products/watercolors' },
-    { id: 'sketches', name: 'Sketches', path: '/products/sketches' },
+    { id: "all", name: "All Works", path: "/gallery" },
+    { id: "oils", name: "Oil Paintings", path: "/products/oils" },
+    { id: "watercolors", name: "Watercolors", path: "/products/watercolors" },
+    { id: "sketches", name: "Sketches", path: "/products/sketches" },
   ];
 
   const isActiveCategory = (cat) => {
-    if (cat.id === 'all') return location.pathname === '/gallery';
+    if (cat.id === "all") return location.pathname === "/gallery";
     return location.pathname === cat.path;
   };
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -57,7 +57,7 @@ const GalleryPage = () => {
             <div className="relative aspect-square md:aspect-[4/5] max-w-[630px] mx-auto overflow-hidden rounded-lg shadow-lg">
               <img
                 src={Artist}
-                alt="Artist Tahlia"
+                alt="Artist Goodybliss"
                 className="w-full h-full object-cover object-center transition-transform duration-500 hover:scale-105"
               />
             </div>
@@ -68,12 +68,13 @@ const GalleryPage = () => {
             </h1>
             <div className="text-[#beac98] space-y-4 md:space-y-6">
               <h3 className="text-lg md:text-xl">
-                Pack up the oils, wrap up the brushes and onto the next adventure…
+                Pack up the oils, wrap up the brushes and onto the next
+                adventure…
               </h3>
               <div className="space-y-4">
                 <p className="leading-relaxed md:leading-8 text-base md:text-lg">
-                  After two years in our warehouse studio, my creative practice is
-                  moving to Melbourne! <b>For the first time,</b> collector
+                  After two years in our warehouse studio, my creative practice
+                  is moving to Melbourne! <b>For the first time,</b> collector
                   favourites and newly released works are available at a very
                   special price.
                 </p>
@@ -102,12 +103,14 @@ const GalleryPage = () => {
                   key={filter.id}
                   onClick={() => {
                     setStockFilter(filter.id);
-                    navigate(`/gallery${filter.id === 'all' ? '' : `/${filter.id}`}`);
+                    navigate(
+                      `/gallery${filter.id === "all" ? "" : `/${filter.id}`}`
+                    );
                   }}
                   className={`px-4 py-2 rounded-full text-sm transition-colors ${
                     stockFilter === filter.id
-                      ? 'bg-[#C47E20] text-white'
-                      : 'bg-[#e8ddd0] text-[#846C3B] hover:bg-[#d8c9b5]'
+                      ? "bg-[#C47E20] text-white"
+                      : "bg-[#e8ddd0] text-[#846C3B] hover:bg-[#d8c9b5]"
                   }`}
                 >
                   {filter.label}
@@ -159,8 +162,8 @@ const GalleryPage = () => {
                 to={cat.path}
                 className={`px-4 py-2 rounded-full text-sm transition-colors ${
                   isActiveCategory(cat)
-                    ? 'bg-[#C47E20] text-white'
-                    : 'bg-[#e8ddd0] text-[#846C3B] hover:bg-[#d8c9b5]'
+                    ? "bg-[#C47E20] text-white"
+                    : "bg-[#e8ddd0] text-[#846C3B] hover:bg-[#d8c9b5]"
                 }`}
               >
                 {cat.name}
@@ -184,8 +187,8 @@ const GalleryPage = () => {
                 onClick={() => handlePageChange(page)}
                 className={`w-10 h-10 rounded-full flex items-center justify-center ${
                   currentPage === page
-                    ? 'bg-[#C47E20] text-white'
-                    : 'bg-[#e8ddd0] text-[#846C3B] hover:bg-[#d8c9b5]'
+                    ? "bg-[#C47E20] text-white"
+                    : "bg-[#e8ddd0] text-[#846C3B] hover:bg-[#d8c9b5]"
                 }`}
               >
                 {page}

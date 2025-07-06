@@ -4,6 +4,7 @@ import Homepage from "./pages/Homepage";
 import { Route, Routes } from "react-router";
 import Gallerypage from "./pages/Gallerypage";
 import Error from "./pages/Errorpage";
+import Footer from "./components/Layouts/Footer";
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
         </Route>
         <Route path="*" element={<Error />} />
       </Routes>
+      <Footer/>
     </div>
   );
 };
