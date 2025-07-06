@@ -210,10 +210,7 @@ const Homepage = () => {
       </section>
 
       {/* Product display */}
-      <section>
-        {/* <Photos/> */}
-
-      </section>
+      <section>{/* <Photos/> */}</section>
     </div>
   );
 };

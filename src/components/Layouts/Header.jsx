@@ -1,6 +1,7 @@
 import { Menu, Search, ShoppingBag, User, X } from "lucide-react";
 import React, { useState } from "react";
 import Marquee from "react-fast-marquee";
+import { Link } from "react-router";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -15,16 +16,17 @@ const Header = () => {
     "Sign up for exclusive early access",
   ];
 
+  // Menu items with proper routes
   const menuItems = [
-    "Art Classes",
-    "ORIGINAL MOVING SALE 📦",
-    "Shop By Collection",
-    "Fine Art Prints",
-    "Canvas Prints",
-    "Tapestries",
-    "Originals",
-    "About",
-    "Log in",
+    { name: "Home", path: "/" },
+    { name: "Art Classes", path: "/art-classes" },
+    { name: "ORIGINAL MOVING SALE 📦", path: "/moving-sale" },
+    { name: "Shop By Collection", path: "/collections" },
+    { name: "Fine Art Prints", path: "/gallery" },
+    { name: "Canvas Prints", path: "/gallery" },
+    { name: "Originals", path: "/gallery" },
+    { name: "About", path: "/about" },
+    { name: "Log in", path: "/login" },
   ];
 
   // Static cart data
@@ -47,7 +49,7 @@ const Header = () => {
     },
   ];
 
-  // Static calculations
+  // Calculate subtotal and item count
   const subtotal = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,
     0
@@ -76,15 +78,31 @@ const Header = () => {
       {/* Main Header */}
       <div className="flex justify-between items-center p-4 text-[#C47E20] bg-white shadow-md">
         <span className="flex flex-row gap-4">
-          <button onClick={() => setIsMenuOpen(true)}>
+          <button onClick={() => setIsMenuOpen(true)} aria-label="Open menu">
             <Menu />
           </button>
-          <Search />
+          <button aria-label="Search">
+            <Search />
+          </button>
         </span>
-        <h1 className="Parisienne md:text-3xl">Goodybliss Konxept</h1>
+
+        <Link
+          to="/"
+          className="Parisienne md:text-3xl hover:text-amber-800 transition-colors"
+          aria-label="Home"
+        >
+          Goodybliss Konxept
+        </Link>
+
         <span className="flex flex-row gap-4 relative">
-          <User />
-          <button onClick={() => setIsCartOpen(true)} className="relative">
+          <Link to="/account" aria-label="Account">
+            <User />
+          </Link>
+          <button
+            onClick={() => setIsCartOpen(true)}
+            className="relative"
+            aria-label="Cart"
+          >
             <ShoppingBag />
             {itemCount > 0 && (
               <span className="absolute -top-1 -right-1 bg-[#C47E20] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
@@ -95,7 +113,7 @@ const Header = () => {
         </span>
       </div>
 
-      {/* ===== LEFT MENU ===== */}
+      {/* Mobile Menu */}
       <div
         className={`fixed inset-y-0 left-0 w-72 bg-white/80 backdrop-blur-md transform ${
           isMenuOpen ? "translate-x-0" : "-translate-x-full"
@@ -105,6 +123,7 @@ const Header = () => {
           <button
             onClick={() => setIsMenuOpen(false)}
             className="text-[#846C3B] hover:text-amber-800 transition-colors"
+            aria-label="Close menu"
           >
             <X size={28} />
           </button>
@@ -114,19 +133,20 @@ const Header = () => {
           <ul className="space-y-3">
             {menuItems.map((item, index) => (
               <li key={index}>
-                <a
-                  href="#"
+                <Link
+                  to={item.path}
+                  onClick={() => setIsMenuOpen(false)}
                   className="block py-3 px-3 text-[#846C3B] hover:text-amber-800 hover:bg-white/30 rounded-md transition-colors border-b border-[#846C3B]/20"
                 >
-                  {item}
-                </a>
+                  {item.name}
+                </Link>
               </li>
             ))}
           </ul>
         </nav>
       </div>
 
-      {/* ===== RIGHT CART ===== */}
+      {/* Shopping Cart */}
       <div
         className={`fixed inset-y-0 right-0 w-full md:w-72 lg:w-96 bg-white/80 backdrop-blur-md transform ${
           isCartOpen ? "translate-x-0" : "translate-x-full"
@@ -139,6 +159,7 @@ const Header = () => {
           <button
             onClick={() => setIsCartOpen(false)}
             className="text-[#846C3B] hover:text-amber-800 transition-colors"
+            aria-label="Close cart"
           >
             <X size={28} />
           </button>
@@ -153,7 +174,6 @@ const Header = () => {
                   className="flex gap-3 py-3 border-b border-[#846C3B]/20"
                 >
                   <div className="w-16 h-16 bg-gray-100 rounded-md overflow-hidden">
-                    {/* Replace with your actual Image component */}
                     <img
                       src={item.image}
                       alt={item.title}
@@ -171,6 +191,7 @@ const Header = () => {
                         <button
                           className="text-xs px-1.5 border rounded hover:bg-gray-100"
                           onClick={() => {}}
+                          aria-label="Decrease quantity"
                         >
                           -
                         </button>
@@ -178,6 +199,7 @@ const Header = () => {
                         <button
                           className="text-xs px-1.5 border rounded hover:bg-gray-100"
                           onClick={() => {}}
+                          aria-label="Increase quantity"
                         >
                           +
                         </button>
@@ -209,9 +231,13 @@ const Header = () => {
                 ${subtotal.toFixed(2)}
               </span>
             </div>
-            <button className="w-full py-2 bg-[#C47E20] text-white rounded-md hover:bg-[#a56d1a] transition-colors">
+            <Link
+              to="/checkout"
+              onClick={() => setIsCartOpen(false)}
+              className="block w-full py-2 bg-[#C47E20] text-white text-center rounded-md hover:bg-[#a56d1a] transition-colors"
+            >
               Checkout
-            </button>
+            </Link>
           </div>
         )}
       </div>
