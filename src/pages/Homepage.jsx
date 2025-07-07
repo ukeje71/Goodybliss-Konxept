@@ -265,8 +265,9 @@ const Homepage = () => {
           </p>
           <button 
             onClick={() => navigate("/gallery")}
-            className="text-gray-400 text-sm md:text-xl border border-[#74541e] hover:bg-[#74551e52] hover:text-white w-fit px-5 py-2.5 lg:py-3 rounded-sm transition-colors uppercase flex items-center mx-auto"
-          >
+            // className="text-gray-400 text-sm md:text-xl border border-[#74541e] hover:bg-[#74551e52] hover:text-white w-fit px-5 py-2.5 lg:py-3 rounded-sm transition-colors uppercase flex items-center mx-auto"
+            className="px-6 py-3 border border-[#74541e] text-[#74541e] rounded hover:bg-[#74541e] hover:text-white transition-colors flex items-center mx-auto"
+        >
             Welcome your favourite Painting Home <MoveRight className="ml-2 w-4 h-4" />
           </button>
         </div>

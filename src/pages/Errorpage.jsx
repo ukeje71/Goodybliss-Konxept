@@ -8,7 +8,7 @@ const Error = () => {
       <main className="flex-grow flex items-center justify-center p-4">
         <div className="max-w-2xl mx-auto text-center">
           <div className="mb-8">
-            <h1 className="text-8xl md:text-9xl font-bold text-[#C47E20] mb-4">
+            <h1 className="text-8xl md:text-9xl font-bold text-[#74541e] mb-4">
               404
             </h1>
             <h2 className="text-3xl md:text-4xl font-medium mb-4">
@@ -25,7 +25,7 @@ const Error = () => {
               to="/"
               className="bg-white/80 border border-[#846C3B]/20 rounded-lg p-6 hover:bg-white transition-all hover:shadow-md flex flex-col items-center"
             >
-              <Home className="w-8 h-8 text-[#C47E20] mb-3" />
+              <Home className="w-8 h-8 text-[#74541e] mb-3" />
               <span className="font-medium">Return Home</span>
             </Link>
 
@@ -33,7 +33,7 @@ const Error = () => {
               to="/gallery"
               className="bg-white/80 border border-[#846C3B]/20 rounded-lg p-6 hover:bg-white transition-all hover:shadow-md flex flex-col items-center"
             >
-              <Image className="w-8 h-8 text-[#C47E20] mb-3" />
+              <Image className="w-8 h-8 text-[#74541e] mb-3" />
               <span className="font-medium">Browse Gallery</span>
             </Link>
 
@@ -41,7 +41,7 @@ const Error = () => {
               to="/contact"
               className="bg-white/80 border border-[#846C3B]/20 rounded-lg p-6 hover:bg-white transition-all hover:shadow-md flex flex-col items-center"
             >
-              <Mail className="w-8 h-8 text-[#C47E20] mb-3" />
+              <Mail className="w-8 h-8 text-[#74541e] mb-3" />
               <span className="font-medium">Get Help</span>
             </Link>
           </div>

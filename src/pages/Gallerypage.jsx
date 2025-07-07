@@ -63,10 +63,10 @@ const GalleryPage = () => {
             </div>
           </div>
           <div className="w-full lg:w-1/2 goudy text-center lg:text-left max-w-[500px] mx-auto lg:mx-0">
-            <h1 className="text-[#C47E20] text-3xl sm:text-4xl md:text-5xl Cormorant mb-4 md:mb-6">
+            <h1 className="text-[#74541e] text-3xl sm:text-4xl md:text-5xl Cormorant mb-4 md:mb-6">
               The Original Moving Sale
             </h1>
-            <div className="text-[#beac98] space-y-4 md:space-y-6">
+            <div className="text-gray-800 space-y-4 md:space-y-6">
               <h3 className="text-lg md:text-xl">
                 Pack up the oils, wrap up the brushes and onto the next
                 adventure…
@@ -78,7 +78,7 @@ const GalleryPage = () => {
                   favourites and newly released works are available at a very
                   special price.
                 </p>
-                <p className="text-[#C47E20] italic text-lg md:text-xl">
+                <p className="text-[#74541e] italic text-lg md:text-xl">
                   Goodybliss - Konxept
                 </p>
               </div>
@@ -89,7 +89,7 @@ const GalleryPage = () => {
 
       {/* Gallery Controls */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h2 className="text-center text-2xl md:text-3xl font-serif text-[#C47E20] mb-8">
+        <h2 className="text-center text-2xl md:text-3xl font-serif text-[#74541e] mb-8">
           Explore the Gallery
         </h2>
 

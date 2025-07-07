@@ -6,6 +6,8 @@ import Gallerypage from "./pages/Gallerypage";
 import Error from "./pages/Errorpage";
 import Footer from "./components/Layouts/Footer";
 import Aboutpage from "./pages/Aboutpage";
+import Loginpage from "./pages/Loginpage";
+import CreateProductPage from "./pages/CreateProductPage";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -28,6 +30,8 @@ const App = () => {
         <Route path="gallery" element={<Gallerypage />}>
           <Route path=":categoryId" element={<Gallerypage />} />
         </Route>
+        <Route path="login" element={<Loginpage />} />
+        <Route path="newproduct" element={<CreateProductPage />} />
         <Route path="*" element={<Error />} />
       </Routes>
       <Footer />

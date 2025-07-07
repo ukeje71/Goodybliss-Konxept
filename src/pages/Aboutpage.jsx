@@ -39,7 +39,7 @@ const AboutPage = () => {
   return (
     <div className="bg-[#f9f7f3]">
       {/* Hero Section */}
-      <section className="relative h-screen max-h-[800px]">
+      <section className="relative h-screen max-h-[80vh]">
         <div className="absolute inset-0 bg-black/40 z-10" />
         <img 
           src={studioImage} 

@@ -14,9 +14,9 @@ const Header = () => {
   useEffect(() => {
     const handleScroll = () => {
       if (isMobile) return;
-      
+
       const currentScrollY = window.scrollY;
-      
+
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
         // Scrolling down
         setShowHeader(false);
@@ -28,8 +28,8 @@ const Header = () => {
       setLastScrollY(currentScrollY);
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY, isMobile]);
 
   // Check mobile viewport
@@ -38,8 +38,8 @@ const Header = () => {
       setIsMobile(window.innerWidth < 768);
     };
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   // Static data
@@ -108,19 +108,23 @@ const Header = () => {
       </Marquee>
 
       {/* Main Header - Now scroll aware */}
-      <div className={`fixe top-0 left-0 right-0 z-30 transition-transform duration-300 ${
-        showHeader || isMobile ? 'translate-y-0 shadow-md' : '-translate-y-full'
-      }`}>
-        <div className="flex justify-between items-center p-4 text-[#C47E20] bg-white">
+      <div
+        className={`fixe top-0 left-0 right-0 z-30 transition-transform duration-300 ${
+          showHeader || isMobile
+            ? "translate-y-0 shadow-md"
+            : "-translate-y-full"
+        }`}
+      >
+        <div className="flex justify-between items-center p-4 text-[#74541e] bg-white">
           <span className="flex flex-row gap-4">
-            <button 
-              onClick={() => setIsMenuOpen(true)} 
+            <button
+              onClick={() => setIsMenuOpen(true)}
               aria-label="Open menu"
               className="hover:text-amber-800 transition-colors"
             >
               <Menu />
             </button>
-            <button 
+            <button
               aria-label="Search"
               className="hover:text-amber-800 transition-colors"
             >
@@ -137,9 +141,9 @@ const Header = () => {
           </Link>
 
           <span className="flex flex-row gap-4 relative">
-            <Link 
-              to="/account" 
-              aria-label="Account"
+            <Link
+              to="/login"
+              aria-label="login"
               className="hover:text-amber-800 transition-colors"
             >
               <User />
@@ -231,7 +235,7 @@ const Header = () => {
                     <h3 className="text-[#846C3B] font-medium">{item.title}</h3>
                     <p className="text-sm text-[#846C3B]/80">{item.size}</p>
                     <div className="flex justify-between items-center mt-1">
-                      <span className="text-[#C47E20] font-medium">
+                      <span className="text-[#74541e] font-medium">
                         ${item.price.toFixed(2)}
                       </span>
                       <div className="flex items-center gap-2">
@@ -272,7 +276,7 @@ const Header = () => {
           <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-[#846C3B] bg-white/80">
             <div className="flex justify-between mb-4">
               <span className="text-[#846C3B]">Subtotal</span>
-              <span className="text-[#C47E20] font-medium">
+              <span className="text-[#74541e] font-medium">
                 ${subtotal.toFixed(2)}
               </span>
             </div>
