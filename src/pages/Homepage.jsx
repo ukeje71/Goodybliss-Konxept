@@ -370,7 +370,7 @@ const Homepage = () => {
                         </span>
                       )}
                     </div>
-                    <button className="mt-4 w-full py-2 bg-[#C47E20] text-white rounded hover:bg-[#a86d1a] transition-colors flex items-center justify-center">
+                    <button className="mt-4 w-full py-2 bg-[#74541e] text-white rounded hover:bg-[#5a4218]  transition-colors flex items-center justify-center">
                       Add to Cart <MoveRight className="ml-2 w-4 h-4" />
                     </button>
                   </div>
@@ -498,7 +498,7 @@ const Homepage = () => {
               </p>
               <button 
               onClick={() => navigate("/about")}
-              className="px-6 py-3 bg-[#74541e] text-white rounded hover:bg-[#5a4218] transition-colors flex items-center w-fit">
+              className="px-6 py-3 bg-[#74541e] text-white rounded hover:bg-[#5a4218]  transition-colors flex items-center w-fit">
                 Read Full Biography <MoveRight className="ml-2 w-4 h-4" />
               </button>
             </div>

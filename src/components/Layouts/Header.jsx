@@ -108,7 +108,7 @@ const Header = () => {
       </Marquee>
 
       {/* Main Header - Now scroll aware */}
-      <div className={`fixed top-0 left-0 right-0 z-30 transition-transform duration-300 ${
+      <div className={`fixe top-0 left-0 right-0 z-30 transition-transform duration-300 ${
         showHeader || isMobile ? 'translate-y-0 shadow-md' : '-translate-y-full'
       }`}>
         <div className="flex justify-between items-center p-4 text-[#C47E20] bg-white">

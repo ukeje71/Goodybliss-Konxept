@@ -149,7 +149,7 @@ const Cards = ({
                 <button 
                   className={`flex-1 py-2 text-sm rounded transition-colors ${
                     item.inStock 
-                      ? "bg-[#C47E20] text-white hover:bg-[#a86d1a]"
+                      ? "bg-[#74541e] text-white rounded hover:bg-[#5a4218] "
                       : "bg-gray-300 text-gray-500 cursor-not-allowed"
                   }`}
                   disabled={item.inStock === false}

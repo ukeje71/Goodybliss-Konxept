@@ -109,7 +109,7 @@ const GalleryPage = () => {
                   }}
                   className={`px-4 py-2 rounded-full text-sm transition-colors ${
                     stockFilter === filter.id
-                      ? "bg-[#C47E20] text-white"
+                      ? "bg-[#74541e] text-white"
                       : "bg-[#e8ddd0] text-[#846C3B] hover:bg-[#d8c9b5]"
                   }`}
                 >
@@ -162,10 +162,11 @@ const GalleryPage = () => {
                 to={cat.path}
                 className={`px-4 py-2 rounded-full text-sm transition-colors ${
                   isActiveCategory(cat)
-                    ? "bg-[#C47E20] text-white"
+                    ? "bg-[#74541e] text-white"
                     : "bg-[#e8ddd0] text-[#846C3B] hover:bg-[#d8c9b5]"
                 }`}
               >
+                {/* bg-[#74541e] text-white rounded hover:bg-[#5a4218]  */}
                 {cat.name}
               </Link>
             ))}
@@ -187,7 +188,7 @@ const GalleryPage = () => {
                 onClick={() => handlePageChange(page)}
                 className={`w-10 h-10 rounded-full flex items-center justify-center ${
                   currentPage === page
-                    ? "bg-[#C47E20] text-white"
+                    ? "bg-[#74541e] text-white"
                     : "bg-[#e8ddd0] text-[#846C3B] hover:bg-[#d8c9b5]"
                 }`}
               >
