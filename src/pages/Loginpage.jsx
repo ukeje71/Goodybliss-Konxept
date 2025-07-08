@@ -28,7 +28,7 @@ const Loginpage = () => {
       // Check if the logged-in user is an admin
       if (ADMIN_EMAILS.includes(user.email)) {
         // Successful admin login
-        navigate('/admin-dashboard'); // Redirect to admin dashboard
+        navigate('/dashboard'); // Redirect to admin dashboard
       } else {
         // Not an admin - sign them out
         await auth.signOut();
