@@ -10,12 +10,18 @@ import {
   Menu,
   X,
 } from "lucide-react";
-import { Link, useLocation } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { useState, useEffect } from "react";
 
 const Sidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Close menu when route changes
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location.pathname]);
 
   const menuItems = [
     {
@@ -64,22 +70,27 @@ const Sidebar = () => {
         {
           name: "Logout",
           icon: <LogOut size={18} />,
-          path: "/logout",
+          onClick: () => {
+            // Handle logout logic
+            localStorage.removeItem('authToken');
+            navigate('/login');
+          },
         },
       ],
     },
   ];
 
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+    setIsMenuOpen(prev => !prev);
   };
 
   return (
     <>
-      {/* Hamburger Menu Button (Always visible) */}
+      {/* Hamburger Menu Button */}
       <button
         onClick={toggleMenu}
-        className="fixed bottom-4 right-4 z-50 p-3 rounded-full bg-[#2a2118] text-[#beac98] shadow-lg"
+        aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+        className="fixed bottom-4 right-4 z-50 p-3 rounded-full bg-[#2a2118] text-[#beac98] shadow-lg hover:bg-[#3e3327] transition-colors"
       >
         {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
@@ -89,6 +100,7 @@ const Sidebar = () => {
         className={`fixed inset-0 z-40 transform transition-all duration-300 ease-in-out ${
           isMenuOpen ? "translate-x-0" : "-translate-x-full"
         } w-64 h-screen bg-[#2a2118] text-[#beac98] overflow-y-auto`}
+        aria-hidden={!isMenuOpen}
       >
         <div className="p-6 border-b border-[#3e3327]">
           <Link
@@ -103,25 +115,38 @@ const Sidebar = () => {
 
         <div className="p-4">
           {menuItems.map((section, index) => (
-            <div key={index} className="mb-8">
+            <div key={`section-${index}`} className="mb-8">
               <h3 className="text-xs uppercase tracking-wider text-[#846C3B] mb-4 px-2">
                 {section.title}
               </h3>
               <ul className="space-y-1">
                 {section.items.map((item, itemIndex) => (
-                  <li key={itemIndex}>
-                    <Link
-                      to={item.path}
-                      onClick={() => setIsMenuOpen(false)}
-                      className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
-                        location.pathname === item.path
-                          ? "bg-[#74541e] text-white"
-                          : "hover:bg-[#3e3327] hover:text-white"
-                      }`}
-                    >
-                      <span className="text-[#C47E20]">{item.icon}</span>
-                      <span>{item.name}</span>
-                    </Link>
+                  <li key={`item-${itemIndex}`}>
+                    {item.onClick ? (
+                      <button
+                        onClick={() => {
+                          item.onClick();
+                          setIsMenuOpen(false);
+                        }}
+                        className="w-full flex items-center gap-3 px-3 py-2 rounded-md transition-colors hover:bg-[#3e3327] hover:text-white"
+                      >
+                        <span className="text-[#C47E20]">{item.icon}</span>
+                        <span>{item.name}</span>
+                      </button>
+                    ) : (
+                      <Link
+                        to={item.path}
+                        onClick={() => setIsMenuOpen(false)}
+                        className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
+                          location.pathname === item.path
+                            ? "bg-[#74541e] text-white"
+                            : "hover:bg-[#3e3327] hover:text-white"
+                        }`}
+                      >
+                        <span className="text-[#C47E20]">{item.icon}</span>
+                        <span>{item.name}</span>
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -147,6 +172,7 @@ const Sidebar = () => {
         <div
           className="fixed inset-0 bg-black/20 backdrop-blur-sm z-30"
           onClick={toggleMenu}
+          aria-hidden="true"
         />
       )}
     </>
