@@ -9,6 +9,7 @@ const Header = () => {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [showHeader, setShowHeader] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   // Scroll event handler
   useEffect(() => {
@@ -42,6 +43,17 @@ const Header = () => {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  // Close search when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isSearchOpen && !event.target.closest(".search-container")) {
+        setIsSearchOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isSearchOpen]);
+
   // Static data
   const announcements = [
     "Free shipping on all prints!",
@@ -61,6 +73,15 @@ const Header = () => {
     { name: "Originals", path: "/gallery" },
     { name: "About", path: "/about" },
     { name: "Log in", path: "/login" },
+  ];
+
+  const searchCategories = [
+    "All Collections",
+    "Original Paintings",
+    "Limited Edition Prints",
+    "Art Classes",
+    "Gift Cards",
+    "Sale Items",
   ];
 
   const cartItems = [
@@ -109,14 +130,14 @@ const Header = () => {
 
       {/* Main Header - Now scroll aware */}
       <div
-        className={`fixe top-0 left-0 right-0 z-30 transition-transform duration-300 ${
+        className={`fixe top-0  left-0 right-0 z-30 transition-transform duration-300 ${
           showHeader || isMobile
             ? "translate-y-0 shadow-md"
             : "-translate-y-full"
         }`}
       >
         <div className="flex justify-between items-center p-4 text-[#74541e] bg-white">
-          <span className="flex flex-row gap-4">
+          <div className="flex flex-row gap-4">
             <button
               onClick={() => setIsMenuOpen(true)}
               aria-label="Open menu"
@@ -124,13 +145,46 @@ const Header = () => {
             >
               <Menu />
             </button>
-            <button
-              aria-label="Search"
-              className="hover:text-amber-800 transition-colors"
-            >
-              <Search />
-            </button>
-          </span>
+            {/* Search with dropdown */}
+            <div className="relative search-container">
+              <button
+                onClick={() => setIsSearchOpen(!isSearchOpen)}
+                aria-label="Search"
+                className="p-2 rounded-full hover:bg-amber-50 transition-colors"
+              >
+                <Search className="text-amber-800 w-5 h-5" />
+              </button>
+
+              {isSearchOpen && (
+                <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-lg shadow-xl z-40 border border-amber-100 overflow-hidden">
+                  <div className="p-4 border-b border-amber-100">
+                    <div className="relative">
+                      <input
+                        type="text"
+                        placeholder="Search artworks, collections..."
+                        className="w-full pl-10 pr-4 py-2 border border-amber-200 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-300"
+                      />
+                      <Search className="absolute left-3 top-2.5 text-amber-400 w-4 h-4" />
+                    </div>
+                  </div>
+                  <div className="py-2">
+                    <h3 className="px-4 py-2 text-xs font-semibold text-amber-600 uppercase tracking-wider">
+                      Popular Searches
+                    </h3>
+                    <ul>
+                      {searchCategories.map((category, index) => (
+                        <li key={index}>
+                          <button className="w-full text-left px-4 py-2 hover:bg-amber-50 transition-colors text-amber-800">
+                            {category}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
 
           <Link
             to="/"
@@ -140,7 +194,7 @@ const Header = () => {
             Goodybliss Konxept
           </Link>
 
-          <span className="flex flex-row gap-4 relative">
+          <div className="flex flex-row gap-4 relative">
             <Link
               to="/login"
               aria-label="login"
@@ -160,7 +214,7 @@ const Header = () => {
                 </span>
               )}
             </button>
-          </span>
+          </div>
         </div>
       </div>
 

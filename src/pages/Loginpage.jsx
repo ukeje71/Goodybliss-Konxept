@@ -13,26 +13,30 @@ const Loginpage = () => {
   const navigate = useNavigate();
 
   // List of admin emails (store this more securely in production)
-  const ADMIN_EMAILS = ['ukejeisaac71@gmail.com'];
+  const ADMIN_EMAILS = ["ukejeisaac71@gmail.com"];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setIsLoading(true);
 
     try {
       // Sign in with Firebase
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
 
       // Check if the logged-in user is an admin
       if (ADMIN_EMAILS.includes(user.email)) {
         // Successful admin login
-        navigate('/dashboard'); // Redirect to admin dashboard
+        navigate("/dashboard"); // Redirect to admin dashboard
       } else {
         // Not an admin - sign them out
         await auth.signOut();
-        setError('Access restricted to admin only');
+        setError("Access restricted to admin only");
       }
     } catch (err) {
       setError(err.message);
@@ -179,7 +183,7 @@ const Loginpage = () => {
           </div>
 
           {/* Footer */}
-          <div className="bg-[#f9f7f3] px-8 py-4 text-center border-t border-[#e8e2d6]">
+          <div className="text-xs bg-[#f9f7f3] px-8 py-4 text-center border-t border-[#e8e2d6]">
             <p className="text-xs text-[#846C3B]">
               © {new Date().getFullYear()} Goodybliss Konxept. All rights
               reserved.
