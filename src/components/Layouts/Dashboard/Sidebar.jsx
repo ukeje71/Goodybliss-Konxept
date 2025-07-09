@@ -18,7 +18,6 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Close menu when route changes
   useEffect(() => {
     setIsMenuOpen(false);
   }, [location.pathname]);
@@ -35,7 +34,7 @@ const Sidebar = () => {
         {
           name: "New Product",
           icon: <PlusSquare size={18} />,
-          path: "/admin/new-product",
+          path: "/admin/newproduct",
         },
         {
           name: "Products",
@@ -71,9 +70,8 @@ const Sidebar = () => {
           name: "Logout",
           icon: <LogOut size={18} />,
           onClick: () => {
-            // Handle logout logic
-            localStorage.removeItem('authToken');
-            navigate('/login');
+            localStorage.removeItem("authToken");
+            navigate("/login");
           },
         },
       ],
@@ -81,12 +79,11 @@ const Sidebar = () => {
   ];
 
   const toggleMenu = () => {
-    setIsMenuOpen(prev => !prev);
+    setIsMenuOpen((prev) => !prev);
   };
 
   return (
     <>
-      {/* Hamburger Menu Button */}
       <button
         onClick={toggleMenu}
         aria-label={isMenuOpen ? "Close menu" : "Open menu"}
@@ -95,7 +92,6 @@ const Sidebar = () => {
         {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
 
-      {/* Sidebar */}
       <div
         className={`fixed inset-0 z-40 transform transition-all duration-300 ease-in-out ${
           isMenuOpen ? "translate-x-0" : "-translate-x-full"
@@ -167,7 +163,6 @@ const Sidebar = () => {
         </div>
       </div>
 
-      {/* Overlay */}
       {isMenuOpen && (
         <div
           className="fixed inset-0 bg-black/20 backdrop-blur-sm z-30"

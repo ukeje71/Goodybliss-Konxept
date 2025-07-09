@@ -65,14 +65,15 @@ const Header = () => {
 
   const menuItems = [
     { name: "Home", path: "/" },
+    { name: "About", path: "/about" },
     { name: "Art Classes", path: "/art-classes" },
-    { name: "ORIGINAL MOVING SALE 📦", path: "/moving-sale" },
-    { name: "Shop By Collection", path: "/collections" },
+    { name: "ORIGINAL MOVING SALE 📦", path: "/gallery" },
+    { name: "Shop By Collection", path: "/gallery" },
     { name: "Fine Art Prints", path: "/gallery" },
     { name: "Canvas Prints", path: "/gallery" },
     { name: "Originals", path: "/gallery" },
-    { name: "About", path: "/about" },
-    { name: "Log in", path: "/login" },
+    { name: "Contact", path: "/contact" },
+    { name: "Admin Log in", path: "/login" },
   ];
 
   const searchCategories = [
@@ -146,13 +147,13 @@ const Header = () => {
               <Menu />
             </button>
             {/* Search with dropdown */}
-            <div className="relative search-container">
+            <div className="relative search-container ">
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
                 aria-label="Search"
                 className="p-2 rounded-full hover:bg-amber-50 transition-colors"
               >
-                <Search className="text-amber-800 w-5 h-5" />
+                <Search className="w-5 h-5" />
               </button>
 
               {isSearchOpen && (
@@ -164,7 +165,7 @@ const Header = () => {
                         placeholder="Search artworks, collections..."
                         className="w-full pl-10 pr-4 py-2 border border-amber-200 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-300"
                       />
-                      <Search className="absolute left-3 top-2.5 text-amber-400 w-4 h-4" />
+                      <Search className="absolute left-3 top-2.5  w-4 h-4" />
                     </div>
                   </div>
                   <div className="py-2">
@@ -337,7 +338,7 @@ const Header = () => {
             <Link
               to="/checkout"
               onClick={() => setIsCartOpen(false)}
-              className="block w-full py-2 bg-[#C47E20] text-white text-center rounded-md hover:bg-[#a56d1a] transition-colors"
+              className="block w-full py-2 bg-[#74541e] text-white text-center rounded-md hover:bg-[#5a4218] transition-colors"
             >
               Checkout
             </Link>

@@ -13,9 +13,9 @@ import {
   Clock,
   TrendingUp,
 } from "lucide-react";
-import Sidebar from "./components/Layouts/Dashboard/Sidebar";
+import Sidebar from "../components/Layouts/Dashboard/Sidebar";
 
-const DashboardPage = () => {
+const Dashboardpage = () => {
   // Sample data
   const [recentSales] = useState([
     {
@@ -362,4 +362,4 @@ const DashboardPage = () => {
     </div>
   );
 };
-export default DashboardPage;
+export default Dashboardpage;

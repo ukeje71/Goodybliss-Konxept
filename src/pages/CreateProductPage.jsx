@@ -13,6 +13,7 @@ import {
   Info,
   Check,
 } from "lucide-react";
+import Sidebar from "../components/Layouts/Dashboard/Sidebar";
 
 const CreateProductPage = () => {
   const [productData, setProductData] = useState({
@@ -94,6 +95,8 @@ const CreateProductPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f9f5ee] to-[#f0e8d8] py-8 px-4 sm:px-6 lg:px-8">
+      {/* Sidebar */}
+      <Sidebar/>
       <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden border border-[#e8e2d6]">
         <div className="p-6 sm:p-8">
           <div className="flex items-center justify-between mb-6">
