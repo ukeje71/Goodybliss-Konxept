@@ -500,7 +500,7 @@ const Homepage = () => {
               <button 
               onClick={() => navigate("/about")}
               className="px-6 py-3 bg-[#74541e] text-white rounded hover:bg-[#5a4218]  transition-colors flex items-center w-fit">
-                Read Full Biography <MoveRight className="ml-2 w-4 h-4" />
+                See Full Artist Bio <MoveRight className="ml-2 w-4 h-4" />
               </button>
             </div>
           </div>

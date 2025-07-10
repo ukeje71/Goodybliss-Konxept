@@ -1,5 +1,7 @@
 import React from "react";
 import { product } from "../../data/product";
+import useCartStore from "../Store/cartStore";
+import toast from "react-hot-toast";
 
 const Cards = ({ 
   stockFilter = "all", 
@@ -10,9 +12,25 @@ const Cards = ({
   // Safe data handling
   const safeProducts = product || [];
   
+  // Cart functionality
+  const { addToCart } = useCartStore();
+
+  // Handle add to cart with proper product structure
+  const handleAddToCart = (product) => {
+    const cartProduct = {
+      id: product.id,
+      title: product.title,
+      price: product.discountPrice || product.regularPrice,
+      image: product.image,
+      size: product.size,
+      quantity: 1 // Initial quantity
+    };
+    addToCart(cartProduct);
+     toast.success('Item added to cart!');
+  };
+
   // 1. Filter products with fallbacks
   const filteredProducts = safeProducts.filter(item => {
-    // Ensure item has required properties
     if (!item || typeof item !== 'object') return false;
     
     if (stockFilter === "all") return true;
@@ -51,13 +69,6 @@ const Cards = ({
   const endIndex = Math.min(startIndex + photosPerPage, sortedProducts.length);
   const productsToShow = sortedProducts.slice(startIndex, endIndex);
 
-  // Debug log (remove in production)
-  console.log('Displaying products:', {
-    originalCount: safeProducts.length,
-    filteredCount: filteredProducts.length,
-    showing: productsToShow.length
-  });
-
   if (productsToShow.length === 0) {
     return (
       <div className="text-center py-12">
@@ -67,9 +78,8 @@ const Cards = ({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {productsToShow.map((item) => {
-        // Calculate discount percentage safely
         const discountPercent = item.discountPrice 
           ? Math.round(((item.regularPrice - item.discountPrice) / item.regularPrice) * 100)
           : 0;
@@ -147,9 +157,10 @@ const Cards = ({
                   View Details
                 </button>
                 <button 
+                  onClick={() => item.inStock && handleAddToCart(item)}
                   className={`flex-1 py-2 text-sm rounded transition-colors ${
                     item.inStock 
-                      ? "bg-[#74541e] text-white rounded hover:bg-[#5a4218] "
+                      ? "bg-[#74541e] text-white rounded hover:bg-[#5a4218]"
                       : "bg-gray-300 text-gray-500 cursor-not-allowed"
                   }`}
                   disabled={item.inStock === false}

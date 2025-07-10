@@ -10,6 +10,8 @@ import Loginpage from "./pages/Loginpage";
 import CreateProductPage from "./pages/CreateProductPage";
 import Dashboardpage from "./pages/Dashboardpage";
 import ContactPage from "./pages/Contactpage";
+import { Toaster } from "react-hot-toast";
+
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -68,6 +70,7 @@ const App = () => {
 
           <Route path="*" element={<Error />} />
         </Routes>
+        <Toaster position="top-right" reverseOrder={false} />
       </main>
       <Footer />
     </div>

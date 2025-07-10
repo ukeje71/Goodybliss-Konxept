@@ -2,6 +2,8 @@ import { Menu, Search, ShoppingBag, User, X } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import Marquee from "react-fast-marquee";
 import { Link } from "react-router";
+import Cart from "./Cart";
+import useCartStore from "../Store/cartStore";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -10,49 +12,28 @@ const Header = () => {
   const [showHeader, setShowHeader] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  
+  const { getTotalItems } = useCartStore();
 
-  // Scroll event handler
+  // Scroll handler
   useEffect(() => {
     const handleScroll = () => {
       if (isMobile) return;
-
       const currentScrollY = window.scrollY;
-
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        // Scrolling down
-        setShowHeader(false);
-      } else if (currentScrollY < lastScrollY) {
-        // Scrolling up
-        setShowHeader(true);
-      }
-
+      setShowHeader(currentScrollY <= lastScrollY || currentScrollY < 100);
       setLastScrollY(currentScrollY);
     };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY, isMobile]);
 
-  // Check mobile viewport
+  // Mobile detection
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
-
-  // Close search when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (isSearchOpen && !event.target.closest(".search-container")) {
-        setIsSearchOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isSearchOpen]);
 
   // Static data
   const announcements = [
@@ -85,34 +66,9 @@ const Header = () => {
     "Sale Items",
   ];
 
-  const cartItems = [
-    {
-      id: 1,
-      title: "Ephemeral Dreams",
-      price: 1200,
-      size: "24 × 36 in",
-      quantity: 1,
-      image: "../assets/Images/abstract.jpeg",
-    },
-    {
-      id: 2,
-      title: "Chromatic Harmony",
-      price: 950,
-      size: "18 × 24 in",
-      quantity: 1,
-      image: "../assets/Images/fine-art.jpeg",
-    },
-  ];
-
-  const subtotal = cartItems.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  );
-  const itemCount = cartItems.reduce((count, item) => count + item.quantity, 0);
-
   return (
     <div className="relative">
-      {/* Announcement Marquee - Always visible */}
+      {/* Announcement Marquee */}
       <Marquee
         speed={40}
         gradient={false}
@@ -129,9 +85,9 @@ const Header = () => {
         ))}
       </Marquee>
 
-      {/* Main Header - Now scroll aware */}
+      {/* Main Header */}
       <div
-        className={`fixe top-0  left-0 right-0 z-30 transition-transform duration-300 ${
+        className={` left-0 right-0 z-30 transition-transform duration-300 ${
           showHeader || isMobile
             ? "translate-y-0 shadow-md"
             : "-translate-y-full"
@@ -146,8 +102,9 @@ const Header = () => {
             >
               <Menu />
             </button>
+            
             {/* Search with dropdown */}
-            <div className="relative search-container ">
+            <div className="relative search-container">
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
                 aria-label="Search"
@@ -165,7 +122,7 @@ const Header = () => {
                         placeholder="Search artworks, collections..."
                         className="w-full pl-10 pr-4 py-2 border border-amber-200 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-300"
                       />
-                      <Search className="absolute left-3 top-2.5  w-4 h-4" />
+                      <Search className="absolute left-3 top-2.5 w-4 h-4" />
                     </div>
                   </div>
                   <div className="py-2">
@@ -209,9 +166,9 @@ const Header = () => {
               aria-label="Cart"
             >
               <ShoppingBag />
-              {itemCount > 0 && (
+              {getTotalItems() > 0 && (
                 <span className="absolute -top-1 -right-1 bg-[#C47E20] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {itemCount}
+                  {getTotalItems()}
                 </span>
               )}
             </button>
@@ -219,7 +176,7 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu - Original Styling */}
       <div
         className={`fixed inset-y-0 left-0 w-72 bg-white/80 backdrop-blur-md transform ${
           isMenuOpen ? "translate-x-0" : "-translate-x-full"
@@ -252,99 +209,8 @@ const Header = () => {
         </nav>
       </div>
 
-      {/* Shopping Cart */}
-      <div
-        className={`fixed inset-y-0 right-0 w-full md:w-72 lg:w-96 bg-white/80 backdrop-blur-md transform ${
-          isCartOpen ? "translate-x-0" : "translate-x-full"
-        } transition-transform duration-300 ease-in-out z-50 border-l border-[#846C3B]`}
-      >
-        <div className="p-4 flex justify-between items-center border-b border-[#846C3B] bg-white/30">
-          <h2 className="text-lg font-medium text-[#846C3B]">
-            Your Cart ({itemCount})
-          </h2>
-          <button
-            onClick={() => setIsCartOpen(false)}
-            className="text-[#846C3B] hover:text-amber-800 transition-colors"
-            aria-label="Close cart"
-          >
-            <X size={28} />
-          </button>
-        </div>
-
-        <div className="p-4 h-[calc(100vh-130px)] overflow-y-auto">
-          {cartItems.length > 0 ? (
-            <ul className="space-y-4">
-              {cartItems.map((item) => (
-                <li
-                  key={item.id}
-                  className="flex gap-3 py-3 border-b border-[#846C3B]/20"
-                >
-                  <div className="w-16 h-16 bg-gray-100 rounded-md overflow-hidden">
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-[#846C3B] font-medium">{item.title}</h3>
-                    <p className="text-sm text-[#846C3B]/80">{item.size}</p>
-                    <div className="flex justify-between items-center mt-1">
-                      <span className="text-[#74541e] font-medium">
-                        ${item.price.toFixed(2)}
-                      </span>
-                      <div className="flex items-center gap-2">
-                        <button
-                          className="text-xs px-1.5 border rounded hover:bg-gray-100"
-                          aria-label="Decrease quantity"
-                        >
-                          -
-                        </button>
-                        <span className="text-sm">{item.quantity}</span>
-                        <button
-                          className="text-xs px-1.5 border rounded hover:bg-gray-100"
-                          aria-label="Increase quantity"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div className="h-full flex flex-col items-center justify-center text-[#846C3B]/60">
-              <ShoppingBag size={48} className="mb-4 opacity-40" />
-              <p>Your cart is empty</p>
-              <button
-                className="mt-4 px-4 py-2 bg-[#C47E20] text-white rounded-md hover:bg-[#a56d1a] transition-colors"
-                onClick={() => setIsCartOpen(false)}
-              >
-                Continue Shopping
-              </button>
-            </div>
-          )}
-        </div>
-
-        {cartItems.length > 0 && (
-          <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-[#846C3B] bg-white/80">
-            <div className="flex justify-between mb-4">
-              <span className="text-[#846C3B]">Subtotal</span>
-              <span className="text-[#74541e] font-medium">
-                ${subtotal.toFixed(2)}
-              </span>
-            </div>
-            <Link
-              to="/checkout"
-              onClick={() => setIsCartOpen(false)}
-              className="block w-full py-2 bg-[#74541e] text-white text-center rounded-md hover:bg-[#5a4218] transition-colors"
-            >
-              Checkout
-            </Link>
-          </div>
-        )}
-      </div>
+      {/* Cart Component */}
+      <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
 
       {/* Overlays */}
       {isMenuOpen && (

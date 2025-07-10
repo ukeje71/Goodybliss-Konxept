@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Lock, Mail, Eye, EyeOff, ArrowRight } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router";
 import { auth, signInWithEmailAndPassword } from "../components/Firebase";
+import toast from "react-hot-toast";
 
 const Loginpage = () => {
   const [email, setEmail] = useState("");
@@ -36,16 +37,20 @@ const Loginpage = () => {
         // Redirect to intended page or admin dashboard
         const from = location.state?.from?.pathname || "/admin/dashboard";
         navigate(from, { replace: true });
+        toast.success('Admin logged in successfully!');
       } else {
         await auth.signOut();
         localStorage.removeItem("authToken");
         setError("Access restricted to admin only");
+        toast.error('Login failed. Admin access required.');
       }
     } catch (err) {
       setError(err.code === "auth/invalid-credential" 
         ? "Invalid email or password" 
         : "Login failed. Please try again.");
       localStorage.removeItem("authToken");
+        toast.error('Login failed. Admin access required.');
+      
     } finally {
       setIsLoading(false);
     }

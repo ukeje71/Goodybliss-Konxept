@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useParams, useLocation } from "react-router";
+import { Link, useParams, useLocation } from "react-router";
 import Artist from "../assets/Images/Face1.jpeg";
 import Photos from "../components/UI/Photos";
+import { product } from "../data/product"; 
 
 const GalleryPage = () => {
   const { category } = useParams();
-  const navigate = useNavigate();
   const location = useLocation();
 
   const [stockFilter, setStockFilter] = useState("all");
   const [sortBy, setSortBy] = useState("alphabetical");
   const [currentPage, setCurrentPage] = useState(1);
-  const photosPerPage = 8;
+  const photosPerPage = 12;
 
   useEffect(() => {
-    setStockFilter(category || "all");
+    if (category && ["oils", "watercolors", "sketches"].includes(category)) {
+      setStockFilter(category);
+    } else {
+      setStockFilter("all");
+    }
   }, [category]);
 
   const stockFilters = [
@@ -33,20 +37,39 @@ const GalleryPage = () => {
 
   const categories = [
     { id: "all", name: "All Works", path: "/gallery" },
-    { id: "oils", name: "Oil Paintings", path: "/products/oils" },
-    { id: "watercolors", name: "Watercolors", path: "/products/watercolors" },
-    { id: "sketches", name: "Sketches", path: "/products/sketches" },
+    { id: "oils", name: "Oil Paintings", path: "/gallery/oils" },
+    { id: "watercolors", name: "Watercolors", path: "/gallery/watercolors" },
+    { id: "sketches", name: "Sketches", path: "/gallery/sketches" },
   ];
 
   const isActiveCategory = (cat) => {
-    if (cat.id === "all") return location.pathname === "/gallery";
+    if (cat.id === "all") {
+      return location.pathname === "/gallery" || !category;
+    }
     return location.pathname === cat.path;
+  };
+
+  const handleFilterChange = (filterId) => {
+    setStockFilter(filterId);
+    setCurrentPage(1);
   };
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  // ✅ Calculate total pages based on current filter
+  const filteredProducts = product.filter((item) => {
+    if (!item || typeof item !== "object") return false;
+
+    if (stockFilter === "all") return true;
+    if (stockFilter === "in-stock") return item.inStock !== false;
+    if (stockFilter === "out-of-stock") return item.inStock === false;
+    return item.category === stockFilter;
+  });
+
+  const totalPages = Math.ceil(filteredProducts.length / photosPerPage);
 
   return (
     <div className="w-full min-h-screen bg-[#f5f0ea]">
@@ -59,17 +82,17 @@ const GalleryPage = () => {
                 src={Artist}
                 alt="Artist Goodybliss"
                 className="w-full h-full object-cover object-center transition-transform duration-500 hover:scale-105"
+                loading="lazy"
               />
             </div>
           </div>
-          <div className="w-full lg:w-1/2 goudy text-center lg:text-left max-w-[500px] mx-auto lg:mx-0">
-            <h1 className="text-[#74541e] text-3xl sm:text-4xl md:text-5xl Cormorant mb-4 md:mb-6">
+          <div className="w-full lg:w-1/2 text-center lg:text-left max-w-[500px] mx-auto lg:mx-0">
+            <h1 className="text-[#74541e] text-3xl sm:text-4xl md:text-5xl font-serif mb-4 md:mb-6">
               The Original Moving Sale
             </h1>
             <div className="text-gray-800 space-y-4 md:space-y-6">
               <h3 className="text-lg md:text-xl">
-                Pack up the oils, wrap up the brushes and onto the next
-                adventure…
+                Pack up the oils, wrap up the brushes and onto the next adventure...
               </h3>
               <div className="space-y-4">
                 <p className="leading-relaxed md:leading-8 text-base md:text-lg">
@@ -101,12 +124,7 @@ const GalleryPage = () => {
               {stockFilters.map((filter) => (
                 <button
                   key={filter.id}
-                  onClick={() => {
-                    setStockFilter(filter.id);
-                    navigate(
-                      `/gallery${filter.id === "all" ? "" : `/${filter.id}`}`
-                    );
-                  }}
+                  onClick={() => handleFilterChange(filter.id)}
                   className={`px-4 py-2 rounded-full text-sm transition-colors ${
                     stockFilter === filter.id
                       ? "bg-[#74541e] text-white"
@@ -166,13 +184,13 @@ const GalleryPage = () => {
                     : "bg-[#e8ddd0] text-[#846C3B] hover:bg-[#d8c9b5]"
                 }`}
               >
-                {/* bg-[#74541e] text-white rounded hover:bg-[#5a4218]  */}
                 {cat.name}
               </Link>
             ))}
           </div>
         </div>
 
+        {/* Photos Component */}
         <Photos
           stockFilter={stockFilter}
           sortBy={sortBy}
@@ -180,9 +198,10 @@ const GalleryPage = () => {
           photosPerPage={photosPerPage}
         />
 
+        {/* ✅ Dynamic Pagination */}
         <div className="flex justify-center mt-12">
           <div className="flex gap-2">
-            {[1, 2, 3, 4].map((page) => (
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
               <button
                 key={page}
                 onClick={() => handlePageChange(page)}
