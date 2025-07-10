@@ -1,19 +1,22 @@
 import React from "react";
 import { product } from "../../data/product";
 import useCartStore from "../Store/cartStore";
+import useWishlistStore from "../Store/wishlistStore";
 import toast from "react-hot-toast";
+import { Heart } from "lucide-react";
 
-const Cards = ({ 
-  stockFilter = "all", 
-  sortBy = "alphabetical", 
-  currentPage = 1, 
-  photosPerPage = 24 
+const Cards = ({
+  stockFilter = "all",
+  sortBy = "alphabetical",
+  currentPage = 1,
+  photosPerPage = 24,
 }) => {
   // Safe data handling
   const safeProducts = product || [];
-  
+
   // Cart functionality
   const { addToCart } = useCartStore();
+  const { wishlist, addToWishlist, removeFromWishlist } = useWishlistStore();
 
   // Handle add to cart with proper product structure
   const handleAddToCart = (product) => {
@@ -23,16 +26,34 @@ const Cards = ({
       price: product.discountPrice || product.regularPrice,
       image: product.image,
       size: product.size,
-      quantity: 1 // Initial quantity
+      quantity: 1, // Initial quantity
     };
     addToCart(cartProduct);
-     toast.success('Item added to cart!');
+    toast.success("Item added to cart!");
   };
+  // Add this new function for wishlist toggle
+  const handleWishlistToggle = (product, e) => {
+    e.stopPropagation();
+    const isInWishlist = wishlist.some((item) => item.id === product.id);
 
+    if (isInWishlist) {
+      removeFromWishlist(product.id);
+      toast.success("Removed from wishlist");
+    } else {
+      addToWishlist({
+        id: product.id,
+        title: product.title,
+        price: product.discountPrice || product.regularPrice,
+        image: product.image,
+        size: product.size,
+      });
+      toast.success("Added to wishlist!");
+    }
+  };
   // 1. Filter products with fallbacks
-  const filteredProducts = safeProducts.filter(item => {
-    if (!item || typeof item !== 'object') return false;
-    
+  const filteredProducts = safeProducts.filter((item) => {
+    if (!item || typeof item !== "object") return false;
+
     if (stockFilter === "all") return true;
     if (stockFilter === "in-stock") return item.inStock !== false;
     if (stockFilter === "out-of-stock") return item.inStock === false;
@@ -45,18 +66,18 @@ const Cards = ({
       const priceA = a.discountPrice ?? a.regularPrice ?? 0;
       const priceB = b.discountPrice ?? b.regularPrice ?? 0;
 
-      switch(sortBy) {
-        case "alphabetical": 
-          return (a.title || '').localeCompare(b.title || '');
-        case "price-low-high": 
+      switch (sortBy) {
+        case "alphabetical":
+          return (a.title || "").localeCompare(b.title || "");
+        case "price-low-high":
           return priceA - priceB;
-        case "price-high-low": 
+        case "price-high-low":
           return priceB - priceA;
-        case "date-new-old": 
+        case "date-new-old":
           return new Date(b.year || 0) - new Date(a.year || 0);
-        case "date-old-new": 
+        case "date-old-new":
           return new Date(a.year || 0) - new Date(b.year || 0);
-        default: 
+        default:
           return 0;
       }
     } catch {
@@ -72,31 +93,38 @@ const Cards = ({
   if (productsToShow.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">No products found matching your criteria</p>
+        <p className="text-gray-500">
+          No products found matching your criteria
+        </p>
       </div>
     );
   }
-
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {productsToShow.map((item) => {
-        const discountPercent = item.discountPrice 
-          ? Math.round(((item.regularPrice - item.discountPrice) / item.regularPrice) * 100)
+        const discountPercent = item.discountPrice
+          ? Math.round(
+              ((item.regularPrice - item.discountPrice) / item.regularPrice) *
+                100
+            )
           : 0;
 
         return (
-          <div key={item.id} className="border border-[#e8e2d6] rounded-lg overflow-hidden bg-white hover:shadow-md transition-all">
+          <div
+            key={item.id}
+            className="border border-[#e8e2d6] rounded-lg overflow-hidden bg-white hover:shadow-md transition-all"
+          >
             {/* Image with error fallback */}
             <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden">
               {item.image ? (
                 <img
                   src={item.image}
-                  alt={item.title || 'Artwork'}
+                  alt={item.title || "Artwork"}
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                   loading="lazy"
                   onError={(e) => {
-                    e.target.onerror = null; 
-                    e.target.src = 'path/to/placeholder-image.jpg';
+                    e.target.onerror = null;
+                    e.target.src = "path/to/placeholder-image.jpg";
                   }}
                 />
               ) : (
@@ -104,15 +132,23 @@ const Cards = ({
                   <span className="text-gray-500">Image not available</span>
                 </div>
               )}
-              
+
+              {/* Heart icon (non-interactive) */}
+              <button
+                onClick={(e) => handleWishlistToggle(item, e)}
+                className="absolute top-3 left-3 p-2 rounded-full bg-white/80"
+              >
+                <Heart size={20} className="text-gray-400" />
+              </button>
+
               {item.discountPrice && (
                 <div className="absolute top-3 right-3 bg-[#C47E20] text-white text-xs font-medium px-2 py-1 rounded-full">
                   On Sale
                 </div>
               )}
-              
+
               {item.inStock === false && (
-                <div className="absolute top-3 left-3 bg-gray-600 text-white text-xs font-medium px-2 py-1 rounded-full">
+                <div className="absolute top-3 right-3 bg-gray-600 text-white text-xs font-medium px-2 py-1 rounded-full">
                   Sold Out
                 </div>
               )}
@@ -121,12 +157,14 @@ const Cards = ({
             {/* Product info */}
             <div className="p-4">
               <h3 className="text-lg font-medium text-gray-800 mb-1">
-                {item.title || 'Untitled'}
+                {item.title || "Untitled"}
               </h3>
               <p className="text-sm text-gray-600 mb-1">
-                {[item.medium, item.year].filter(Boolean).join(' • ')}
+                {[item.medium, item.year].filter(Boolean).join(" • ")}
               </p>
-              {item.size && <p className="text-xs text-gray-500 mb-3">{item.size}</p>}
+              {item.size && (
+                <p className="text-xs text-gray-500 mb-3">{item.size}</p>
+              )}
 
               {/* Price */}
               <div className="mb-4">
@@ -156,10 +194,10 @@ const Cards = ({
                 <button className="flex-1 py-2 text-sm border border-[#d4c9b5] text-[#74541e] rounded hover:bg-[#f0e9dd] transition-colors">
                   View Details
                 </button>
-                <button 
+                <button
                   onClick={() => item.inStock && handleAddToCart(item)}
                   className={`flex-1 py-2 text-sm rounded transition-colors ${
-                    item.inStock 
+                    item.inStock
                       ? "bg-[#74541e] text-white rounded hover:bg-[#5a4218]"
                       : "bg-gray-300 text-gray-500 cursor-not-allowed"
                   }`}

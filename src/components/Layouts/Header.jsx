@@ -47,6 +47,7 @@ const Header = () => {
   const menuItems = [
     { name: "Home", path: "/" },
     { name: "About", path: "/about" },
+    { name: "Wishlist", path: "/wishlist" },
     { name: "Art Classes", path: "/art-classes" },
     { name: "ORIGINAL MOVING SALE 📦", path: "/gallery" },
     { name: "Shop By Collection", path: "/gallery" },

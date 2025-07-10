@@ -11,6 +11,7 @@ import CreateProductPage from "./pages/CreateProductPage";
 import Dashboardpage from "./pages/Dashboardpage";
 import ContactPage from "./pages/Contactpage";
 import { Toaster } from "react-hot-toast";
+import WishlistPage from "./pages/Wishlist";
 
 
 const ScrollToTop = () => {
@@ -53,6 +54,7 @@ const App = () => {
           </Route>
           <Route path="/login" element={<Loginpage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/wishlist" element={<WishlistPage />} />
 
           {/* Protected Admin Routes */}
           <Route element={<ProtectedRoute />}>
