@@ -1,17 +1,25 @@
-import React, { useRef} from "react";
+import React, { useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import { useNavigate } from "react-router";
-import { ChevronLeft, ChevronRight, Star, Mail, MoveRight, ArrowRight } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Star,
+  Mail,
+  MoveRight,
+  ArrowRight,
+} from "lucide-react";
 
 // Assets
 import abstractImage from "../assets/Images/Abstract.jpeg";
 import fineArtImage from "../assets/Images/Fine.jpeg";
 import Watercolor1 from "../assets/Images/Face2.jpeg";
 import Impressionist1 from "../assets/Images/Face1.jpeg";
-
+import toast from "react-hot-toast";
+import useCartStore from "../components/Store/cartStore";
 const SLIDES = [
   {
     image: abstractImage,
@@ -79,7 +87,7 @@ const TESTIMONIALS = [
     text: "I've purchased three pieces now and each one brings me so much joy. The colors are even more vibrant in person.",
     rating: 3,
   },
-   {
+  {
     name: "Sarah J.",
     location: "New York",
     text: "The artwork arrived beautifully packaged and exceeded my expectations. It's the centerpiece of my living room now!",
@@ -131,9 +139,11 @@ const FEATURED_PRODUCTS = [
   },
 ];
 
-const SliderNavigation = ({ swiperRef, className = '' }) => {
+const SliderNavigation = ({ swiperRef, className = "" }) => {
   return (
-    <div className={`flex justify-between w-full pointer-events-none ${className}`}>
+    <div
+      className={`flex justify-between w-full pointer-events-none ${className}`}
+    >
       <button
         onClick={() => swiperRef.current?.slidePrev()}
         className="w-12 h-12 rounded-full bg-white/80 text-[#74541e] flex items-center justify-center hover:bg-white transition-all duration-300 shadow-lg border border-[#d4c9b5] pointer-events-auto"
@@ -156,7 +166,18 @@ const Homepage = () => {
   const navigate = useNavigate();
   const heroSwiperRef = useRef(null);
   const testimonialSwiperRef = useRef(null);
-
+  const handleAddToCart = (product) => {
+    const cartProduct = {
+      id: product.id,
+      title: product.title,
+      price: product.discountPrice || product.price, // Fixed: changed regularPrice to price
+      image: product.image,
+      size: product.size,
+      quantity: 1, // Initial quantity
+    };
+    addToCart(cartProduct);
+    toast.success("Item added to cart!");
+  };
   const renderHeroSlide = ({ image, title, subtitle, quote }) => (
     <SwiperSlide className="relative">
       <div className="absolute inset-0 bg-black/50 z-10" />
@@ -205,13 +226,16 @@ const Homepage = () => {
         {[...Array(5)].map((_, i) => (
           <Star
             key={i}
-            className={`w-4 h-4 ${i < rating ? "text-amber-400 fill-amber-400" : "text-gray-300"}`}
+            className={`w-4 h-4 ${
+              i < rating ? "text-amber-400 fill-amber-400" : "text-gray-300"
+            }`}
             strokeWidth={1.5}
           />
         ))}
       </div>
     );
   };
+  const { addToCart } = useCartStore();
 
   return (
     <div className="overflow-hidden relative">
@@ -238,13 +262,13 @@ const Homepage = () => {
           ))}
         </Swiper>
 
-        <SliderNavigation 
+        <SliderNavigation
           swiperRef={heroSwiperRef}
           className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-between px-4 z-20 pointer-events-none"
         />
 
         <div className="absolute bottom-8 left-0 right-0 z-30 flex justify-center">
-          <button 
+          <button
             onClick={() => navigate("/gallery")}
             className="text-white text-sm tracking-widest hover:underline flex items-center"
           >
@@ -263,21 +287,27 @@ const Homepage = () => {
             moving to <strong>Melbourne!</strong> For the first time, original
             pieces are available at a generous discount.
           </p>
-          <button 
+          <button
             onClick={() => navigate("/gallery")}
             // className="text-gray-400 text-sm md:text-xl border border-[#74541e] hover:bg-[#74551e52] hover:text-white w-fit px-5 py-2.5 lg:py-3 rounded-sm transition-colors uppercase flex items-center mx-auto"
             className="px-6 py-3 border border-[#74541e] text-[#74541e] rounded hover:bg-[#74541e] hover:text-white transition-colors flex items-center mx-auto"
-        >
-            Welcome your favourite Painting Home <MoveRight className="ml-2 w-4 h-4" />
+          >
+            Welcome your favourite Painting Home{" "}
+            <MoveRight className="ml-2 w-4 h-4" />
           </button>
         </div>
-
-        <div className="bg-[#f5f0ea] mt-12">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto py-12">
+        <div className="bg-[#f5f0ea] mt-16 py-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
             {PRODUCT_CARDS.map((card, index) => (
-              <React.Fragment key={index}>
-                {renderProductCard(card)}
-              </React.Fragment>
+              <div
+                key={index}
+                className="transition-all duration-300 hover:scale-[1.02] hover:shadow-md"
+              >
+                {renderProductCard({
+                  ...card,
+                  className: "rounded-lg overflow-hidden shadow-sm bg-white",
+                })}
+              </div>
             ))}
           </div>
         </div>
@@ -327,7 +357,10 @@ const Homepage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {FEATURED_PRODUCTS.map((product) => {
               const discountPercent = product.discountPrice
-                ? Math.round(((product.price - product.discountPrice) / product.price) * 100)
+                ? Math.round(
+                    ((product.price - product.discountPrice) / product.price) *
+                      100
+                  )
                 : 0;
 
               return (
@@ -371,7 +404,10 @@ const Homepage = () => {
                         </span>
                       )}
                     </div>
-                    <button className="mt-4 w-full py-2 bg-[#74541e] text-white rounded hover:bg-[#5a4218]  transition-colors flex items-center justify-center">
+                    <button
+                      onClick={() => handleAddToCart(product)}
+                      className="mt-4 w-full py-2 bg-[#74541e] text-white rounded hover:bg-[#5a4218]  transition-colors flex items-center justify-center"
+                    >
                       Add to Cart <MoveRight className="ml-2 w-4 h-4" />
                     </button>
                   </div>
@@ -455,7 +491,7 @@ const Homepage = () => {
             ))}
           </Swiper>
 
-          <SliderNavigation 
+          <SliderNavigation
             swiperRef={testimonialSwiperRef}
             className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-between px-4 z-10 pointer-events-none"
           />
@@ -497,9 +533,10 @@ const Homepage = () => {
                 emotions at that moment in time. I hope they bring as much joy
                 to collectors as they brought me in creating them."
               </p>
-              <button 
-              onClick={() => navigate("/about")}
-              className="px-6 py-3 bg-[#74541e] text-white rounded hover:bg-[#5a4218]  transition-colors flex items-center w-fit">
+              <button
+                onClick={() => navigate("/about")}
+                className="px-6 py-3 bg-[#74541e] text-white rounded hover:bg-[#5a4218]  transition-colors flex items-center w-fit"
+              >
                 See Full Artist Bio <MoveRight className="ml-2 w-4 h-4" />
               </button>
             </div>
@@ -519,7 +556,10 @@ const Homepage = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
             <div className="relative flex-grow">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-[#74541e]" size={20} />
+              <Mail
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#74541e]"
+                size={20}
+              />
               <input
                 type="email"
                 placeholder="Your email address"
