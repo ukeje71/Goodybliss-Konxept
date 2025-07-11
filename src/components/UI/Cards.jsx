@@ -40,7 +40,7 @@ const Cards = ({
 
     if (isInWishlist) {
       removeFromWishlist(product.id);
-      toast.success("Removed from wishlist");
+      toast.error("Removed from wishlist");
     } else {
       addToWishlist({
         id: product.id,

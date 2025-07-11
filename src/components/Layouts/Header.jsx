@@ -58,7 +58,7 @@ const Header = () => {
     { name: "Canvas Prints", path: "/gallery" },
     { name: "Originals", path: "/gallery" },
     { name: "Contact", path: "/contact" },
-    { name: "Admin Log in", path: "/login" },
+    { name: "LogIn", path: "/login" },
   ];
 
   const searchCategories = [
@@ -97,7 +97,7 @@ const Header = () => {
             : "-translate-y-full"
         }`}
       >
-        <div className="flex justify-between items-center p-4 text-[#74541e] bg-white">
+        <div className=" flex justify-between items-center p-4 text-[#74541e] bg-white">
           <div className="flex flex-row gap-4">
             <button
               onClick={() => setIsMenuOpen(true)}

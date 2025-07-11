@@ -312,8 +312,8 @@ const Homepage = () => {
           </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row h-[90vh] w-full">
-          <div className="hidden md:flex w-full lg:w-1/2 h-1/2 lg:h-full relative">
+        <div className="flex flex-col lg:flex-row lg:h-[90vh] w-full">
+          <div className="hidden  lg:flex w-full lg:w-1/2 h-1/2 lg:h-full relative">
             <img
               className="object-cover w-full h-full"
               src={fineArtImage}

@@ -12,7 +12,7 @@ import Dashboardpage from "./pages/Dashboardpage";
 import ContactPage from "./pages/Contactpage";
 import { Toaster } from "react-hot-toast";
 import WishlistPage from "./pages/Wishlist";
-
+import SignUpPage from "./pages/Signuppage";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -52,6 +52,8 @@ const App = () => {
           <Route path="/gallery" element={<Gallerypage />}>
             <Route path=":categoryId" element={<Gallerypage />} />
           </Route>
+          <Route path="/signup" element={<SignUpPage />} />
+
           <Route path="/login" element={<Loginpage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/wishlist" element={<WishlistPage />} />

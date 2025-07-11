@@ -1,5 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+
 // Your web app's Firebase configuration
 const firebaseConfig = {
   // Use environment variables for sensitive information
@@ -14,5 +16,6 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-export { auth, signInWithEmailAndPassword };
+export { auth, signInWithEmailAndPassword, db ,app};
