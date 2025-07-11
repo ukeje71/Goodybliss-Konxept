@@ -1,9 +1,10 @@
-import { Menu, Search, ShoppingBag, User, X } from "lucide-react";
+import { Heart, Menu, Search, ShoppingBag, User, X } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import Marquee from "react-fast-marquee";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import Cart from "./Cart";
 import useCartStore from "../Store/cartStore";
+import useWishlistStore from "../Store/wishlistStore";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,9 +13,11 @@ const Header = () => {
   const [showHeader, setShowHeader] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  
+  // Store functions
   const { getTotalItems } = useCartStore();
-
+  const { getTotalWishes } = useWishlistStore();
+  // Navigation hook
+  const navigate = useNavigate();
   // Scroll handler
   useEffect(() => {
     const handleScroll = () => {
@@ -103,7 +106,7 @@ const Header = () => {
             >
               <Menu />
             </button>
-            
+
             {/* Search with dropdown */}
             <div className="relative search-container">
               <button
@@ -170,6 +173,18 @@ const Header = () => {
               {getTotalItems() > 0 && (
                 <span className="absolute -top-1 -right-1 bg-[#C47E20] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                   {getTotalItems()}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => navigate("/wishlist")}
+              className="relative hover:text-amber-800 transition-colors"
+              aria-label="Wishlist"
+            >
+              <Heart />
+              {getTotalWishes() > 0 && (
+                <span className="absolute -top-1 -right-1 bg-[#C47E20] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {getTotalWishes()}
                 </span>
               )}
             </button>

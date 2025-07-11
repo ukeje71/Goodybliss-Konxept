@@ -1,8 +1,11 @@
 import { create } from 'zustand';
 
-const useWishlistStore = create((set) => ({
+const useWishlistStore = create((set,get) => ({
   wishlist: [],
-  
+  //Total wishesJ
+getTotalWishes: () => {
+  return get().wishlist.length; 
+  },
   addToWishlist: (product) => set((state) => {
     const exists = state.wishlist.some(item => item.id === product.id);
     if (!exists) {
