@@ -4,6 +4,7 @@ import useCartStore from "../Store/cartStore";
 import useWishlistStore from "../Store/wishlistStore";
 import toast from "react-hot-toast";
 import { Heart } from "lucide-react";
+import { useNavigate } from "react-router";
 
 const Cards = ({
   stockFilter = "all",
@@ -13,7 +14,8 @@ const Cards = ({
 }) => {
   // Safe data handling
   const safeProducts = product || [];
-
+  //
+  const navigate = useNavigate();
   // Cart functionality
   const { addToCart } = useCartStore();
   const { wishlist, addToWishlist, removeFromWishlist } = useWishlistStore();
@@ -26,7 +28,7 @@ const Cards = ({
       price: product.discountPrice || product.regularPrice,
       image: product.image,
       size: product.size,
-      quantity: 1, // Initial quantity
+      quantity: 1,
     };
     addToCart(cartProduct);
     toast.success("Item added to cart!");
@@ -47,7 +49,24 @@ const Cards = ({
         image: product.image,
         size: product.size,
       });
-      toast.success("Added to wishlist!");
+      toast.success(
+        (t) => (
+          <span>
+            Added to wishlist!{" "}
+            <button
+              onClick={() => {
+                // Assuming you're using React Router
+                navigate("/wishlist");
+                toast.dismiss(t.id);
+              }}
+              className="font-bold underline hover:text-blue-600"
+            >
+              View Wishlist
+            </button>
+          </span>
+        ),
+        { duration: 4000 } // Optional: extend duration
+      );
     }
   };
   // 1. Filter products with fallbacks
@@ -108,7 +127,9 @@ const Cards = ({
                 100
             )
           : 0;
-
+        const isInWishlist = wishlist.some(
+          (wishlistItem) => wishlistItem.id === item.id
+        );
         return (
           <div
             key={item.id}
@@ -138,11 +159,16 @@ const Cards = ({
                 onClick={(e) => handleWishlistToggle(item, e)}
                 className="absolute top-3 left-3 p-2 rounded-full bg-white/80"
               >
-                <Heart size={20} className="text-gray-400" />
+                <Heart
+                  size={20}
+                  className={
+                    isInWishlist ? "text-[#74541e] fill-[#74541e]" : "text-gray-400"
+                  }
+                />
               </button>
 
               {item.discountPrice && (
-                <div className="absolute top-3 right-3 bg-[#C47E20] text-white text-xs font-medium px-2 py-1 rounded-full">
+                <div className="absolute top-3 right-3 bg-[#aa9f8f] text-white text-xs font-medium px-2 py-1 rounded-full">
                   On Sale
                 </div>
               )}

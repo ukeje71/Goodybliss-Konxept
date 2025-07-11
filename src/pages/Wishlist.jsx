@@ -54,7 +54,7 @@ const WishlistPage = () => {
             <h2 className="text-2xl font-serif text-[#74541e] mb-2">
               Your wishlist is empty
             </h2>
-            <p className="text-gray-600 mb-6">
+            <p className="text-black mb-6">
               Save your favorite artworks by clicking the heart icon
             </p>
             <button

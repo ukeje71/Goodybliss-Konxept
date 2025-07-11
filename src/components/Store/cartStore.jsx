@@ -1,6 +1,7 @@
 import { create } from "zustand";
+import useWishlistStore from "./wishlistStore";
 
-const useCartStore = create((set) => ({
+const useCartStore = create((set, get) => ({
   // Initial state
   cartItems: [],
 
@@ -10,6 +11,10 @@ const useCartStore = create((set) => ({
       const existingItem = state.cartItems.find(
         (item) => item.id === product.id
       );
+      
+      // Remove from wishlist when adding to cart
+      useWishlistStore.getState().removeFromWishlist(product.id);
+      
       if (existingItem) {
         return {
           cartItems: state.cartItems.map((item) =>
@@ -42,22 +47,37 @@ const useCartStore = create((set) => ({
             ? { ...item, quantity: item.quantity - 1 }
             : item
         )
-        .filter((item) => item.quantity > 0), // Remove items with quantity <= 0
+        .filter((item) => item.quantity > 0),
     })),
-  // Derived state (total items)
-  getTotalItems: () =>
-    useCartStore
-      .getState()
-      .cartItems.reduce((total, item) => total + item.quantity, 0),
 
-  // Derived state (total price)
-  getTotalPrice: () =>
-    useCartStore
-      .getState()
-      .cartItems.reduce((total, item) => total + item.price * item.quantity, 0),
+  // New method to check if item is in cart
+  isInCart: (productId) => {
+    return get().cartItems.some(item => item.id === productId);
+  },
+
+  // Improved derived states (no need for getState)
+  getTotalItems: () => {
+    return get().cartItems.reduce((total, item) => total + item.quantity, 0);
+  },
+
+  getTotalPrice: () => {
+    return get().cartItems.reduce(
+      (total, item) => total + (item.price * item.quantity), 0
+    );
+  },
 
   // Clear cart
   clearCart: () => set({ cartItems: [] }),
+
+  // New method to sync with wishlist
+  syncWithWishlist: () => {
+    const wishlist = useWishlistStore.getState().wishlist;
+    set((state) => ({
+      cartItems: state.cartItems.filter(
+        item => !wishlist.some(wishItem => wishItem.id === item.id)
+      )
+    }));
+  }
 }));
 
 export default useCartStore;

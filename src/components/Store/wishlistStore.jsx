@@ -15,6 +15,13 @@ const useWishlistStore = create((set) => ({
     wishlist: state.wishlist.filter(item => item.id !== productId)
   })),
   
+  // New method to sync with cart
+  removeItemsInCart: (cartItems) => set((state) => ({
+    wishlist: state.wishlist.filter(
+      wishlistItem => !cartItems.some(cartItem => cartItem.id === wishlistItem.id)
+    )
+  })),
+  
   clearWishlist: () => set({ wishlist: [] }),
 }));
 
