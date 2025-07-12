@@ -49,15 +49,15 @@ const Header = () => {
 
   const menuItems = [
     { name: "Home", path: "/" },
-    { name: "About", path: "/about" },
-    { name: "Wishlist", path: "/wishlist" },
+    { name: "About Our Artist", path: "/about" },
     { name: "Art Classes", path: "/art-classes" },
     { name: "ORIGINAL MOVING SALE 📦", path: "/gallery" },
+    { name: "Canvas Prints", path: "/gallery" },
     { name: "Shop By Collection", path: "/gallery" },
     { name: "Fine Art Prints", path: "/gallery" },
-    { name: "Canvas Prints", path: "/gallery" },
     { name: "Originals", path: "/gallery" },
     { name: "Contact", path: "/contact" },
+    { name: "Wishlist", path: "/wishlist" },
     { name: "LogIn", path: "/login" },
   ];
 

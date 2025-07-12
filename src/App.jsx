@@ -13,6 +13,7 @@ import ContactPage from "./pages/Contactpage";
 import { Toaster } from "react-hot-toast";
 import WishlistPage from "./pages/Wishlist";
 import SignUpPage from "./pages/Signuppage";
+import CheckoutPage from "./pages/Checkoutpage";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -56,6 +57,8 @@ const App = () => {
 
           <Route path="/login" element={<Loginpage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+
           <Route path="/wishlist" element={<WishlistPage />} />
 
           {/* Protected Admin Routes */}
