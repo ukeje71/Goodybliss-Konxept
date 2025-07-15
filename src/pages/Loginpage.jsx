@@ -108,7 +108,7 @@ const Loginpage = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="block w-full pl-10 pr-3 py-3 border border-[#d4c9b5] rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]"
-                    placeholder="your@email.com"
+                    placeholder="Some@email.com"
                     required
                     autoComplete="username"
                   />

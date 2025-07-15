@@ -14,6 +14,7 @@ import { Toaster } from "react-hot-toast";
 import WishlistPage from "./pages/Wishlist";
 import SignUpPage from "./pages/Signuppage";
 import CheckoutPage from "./pages/Checkoutpage";
+import ProductDetails from "./pages/ProductDetails";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -34,7 +35,6 @@ const ProtectedRoute = () => {
 const AdminLayout = () => {
   return (
     <div>
-      {/* You can add admin-specific header/sidebar here */}
       <Outlet />
     </div>
   );
@@ -53,12 +53,11 @@ const App = () => {
           <Route path="/gallery" element={<Gallerypage />}>
             <Route path=":categoryId" element={<Gallerypage />} />
           </Route>
+          <Route path="/products/:id" element={<ProductDetails />} /> {/* Fixed this line */}
           <Route path="/signup" element={<SignUpPage />} />
-
           <Route path="/login" element={<Loginpage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
-
           <Route path="/wishlist" element={<WishlistPage />} />
 
           {/* Protected Admin Routes */}

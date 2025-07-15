@@ -59,8 +59,9 @@ const SignUpPage = () => {
 
       // Redirect based on role
       navigate(isAdmin ? "/admin/dashboard" : "/gallery", { replace: true });
-      toast.success(`Account created successfully! Welcome ${isAdmin ? 'Admin' : 'User'}!`);
-
+      toast.success(
+        `Account created successfully! Welcome ${isAdmin ? "Admin" : "User"}!`
+      );
     } catch (err) {
       console.error("Signup error:", err);
       setError(
@@ -68,7 +69,7 @@ const SignUpPage = () => {
           ? "Email already in use"
           : "Failed to create account. Please try again."
       );
-      toast.error('Signup failed. Please try again.');
+      toast.error("Signup failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -120,7 +121,7 @@ const SignUpPage = () => {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     className="block w-full pl-10 pr-3 py-3 border border-[#d4c9b5] rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]"
-                    placeholder="John Doe"
+                    placeholder="Username"
                     required
                     autoComplete="name"
                   />
@@ -144,7 +145,7 @@ const SignUpPage = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="block w-full pl-10 pr-3 py-3 border border-[#d4c9b5] rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]"
-                    placeholder="your@email.com"
+                    placeholder="Some@email.com"
                     required
                     autoComplete="email"
                   />
@@ -176,7 +177,9 @@ const SignUpPage = () => {
                     type="button"
                     className="absolute inset-y-0 right-0 pr-3 flex items-center"
                     onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
                   >
                     {showPassword ? (
                       <EyeOff className="text-[#C47E20] h-5 w-5" />
@@ -220,9 +223,25 @@ const SignUpPage = () => {
               >
                 {isLoading ? (
                   <>
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    <svg
+                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
                     </svg>
                     Creating account...
                   </>
@@ -249,7 +268,8 @@ const SignUpPage = () => {
 
           <div className="text-xs bg-[#f9f7f3] px-8 py-4 text-center border-t border-[#e8e2d6]">
             <p className="text-xs text-[#846C3B]">
-              © {new Date().getFullYear()} Goodybliss Konxept. All rights reserved.
+              © {new Date().getFullYear()} Goodybliss Konxept. All rights
+              reserved.
             </p>
           </div>
         </div>

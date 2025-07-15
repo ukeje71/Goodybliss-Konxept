@@ -162,7 +162,9 @@ const Cards = ({
                 <Heart
                   size={20}
                   className={
-                    isInWishlist ? "text-[#74541e] fill-[#74541e]" : "text-gray-400"
+                    isInWishlist
+                      ? "text-[#74541e] fill-[#74541e]"
+                      : "text-gray-400"
                   }
                 />
               </button>
@@ -217,7 +219,13 @@ const Cards = ({
 
               {/* Buttons */}
               <div className="flex gap-2">
-                <button className="flex-1 py-2 text-sm border border-[#d4c9b5] text-[#74541e] rounded hover:bg-[#f0e9dd] transition-colors">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/products/${item.id}`);
+                  }}
+                  className="flex-1 py-2 text-sm border border-[#d4c9b5] text-[#74541e] rounded hover:bg-[#f0e9dd] transition-colors"
+                >
                   View Details
                 </button>
                 <button

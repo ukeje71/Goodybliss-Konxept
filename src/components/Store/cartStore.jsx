@@ -4,17 +4,18 @@ import useWishlistStore from "./wishlistStore";
 const useCartStore = create((set, get) => ({
   // Initial state
   cartItems: [],
+  selectedProduct: null, // New state for product details
 
-  // Actions
+  // Existing cart actions (unchanged)
   addToCart: (product) =>
     set((state) => {
       const existingItem = state.cartItems.find(
         (item) => item.id === product.id
       );
-      
+
       // Remove from wishlist when adding to cart
       useWishlistStore.getState().removeFromWishlist(product.id);
-      
+
       if (existingItem) {
         return {
           cartItems: state.cartItems.map((item) =>
@@ -50,34 +51,36 @@ const useCartStore = create((set, get) => ({
         .filter((item) => item.quantity > 0),
     })),
 
-  // New method to check if item is in cart
+  // New product details actions
+  setSelectedProduct: (product) => set({ selectedProduct: product }),
+  clearSelectedProduct: () => set({ selectedProduct: null }),
+
+  // Existing utility methods (unchanged)
   isInCart: (productId) => {
-    return get().cartItems.some(item => item.id === productId);
+    return get().cartItems.some((item) => item.id === productId);
   },
 
-  // Improved derived states (no need for getState)
   getTotalItems: () => {
     return get().cartItems.reduce((total, item) => total + item.quantity, 0);
   },
 
   getTotalPrice: () => {
     return get().cartItems.reduce(
-      (total, item) => total + (item.price * item.quantity), 0
+      (total, item) => total + item.price * item.quantity,
+      0
     );
   },
 
-  // Clear cart
   clearCart: () => set({ cartItems: [] }),
 
-  // New method to sync with wishlist
   syncWithWishlist: () => {
     const wishlist = useWishlistStore.getState().wishlist;
     set((state) => ({
       cartItems: state.cartItems.filter(
-        item => !wishlist.some(wishItem => wishItem.id === item.id)
-      )
+        (item) => !wishlist.some((wishItem) => wishItem.id === item.id)
+      ),
     }));
-  }
+  },
 }));
 
 export default useCartStore;
