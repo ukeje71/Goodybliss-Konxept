@@ -1,10 +1,13 @@
 import { Lock, CreditCard, Truck, ArrowLeft } from "lucide-react";
 import { useState } from "react";
+import useCartStore from "../components/Store/cartStore";
+import { useNavigate } from "react-router";
 
 const CheckoutPage = () => {
+  const navigate = useNavigate();
+  const { cartItems, getTotalPrice, clearCart } = useCartStore();
+  
   const [formErrors, setFormErrors] = useState({});
-
-  // Form state
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -16,30 +19,49 @@ const CheckoutPage = () => {
     deliveryOption: "Free Delivery",
   });
 
-  //  Form Vadlisdation
+  // Calculate order values
+  const subtotal = getTotalPrice();
+  const shipping = formData.deliveryOption === "Free Delivery" ? 0 : 10; // Example shipping cost
+  const total = subtotal + shipping;
 
   const validateForm = () => {
     const errors = {};
     if (!formData.fullName.trim()) errors.fullName = "Full name required";
     if (!formData.email.trim()) errors.email = "Email required";
-    if (!formData.phoneNumber.trim())
-      errors.phoneNumber = "Phone number required";
-    if (!formData.addressLine1.trim())
-      errors.addressLine1 = "Address line required";
+    if (!formData.phoneNumber.trim()) errors.phoneNumber = "Phone number required";
+    if (!formData.addressLine1.trim()) errors.addressLine1 = "Address line required";
     if (!formData.streetName.trim()) errors.streetName = "Street name required";
     if (!formData.city.trim()) errors.city = "City required";
     if (!formData.state.trim()) errors.state = "State required";
     return errors;
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const errors = validateForm();
-    setFormErrors(errors);
+    
+    if (Object.keys(errors).length === 0) {
+      // Process payment here
+      // After successful payment:
+      clearCart();
+      navigate("/order-confirmation");
+    } else {
+      setFormErrors(errors);
+    }
   };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
   return (
     <div className="min-h-screen bg-[#f5f0ea] py-8 px-4">
       <div className="max-w-6xl mx-auto">
-        <button className="flex items-center text-[#74541e] mb-6 hover:text-[#5a4218]">
+        <button 
+          onClick={() => navigate(-1)}
+          className="flex items-center text-[#74541e] mb-6 hover:text-[#5a4218]"
+        >
           <ArrowLeft className="mr-2" size={18} />
           Back to Cart
         </button>
@@ -56,14 +78,32 @@ const CheckoutPage = () => {
               <form className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-[#846C3B] mb-1">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-2 border ${formErrors.fullName ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
+                    required
+                  />
+                  {formErrors.fullName && <p className="text-red-500 text-xs mt-1">{formErrors.fullName}</p>}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-[#846C3B] mb-1">
                     Email Address
                   </label>
                   <input
                     type="email"
+                    name="email"
                     value={formData.email}
-                    className="w-full px-4 py-2 border border-[#d4c9b5] rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]"
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-2 border ${formErrors.email ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
                     required
                   />
+                  {formErrors.email && <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>}
                 </div>
 
                 <div>
@@ -72,20 +112,43 @@ const CheckoutPage = () => {
                   </label>
                   <input
                     type="tel"
-                    className="w-full px-4 py-2 border border-[#d4c9b5] rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]"
+                    name="phoneNumber"
+                    value={formData.phoneNumber}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-2 border ${formErrors.phoneNumber ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
                     required
                   />
+                  {formErrors.phoneNumber && <p className="text-red-500 text-xs mt-1">{formErrors.phoneNumber}</p>}
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-[#846C3B] mb-1">
-                    Delivery Address
+                    Address Line 1
                   </label>
-                  <textarea
-                    className="w-full px-4 py-2 border border-[#d4c9b5] rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]"
-                    rows="3"
+                  <input
+                    type="text"
+                    name="addressLine1"
+                    value={formData.addressLine1}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-2 border ${formErrors.addressLine1 ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
                     required
                   />
+                  {formErrors.addressLine1 && <p className="text-red-500 text-xs mt-1">{formErrors.addressLine1}</p>}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-[#846C3B] mb-1">
+                    Street Name
+                  </label>
+                  <input
+                    type="text"
+                    name="streetName"
+                    value={formData.streetName}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-2 border ${formErrors.streetName ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
+                    required
+                  />
+                  {formErrors.streetName && <p className="text-red-500 text-xs mt-1">{formErrors.streetName}</p>}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -95,9 +158,13 @@ const CheckoutPage = () => {
                     </label>
                     <input
                       type="text"
-                      className="w-full px-4 py-2 border border-[#d4c9b5] rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]"
+                      name="city"
+                      value={formData.city}
+                      onChange={handleInputChange}
+                      className={`w-full px-4 py-2 border ${formErrors.city ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
                       required
                     />
+                    {formErrors.city && <p className="text-red-500 text-xs mt-1">{formErrors.city}</p>}
                   </div>
 
                   <div>
@@ -106,16 +173,23 @@ const CheckoutPage = () => {
                     </label>
                     <input
                       type="text"
-                      className="w-full px-4 py-2 border border-[#d4c9b5] rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]"
+                      name="state"
+                      value={formData.state}
+                      onChange={handleInputChange}
+                      className={`w-full px-4 py-2 border ${formErrors.state ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
                       required
                     />
+                    {formErrors.state && <p className="text-red-500 text-xs mt-1">{formErrors.state}</p>}
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-[#846C3B] mb-1">
                       Country
                     </label>
-                    <select className="w-full px-4 py-2 border border-[#d4c9b5] rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]">
+                    <select 
+                      className="w-full px-4 py-2 border border-[#d4c9b5] rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]"
+                      defaultValue="Nigeria"
+                    >
                       <option>Nigeria</option>
                       <option>Ghana</option>
                       <option>Kenya</option>
@@ -124,21 +198,20 @@ const CheckoutPage = () => {
                   </div>
                 </div>
               </form>
-              <h2 className="text-xl font-serif text-[#74541e] mb-4 flex items-center">
+
+              <h2 className="text-xl font-serif text-[#74541e] mt-8 mb-4 flex items-center">
                 <CreditCard className="mr-2" size={20} />
                 Payment Method
               </h2>
 
               <div className="space-y-3">
-                <div
-                  className={`flex items-center p-4 border rounded-lg cursor-pointer border-[#C47E20] bg-[#f9f7f3]' : 'border-[#d4c9b5]'}`}
-                >
+                <div className="flex items-center p-4 border border-[#C47E20] rounded-lg cursor-pointer bg-[#f9f7f3]">
                   <input
                     type="radio"
                     id="paystack"
                     name="paymentMethod"
-                    onChange={() => {}}
                     className="h-4 w-4 text-[#C47E20] focus:ring-[#C47E20] border-[#d4c9b5]"
+                    defaultChecked
                   />
                   <label
                     htmlFor="paystack"
@@ -151,41 +224,66 @@ const CheckoutPage = () => {
             </div>
           </div>
 
+          {/* Right Column - Order Summary */}
           <div>
             <div className="bg-white rounded-xl shadow-sm border border-[#e8e2d6] p-6 sticky top-8">
               <h2 className="text-xl font-serif text-[#74541e] mb-4">
                 Order Summary
               </h2>
 
-              <div className="space-y-4 mb-6">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center">
-                    <img className="w-12 h-12 object-cover rounded mr-3" />
-                    <div></div>
-                  </div>
-                </div>
+              <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
+                {cartItems.length > 0 ? (
+                  cartItems.map((item) => (
+                    <div key={item.id} className="flex justify-between items-center">
+                      <div className="flex items-center">
+                        <img 
+                          src={item.image} 
+                          alt={item.title} 
+                          className="w-12 h-12 object-cover rounded mr-3" 
+                        />
+                        <div>
+                          <h3 className="text-sm font-medium text-[#74541e]">{item.title}</h3>
+                          <p className="text-xs text-[#846C3B]">Qty: {item.quantity}</p>
+                        </div>
+                      </div>
+                      <span className="text-sm font-medium text-[#74541e]">
+                        ${(item.price * item.quantity).toFixed(2)}
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-center text-gray-500 py-4">Your cart is empty</p>
+                )}
               </div>
 
               <div className="border-t border-[#e8e2d6] pt-4 space-y-2">
                 <div className="flex justify-between">
                   <span className="text-sm text-[#846C3B]">Subtotal</span>
+                  <span className="text-sm font-medium text-[#74541e]">${subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-[#846C3B]">Shipping</span>
-                </div>
-                <div className="flex justify-between">
+                  <span className="text-sm font-medium text-[#74541e]">
+                    {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
+                  </span>
                 </div>
                 <div className="flex justify-between pt-2 border-t border-[#e8e2d6] mt-2">
                   <span className="font-medium text-[#74541e]">Total</span>
+                  <span className="font-medium text-[#74541e]">${total.toFixed(2)}</span>
                 </div>
               </div>
 
               <button
-              onClick={handleSubmit}
-                className={`w-full mt-6 py-3 px-4 rounded-lg text-white font-medium flex items-center justify-center bg-[#a8a095] cursor-not-allowed' : 'bg-[#74541e] hover:bg-[#5a4218]'}`}
+                onClick={handleSubmit}
+                disabled={cartItems.length === 0}
+                className={`w-full mt-6 py-3 px-4 rounded-lg text-white font-medium flex items-center justify-center ${
+                  cartItems.length === 0 
+                    ? 'bg-[#a8a095] cursor-not-allowed' 
+                    : 'bg-[#74541e] hover:bg-[#5a4218]'
+                }`}
               >
                 <Lock className="mr-2" size={16} />
-                Checkout
+                {cartItems.length === 0 ? 'Cart is Empty' : 'Complete Checkout'}
               </button>
 
               <p className="text-xs text-[#846C3B] mt-4 flex items-center">
