@@ -1,11 +1,17 @@
 import React from "react";
 import Details from "../components/Store/Details";
-import { useParams } from "react-router"; // Fixed import from "react-router"
+import { useParams } from "react-router";
+import { ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router";
+import useCartStore from "../components/Store/cartStore";
 
 const ProductDetails = () => {
+  const { decreaseQuantity, increaseQuantity } = useCartStore();
+
   const { products } = Details(); // Get products from Zustand
-  const [quantity, setQuantity] = React.useState(1);
+  // const [quantity, setQuantity] = React.useState(1);
   const { id } = useParams(); // Get product ID from URL
+  const navigate = useNavigate();
 
   // Find the product by ID
   const product = products.find((p) => p.id === parseInt(id));
@@ -18,13 +24,14 @@ const ProductDetails = () => {
       </div>
     );
   }
-
-  const increaseQuantity = () => setQuantity(quantity + 1);
-  const decreaseQuantity = () => quantity > 1 && setQuantity(quantity - 1);
-
   return (
     <div className={`min-h-screen bg-[#f5f0ea] py-12 px-4 sm:px-6 lg:px-8`}>
       <div className="max-w-6xl mx-auto">
+        <ArrowLeft
+          onClick={() => navigate(-1)}
+          size={40}
+          className="cursor-pointer bg-[#74541e] p-3  mb-14 text-white rounded-full hover:bg-[#5a4218] transition-colors"
+        />
         {/* Product & Description (Flex Layout) */}
         <div className="flex flex-col md:flex-row gap-8 md:gap-12">
           {/* Product Image */}
@@ -80,14 +87,14 @@ const ProductDetails = () => {
                 <span className="text-gray-700">Quantity:</span>
                 <div className="flex items-center border border-gray-300 rounded">
                   <button
-                    onClick={decreaseQuantity}
+                    onClick={() => decreaseQuantity()}
                     className="px-3 py-1 bg-gray-200 hover:bg-gray-300 text-gray-800"
                   >
                     -
                   </button>
-                  <span className="px-4 py-1">{quantity}</span>
+                  <span className="px-4 py-1"></span>
                   <button
-                    onClick={increaseQuantity}
+                    onClick={() => increaseQuantity()}
                     className="px-3 py-1 bg-gray-200 hover:bg-gray-300 text-gray-800"
                   >
                     +

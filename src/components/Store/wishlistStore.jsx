@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
@@ -17,6 +18,7 @@ const useWishlistStore = create(
         if (!exists) {
           return { wishlist: [...state.wishlist, product] };
         }
+        toast.success("Hi")
         return state;
       }),
       

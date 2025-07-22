@@ -16,7 +16,7 @@ export const product = [
     regularPrice: 1200,
     discountPrice: 899,
     image: Abstract1,
-    category: "abstract",
+    category: "Oil Paintings",
     inStock: true,
     tags: ["modern", "contemporary"],
     description: "A vibrant explosion of color and texture, this acrylic piece captures the fleeting nature of dreams. Layered brushstrokes and bold contrasts evoke a sense of movement and emotional depth."
@@ -30,7 +30,7 @@ export const product = [
     regularPrice: 1800,
     discountPrice: 1500,
     image: Landscape1,
-    category: "landscape",
+    category: "Water Colors",
     inStock: true,
     tags: ["nature", "outdoors"],
     description: "Majestic peaks meet misty valleys in this oil painting. The artist's masterful use of light creates a tranquil atmosphere, inviting viewers to lose themselves in nature's grandeur."
@@ -58,7 +58,7 @@ export const product = [
     regularPrice: 650,
     discountPrice: 550,
     image: StillLife1,
-    category: "still-life",
+    category: "Oil Paintings",
     inStock: true,
     tags: ["flowers", "objects"],
     description: "Delicate watercolor rendering of fresh blooms in soft morning light. The translucent layers capture the ephemeral beauty of nature with a poetic, almost meditative quality."
@@ -72,7 +72,7 @@ export const product = [
     regularPrice: 2200,
     discountPrice: 1800,
     image: ModernArt1,
-    category: "modern",
+    category: "Water Colors",
     inStock: true,
     tags: ["abstract", "experimental"],
     description: "A dynamic collage of urban energy, combining acrylic, newspaper clippings, and metallic leaf. The fragmented composition mirrors the dissonance and rhythm of city life."
@@ -86,7 +86,7 @@ export const product = [
     regularPrice: 850,
     discountPrice: 750,
     image: Watercolor1,
-    category: "seascape",
+    category: "Sketches",
     inStock: true,
     tags: ["water", "nature"],
     description: "Fluid watercolor techniques emulate the ocean's movement, with salt textures creating organic wave patterns. The cool palette evokes the freshness of sea air."

@@ -1,4 +1,4 @@
-import { ShoppingBag, X } from "lucide-react";
+import { ShoppingBag, Trash, X } from "lucide-react";
 import { Link } from "react-router";
 import useCartStore from "../Store/cartStore";
 
@@ -7,7 +7,7 @@ const Cart = ({ isOpen, onClose }) => {
     cartItems,
     increaseQuantity,
     decreaseQuantity,
-    // removeFromCart,
+    removeFromCart,
     getTotalPrice,
     getTotalItems,
     // clearCart,
@@ -57,7 +57,7 @@ const Cart = ({ isOpen, onClose }) => {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => decreaseQuantity(item.id)}
-                        className="text-xs px-1.5 border rounded hover:bg-gray-100"
+                        className="text-xs px-2 border rounded text-[#846C3B]  hover:bg-g ray-100"
                         aria-label="Decrease quantity"
                       >
                         -
@@ -65,10 +65,13 @@ const Cart = ({ isOpen, onClose }) => {
                       <span className="text-sm">{item.quantity}</span>
                       <button
                         onClick={() => increaseQuantity(item.id)}
-                        className="text-xs px-1.5 border rounded hover:bg-gray-100"
+                        className="text-xs px-2 border rounded text-[#846C3B]  hover:bg-g ray-100"
                         aria-label="Increase quantity"
                       >
                         +
+                      </button>
+                      <button onClick={() => removeFromCart(item.id)}>
+                        <Trash className="text-[#846C3B]" />
                       </button>
                     </div>
                   </div>

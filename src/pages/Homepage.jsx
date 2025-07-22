@@ -18,8 +18,9 @@ import abstractImage from "../assets/Images/Abstract.jpeg";
 import fineArtImage from "../assets/Images/Fine.jpeg";
 import Watercolor1 from "../assets/Images/Face2.jpeg";
 import Impressionist1 from "../assets/Images/Face1.jpeg";
-import toast from "react-hot-toast";
-import useCartStore from "../components/Store/cartStore";
+
+import Cards2 from "../components/Layouts/Cards2";
+import { product } from "../data/product";
 const SLIDES = [
   {
     image: abstractImage,
@@ -107,37 +108,37 @@ const TESTIMONIALS = [
   },
 ];
 
-const FEATURED_PRODUCTS = [
-  {
-    id: 1,
-    image: Watercolor1,
-    title: "Golden Horizon",
-    medium: "Oil on Canvas",
-    price: 1200,
-    discountPrice: 950,
-    size: "24 × 36 inches",
-    year: 2023,
-  },
-  {
-    id: 2,
-    image: Watercolor1,
-    title: "Azure Reflections",
-    medium: "Acrylic on Wood Panel",
-    price: 850,
-    size: "18 × 24 inches",
-    year: 2022,
-  },
-  {
-    id: 3,
-    image: Watercolor1,
-    title: "Whispering Pines",
-    medium: "Watercolor on Paper",
-    price: 650,
-    discountPrice: 550,
-    size: "16 × 20 inches",
-    year: 2024,
-  },
-];
+// const FEATURED_PRODUCTS = [
+//   {
+//     id: 1,
+//     image: Watercolor1,
+//     title: "Golden Horizon",
+//     medium: "Oil on Canvas",
+//     price: 1200,
+//     discountPrice: 950,
+//     size: "24 × 36 inches",
+//     year: 2023,
+//   },
+//   {
+//     id: 2,
+//     image: Watercolor1,
+//     title: "Azure Reflections",
+//     medium: "Acrylic on Wood Panel",
+//     price: 850,
+//     size: "18 × 24 inches",
+//     year: 2022,
+//   },
+//   {
+//     id: 3,
+//     image: Watercolor1,
+//     title: "Whispering Pines",
+//     medium: "Watercolor on Paper",
+//     price: 650,
+//     discountPrice: 550,
+//     size: "16 × 20 inches",
+//     year: 2024,
+//   },
+// ];
 
 const SliderNavigation = ({ swiperRef, className = "" }) => {
   return (
@@ -163,21 +164,12 @@ const SliderNavigation = ({ swiperRef, className = "" }) => {
 };
 
 const Homepage = () => {
+  const produce = product.filter((product) => product);
+
   const navigate = useNavigate();
   const heroSwiperRef = useRef(null);
   const testimonialSwiperRef = useRef(null);
-  const handleAddToCart = (product) => {
-    const cartProduct = {
-      id: product.id,
-      title: product.title,
-      price: product.discountPrice || product.price, // Fixed: changed regularPrice to price
-      image: product.image,
-      size: product.size,
-      quantity: 1, // Initial quantity
-    };
-    addToCart(cartProduct);
-    toast.success("Item added to cart!");
-  };
+
   const renderHeroSlide = ({ image, title, subtitle, quote }) => (
     <SwiperSlide className="relative">
       <div className="absolute inset-0 bg-black/50 z-10" />
@@ -235,7 +227,7 @@ const Homepage = () => {
       </div>
     );
   };
-  const { addToCart } = useCartStore();
+
 
   return (
     <div className="overflow-hidden relative">
@@ -355,65 +347,21 @@ const Homepage = () => {
             Featured Artworks
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {FEATURED_PRODUCTS.map((product) => {
-              const discountPercent = product.discountPrice
-                ? Math.round(
-                    ((product.price - product.discountPrice) / product.price) *
-                      100
-                  )
-                : 0;
+           {produce.slice(0,3).map((airline) => (
+            <Cards2
+              key={airline.id}
+              image={airline.image}
+              title={airline.title}
+              regularPrice={airline.regularPrice}
+              inStock={airline.inStock}
+              year={airline.year}
+              className="border border-gray-200"
+              size={airline.size}
+              medium={airline.medium}
+              discountPrice={airline.discountPrice}
 
-              return (
-                <div
-                  key={product.id}
-                  className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow"
-                >
-                  <div className="relative aspect-[4/3] overflow-hidden">
-                    <img
-                      src={product.image}
-                      alt={product.title}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                    />
-                    {product.discountPrice && (
-                      <div className="absolute top-3 right-3 bg-[#C47E20] text-white text-xs font-medium px-2 py-1 rounded-full">
-                        {discountPercent}% OFF
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <h3 className="text-xl font-medium text-gray-800">
-                      {product.title}
-                    </h3>
-                    <p className="text-sm text-gray-600 mt-1">
-                      {product.medium} • {product.year}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">{product.size}</p>
-                    <div className="mt-3">
-                      {product.discountPrice ? (
-                        <div className="flex items-center gap-2">
-                          <span className="text-lg font-bold text-[#74541e]">
-                            ${product.discountPrice.toFixed(2)}
-                          </span>
-                          <span className="text-sm text-gray-400 line-through">
-                            ${product.price.toFixed(2)}
-                          </span>
-                        </div>
-                      ) : (
-                        <span className="text-lg font-bold text-[#74541e]">
-                          ${product.price.toFixed(2)}
-                        </span>
-                      )}
-                    </div>
-                    <button
-                      onClick={() => handleAddToCart(product)}
-                      className="mt-4 w-full py-2 bg-[#74541e] text-white rounded hover:bg-[#5a4218]  transition-colors flex items-center justify-center"
-                    >
-                      Add to Cart <MoveRight className="ml-2 w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+            />
+          ))}
           </div>
           <div className="text-center mt-10">
             <button

@@ -1,6 +1,6 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import useWishlistStore from './wishlistStore';
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import useWishlistStore from "./wishlistStore";
 
 const useCartStore = create(
   persist(
@@ -10,49 +10,51 @@ const useCartStore = create(
 
       // Actions
       addToCart: (product) => {
-        const existingItem = get().cartItems.find(item => item.id === product.id);
+        const existingItem = get().cartItems.find(
+          (item) => item.id === product.id
+        );
         useWishlistStore.getState().removeFromWishlist(product.id);
-        
+
         if (existingItem) {
           set({
-            cartItems: get().cartItems.map(item =>
+            cartItems: get().cartItems.map((item) =>
               item.id === product.id
                 ? { ...item, quantity: item.quantity + 1 }
                 : item
-            )
+            ),
           });
         } else {
           set({
-            cartItems: [...get().cartItems, { ...product, quantity: 1 }]
+            cartItems: [...get().cartItems, { ...product, quantity: 1 }],
           });
         }
       },
 
       removeFromCart: (productId) => {
         set({
-          cartItems: get().cartItems.filter(item => item.id !== productId)
+          cartItems: get().cartItems.filter((item) => item.id !== productId),
         });
       },
 
       increaseQuantity: (productId) => {
         set({
-          cartItems: get().cartItems.map(item =>
+          cartItems: get().cartItems.map((item) =>
             item.id === productId
               ? { ...item, quantity: item.quantity + 1 }
               : item
-          )
+          ),
         });
       },
 
       decreaseQuantity: (productId) => {
         set({
-          cartItems: get().cartItems
-            .map(item =>
+          cartItems: get()
+            .cartItems.map((item) =>
               item.id === productId
                 ? { ...item, quantity: item.quantity - 1 }
                 : item
             )
-            .filter(item => item.quantity > 0)
+            .filter((item) => item.quantity > 0),
         });
       },
 
@@ -61,16 +63,19 @@ const useCartStore = create(
 
       // Getters
       isInCart: (productId) => {
-        return get().cartItems.some(item => item.id === productId);
+        return get().cartItems.some((item) => item.id === productId);
       },
 
       getTotalItems: () => {
-        return get().cartItems.reduce((total, item) => total + item.quantity, 0);
+        return get().cartItems.reduce(
+          (total, item) => total + item.quantity,
+          0
+        );
       },
 
       getTotalPrice: () => {
         return get().cartItems.reduce(
-          (total, item) => total + (item.price * item.quantity), 
+          (total, item) => total + item.price * item.quantity,
           0
         );
       },
@@ -81,13 +86,13 @@ const useCartStore = create(
         const wishlist = useWishlistStore.getState().wishlist;
         set({
           cartItems: get().cartItems.filter(
-            item => !wishlist.some(wishItem => wishItem.id === item.id)
-          )
+            (item) => !wishlist.some((wishItem) => wishItem.id === item.id)
+          ),
         });
-      }
+      },
     }),
     {
-      name: 'cart-storage',
+      name: "cart-storage",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({ cartItems: state.cartItems }),
       version: 1,
