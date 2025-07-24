@@ -14,13 +14,13 @@ const Cards = ({
 }) => {
   // Safe data handling
   const safeProducts = product || [];
-  //
   const navigate = useNavigate();
-  // Cart functionality
+  
+  // Store hooks
   const { addToCart } = useCartStore();
   const { wishlist, addToWishlist, removeFromWishlist } = useWishlistStore();
 
-  // Handle add to cart with proper product structure
+  // Handle add to cart
   const handleAddToCart = (product) => {
     const cartProduct = {
       id: product.id,
@@ -33,7 +33,8 @@ const Cards = ({
     addToCart(cartProduct);
     toast.success("Item added to cart!");
   };
-  // Add this new function for wishlist toggle
+
+  // Handle wishlist toggle
   const handleWishlistToggle = (product, e) => {
     e.stopPropagation();
     const isInWishlist = wishlist.some((item) => item.id === product.id);
@@ -42,20 +43,23 @@ const Cards = ({
       removeFromWishlist(product.id);
       toast.error("Removed from wishlist");
     } else {
-      addToWishlist({
+      const wishlistProduct = {
         id: product.id,
         title: product.title,
         price: product.discountPrice || product.regularPrice,
         image: product.image,
         size: product.size,
-      });
+        year: product.year,
+        medium: product.medium,
+        inStock: product.inStock
+      };
+      addToWishlist(wishlistProduct);
       toast.success(
         (t) => (
           <span>
             Added to wishlist!{" "}
             <button
               onClick={() => {
-                // Assuming you're using React Router
                 navigate("/wishlist");
                 toast.dismiss(t.id);
               }}
@@ -65,11 +69,12 @@ const Cards = ({
             </button>
           </span>
         ),
-        { duration: 4000 } // Optional: extend duration
+        { duration: 4000 }
       );
     }
   };
-  // 1. Filter products with fallbacks
+
+  // Filter products
   const filteredProducts = safeProducts.filter((item) => {
     if (!item || typeof item !== "object") return false;
 
@@ -79,7 +84,7 @@ const Cards = ({
     return item.category === stockFilter;
   });
 
-  // 2. Sort products with protection
+  // Sort products
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     try {
       const priceA = a.discountPrice ?? a.regularPrice ?? 0;
@@ -104,7 +109,7 @@ const Cards = ({
     }
   });
 
-  // 3. Paginate with bounds checking
+  // Paginate products
   const startIndex = Math.max(0, (currentPage - 1) * photosPerPage);
   const endIndex = Math.min(startIndex + photosPerPage, sortedProducts.length);
   const productsToShow = sortedProducts.slice(startIndex, endIndex);
@@ -118,6 +123,7 @@ const Cards = ({
       </div>
     );
   }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {productsToShow.map((item) => {
@@ -130,12 +136,14 @@ const Cards = ({
         const isInWishlist = wishlist.some(
           (wishlistItem) => wishlistItem.id === item.id
         );
+
         return (
           <div
             key={item.id}
-            className="border border-[#e8e2d6] rounded-lg overflow-hidden bg-white hover:shadow-md transition-all"
+            className="border border-[#e8e2d6] rounded-lg overflow-hidden bg-white hover:shadow-md transition-all cursor-pointer"
+            onClick={() => navigate(`/products/${item.id}`)}
           >
-            {/* Image with error fallback */}
+            {/* Image container */}
             <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden">
               {item.image ? (
                 <img
@@ -154,27 +162,30 @@ const Cards = ({
                 </div>
               )}
 
-              {/* Heart icon (non-interactive) */}
+              {/* Wishlist button */}
               <button
                 onClick={(e) => handleWishlistToggle(item, e)}
-                className="absolute top-3 left-3 p-2 rounded-full bg-white/80"
+                className="absolute top-3 left-3 p-2 rounded-full bg-white/80 hover:bg-white transition-colors z-10"
+                aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
               >
                 <Heart
                   size={20}
                   className={
                     isInWishlist
                       ? "text-[#74541e] fill-[#74541e]"
-                      : "text-gray-400"
+                      : "text-gray-400 hover:text-[#74541e]"
                   }
                 />
               </button>
 
+              {/* Sale badge */}
               {item.discountPrice && (
                 <div className="absolute top-3 right-3 bg-[#aa9f8f] text-white text-xs font-medium px-2 py-1 rounded-full">
                   On Sale
                 </div>
               )}
 
+              {/* Sold out badge */}
               {item.inStock === false && (
                 <div className="absolute top-3 right-3 bg-gray-600 text-white text-xs font-medium px-2 py-1 rounded-full">
                   Sold Out
@@ -184,10 +195,10 @@ const Cards = ({
 
             {/* Product info */}
             <div className="p-4">
-              <h3 className="text-lg font-medium text-gray-800 mb-1">
+              <h3 className="text-lg font-medium text-gray-800 mb-1 line-clamp-1">
                 {item.title || "Untitled"}
               </h3>
-              <p className="text-sm text-gray-600 mb-1">
+              <p className="text-sm text-gray-600 mb-1 line-clamp-1">
                 {[item.medium, item.year].filter(Boolean).join(" • ")}
               </p>
               {item.size && (
@@ -229,10 +240,13 @@ const Cards = ({
                   View Details
                 </button>
                 <button
-                  onClick={() => item.inStock && handleAddToCart(item)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    item.inStock && handleAddToCart(item);
+                  }}
                   className={`flex-1 py-2 text-sm rounded transition-colors ${
                     item.inStock
-                      ? "bg-[#74541e] text-white rounded hover:bg-[#5a4218]"
+                      ? "bg-[#74541e] text-white hover:bg-[#5a4218]"
                       : "bg-gray-300 text-gray-500 cursor-not-allowed"
                   }`}
                   disabled={item.inStock === false}

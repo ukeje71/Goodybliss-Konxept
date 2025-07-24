@@ -1,4 +1,5 @@
-import toast from 'react-hot-toast';
+// wishlistStore.js
+// import toast from 'react-hot-toast';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
@@ -18,7 +19,6 @@ const useWishlistStore = create(
         if (!exists) {
           return { wishlist: [...state.wishlist, product] };
         }
-        toast.success("Hi")
         return state;
       }),
       
@@ -37,14 +37,6 @@ const useWishlistStore = create(
     {
       name: 'wishlist-storage',
       storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({ wishlist: state.wishlist }), 
-      version: 1, 
-      migrate: (persistedState, version) => {
-        if (version === 0) {
-          // Migration logic if needed in future versions
-        }
-        return persistedState;
-      },
     }
   )
 );

@@ -52,12 +52,12 @@ const Cart = ({ isOpen, onClose }) => {
                   <p className="text-sm text-[#846C3B]/80">{item.size}</p>
                   <div className="flex justify-between items-center mt-1">
                     <span className="text-[#74541e] font-medium">
-                      ${item.price.toFixed(2)}
+                      {/* ${item.price.toFixed(2)} */}
                     </span>
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => decreaseQuantity(item.id)}
-                        className="text-xs px-2 border rounded text-[#846C3B]  hover:bg-g ray-100"
+                        className="text-xs px-2 border rounded text-[#846C3B]  hover:bg-gray-100"
                         aria-label="Decrease quantity"
                       >
                         -
