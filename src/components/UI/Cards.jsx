@@ -1,5 +1,6 @@
-import React from "react";
-import { product } from "../../data/product";
+// src/components/Cards.jsx (or wherever your Cards file is)
+
+import React, { useEffect, useState } from "react";
 import useCartStore from "../Store/cartStore";
 import useWishlistStore from "../Store/wishlistStore";
 import toast from "react-hot-toast";
@@ -12,15 +13,61 @@ const Cards = ({
   currentPage = 1,
   photosPerPage = 24,
 }) => {
-  // Safe data handling
-  const safeProducts = product || [];
+  const [products, setProducts] = useState([]);
   const navigate = useNavigate();
-  
-  // Store hooks
   const { addToCart } = useCartStore();
   const { wishlist, addToWishlist, removeFromWishlist } = useWishlistStore();
 
-  // Handle add to cart
+  // 🟢 Fetch products from GitHub JSON file
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch(
+          "https://raw.githubusercontent.com/ukeje71/json_file/main/products.json"
+        );
+        const data = await res.json();
+        setProducts(data);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  // Filter, sort, paginate
+  const safeProducts = products || [];
+
+  const filteredProducts = safeProducts.filter((item) => {
+    if (!item || typeof item !== "object") return false;
+    if (stockFilter === "all") return true;
+    if (stockFilter === "in-stock") return item.inStock !== false;
+    if (stockFilter === "out-of-stock") return item.inStock === false;
+    return item.category === stockFilter;
+  });
+
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    const priceA = a.discountPrice ?? a.regularPrice ?? 0;
+    const priceB = b.discountPrice ?? b.regularPrice ?? 0;
+    switch (sortBy) {
+      case "alphabetical":
+        return (a.title || "").localeCompare(b.title || "");
+      case "price-low-high":
+        return priceA - priceB;
+      case "price-high-low":
+        return priceB - priceA;
+      case "date-new-old":
+        return new Date(b.year || 0) - new Date(a.year || 0);
+      case "date-old-new":
+        return new Date(a.year || 0) - new Date(b.year || 0);
+      default:
+        return 0;
+    }
+  });
+
+  const startIndex = Math.max(0, (currentPage - 1) * photosPerPage);
+  const endIndex = Math.min(startIndex + photosPerPage, sortedProducts.length);
+  const productsToShow = sortedProducts.slice(startIndex, endIndex);
+
   const handleAddToCart = (product) => {
     const cartProduct = {
       id: product.id,
@@ -34,11 +81,9 @@ const Cards = ({
     toast.success("Item added to cart!");
   };
 
-  // Handle wishlist toggle
   const handleWishlistToggle = (product, e) => {
     e.stopPropagation();
     const isInWishlist = wishlist.some((item) => item.id === product.id);
-
     if (isInWishlist) {
       removeFromWishlist(product.id);
       toast.error("Removed from wishlist");
@@ -51,7 +96,7 @@ const Cards = ({
         size: product.size,
         year: product.year,
         medium: product.medium,
-        inStock: product.inStock
+        inStock: product.inStock,
       };
       addToWishlist(wishlistProduct);
       toast.success(
@@ -74,46 +119,6 @@ const Cards = ({
     }
   };
 
-  // Filter products
-  const filteredProducts = safeProducts.filter((item) => {
-    if (!item || typeof item !== "object") return false;
-
-    if (stockFilter === "all") return true;
-    if (stockFilter === "in-stock") return item.inStock !== false;
-    if (stockFilter === "out-of-stock") return item.inStock === false;
-    return item.category === stockFilter;
-  });
-
-  // Sort products
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    try {
-      const priceA = a.discountPrice ?? a.regularPrice ?? 0;
-      const priceB = b.discountPrice ?? b.regularPrice ?? 0;
-
-      switch (sortBy) {
-        case "alphabetical":
-          return (a.title || "").localeCompare(b.title || "");
-        case "price-low-high":
-          return priceA - priceB;
-        case "price-high-low":
-          return priceB - priceA;
-        case "date-new-old":
-          return new Date(b.year || 0) - new Date(a.year || 0);
-        case "date-old-new":
-          return new Date(a.year || 0) - new Date(b.year || 0);
-        default:
-          return 0;
-      }
-    } catch {
-      return 0;
-    }
-  });
-
-  // Paginate products
-  const startIndex = Math.max(0, (currentPage - 1) * photosPerPage);
-  const endIndex = Math.min(startIndex + photosPerPage, sortedProducts.length);
-  const productsToShow = sortedProducts.slice(startIndex, endIndex);
-
   if (productsToShow.length === 0) {
     return (
       <div className="text-center py-12">
@@ -129,7 +134,8 @@ const Cards = ({
       {productsToShow.map((item) => {
         const discountPercent = item.discountPrice
           ? Math.round(
-              ((item.regularPrice - item.discountPrice) / item.regularPrice) *
+              ((item.regularPrice - item.discountPrice) /
+                item.regularPrice) *
                 100
             )
           : 0;
@@ -143,7 +149,6 @@ const Cards = ({
             className="border border-[#e8e2d6] rounded-lg overflow-hidden bg-white hover:shadow-md transition-all cursor-pointer"
             onClick={() => navigate(`/products/${item.id}`)}
           >
-            {/* Image container */}
             <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden">
               {item.image ? (
                 <img
@@ -153,7 +158,7 @@ const Cards = ({
                   loading="lazy"
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = "path/to/placeholder-image.jpg";
+                    e.target.src = "https://via.placeholder.com/300x200";
                   }}
                 />
               ) : (
@@ -162,11 +167,9 @@ const Cards = ({
                 </div>
               )}
 
-              {/* Wishlist button */}
               <button
                 onClick={(e) => handleWishlistToggle(item, e)}
                 className="absolute top-3 left-3 p-2 rounded-full bg-white/80 hover:bg-white transition-colors z-10"
-                aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
               >
                 <Heart
                   size={20}
@@ -178,14 +181,11 @@ const Cards = ({
                 />
               </button>
 
-              {/* Sale badge */}
               {item.discountPrice && (
                 <div className="absolute top-3 right-3 bg-[#aa9f8f] text-white text-xs font-medium px-2 py-1 rounded-full">
                   On Sale
                 </div>
               )}
-
-              {/* Sold out badge */}
               {item.inStock === false && (
                 <div className="absolute top-3 right-3 bg-gray-600 text-white text-xs font-medium px-2 py-1 rounded-full">
                   Sold Out
@@ -193,7 +193,6 @@ const Cards = ({
               )}
             </div>
 
-            {/* Product info */}
             <div className="p-4">
               <h3 className="text-lg font-medium text-gray-800 mb-1 line-clamp-1">
                 {item.title || "Untitled"}
@@ -204,8 +203,6 @@ const Cards = ({
               {item.size && (
                 <p className="text-xs text-gray-500 mb-3">{item.size}</p>
               )}
-
-              {/* Price */}
               <div className="mb-4">
                 {item.discountPrice ? (
                   <div className="flex items-center gap-2">
@@ -227,8 +224,6 @@ const Cards = ({
                   </span>
                 )}
               </div>
-
-              {/* Buttons */}
               <div className="flex gap-2">
                 <button
                   onClick={(e) => {

@@ -29,19 +29,24 @@ const SLIDES = [
     quote: "Art washes away from the soul the dust of everyday life",
   },
   {
-    image: fineArtImage,
+    image:
+      "https://res.cloudinary.com/dlyearrnf/image/upload/v1753792136/Face1_pqpqrd.jpg",
+
     title: "Chromatic Harmony",
     subtitle: "Oil Painting • 2022",
     quote: "Color is my day-long obsession, joy and torment",
   },
   {
-    image: Watercolor1,
-    title: "Silent Echoes",
-    subtitle: "Charcoal & Gold Leaf • 2024",
+    image:
+      "https://res.cloudinary.com/dlyearrnf/image/upload/v1753792029/Painting_qrunau.jpg",
+    title: "Whispers of the Past",
+    subtitle: "Acrylic & Mixed Media • 2024",
     quote: "In art, truth and reality begin when one no longer understands",
   },
   {
-    image: Impressionist1,
+    image:
+      "https://res.cloudinary.com/dlyearrnf/image/upload/v1753792044/Face2_nqgxcg.jpg",
+
     title: "The Doors are Open",
     subtitle: "Acrylic & Resin • 2023",
     quote: "The artist is a receptacle for emotions that come from everywhere",
@@ -50,19 +55,25 @@ const SLIDES = [
 
 const PRODUCT_CARDS = [
   {
-    image: abstractImage,
+    image:
+      "https://res.cloudinary.com/dlyearrnf/image/upload/v1753792044/Face2_nqgxcg.jpg",
+
     title: "Most Popular",
     description: "Explore collector favourite works and best sellers",
     cta: "Explore",
   },
   {
-    image: fineArtImage,
+    image:
+      "https://res.cloudinary.com/dlyearrnf/image/upload/v1753792036/Admirer_bb4hnn.jpg",
+
     title: "Featured Artwork",
     description: '"The Beauty Of Imperfect Things" fine art print',
     cta: "Discover",
   },
   {
-    image: abstractImage,
+    image:
+      "https://res.cloudinary.com/dlyearrnf/image/upload/v1753792028/Fine_jgueyn.jpg",
+
     title: "Available Originals",
     description: "Take your time to find the perfect heirloom",
     cta: "View Originals",
@@ -228,7 +239,6 @@ const Homepage = () => {
     );
   };
 
-
   return (
     <div className="overflow-hidden relative">
       {/* Hero Slider Section */}
@@ -347,21 +357,20 @@ const Homepage = () => {
             Featured Artworks
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-           {produce.slice(0,3).map((airline) => (
-            <Cards2
-              key={airline.id}
-              image={airline.image}
-              title={airline.title}
-              regularPrice={airline.regularPrice}
-              inStock={airline.inStock}
-              year={airline.year}
-              className="border border-gray-200"
-              size={airline.size}
-              medium={airline.medium}
-              discountPrice={airline.discountPrice}
-
-            />
-          ))}
+            {produce.slice(0, 3).map((airline) => (
+              <Cards2
+                key={airline.id}
+                image={airline.image}
+                title={airline.title}
+                regularPrice={airline.regularPrice}
+                inStock={airline.inStock}
+                year={airline.year}
+                className="border border-gray-200"
+                size={airline.size}
+                medium={airline.medium}
+                discountPrice={airline.discountPrice}
+              />
+            ))}
           </div>
           <div className="text-center mt-10">
             <button
