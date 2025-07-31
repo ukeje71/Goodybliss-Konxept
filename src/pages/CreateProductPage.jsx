@@ -14,89 +14,142 @@ import {
   Check,
 } from "lucide-react";
 import Sidebar from "../components/Layouts/Dashboard/Sidebar";
+import axios from "axios";
+import { db } from "../components/Firebase";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 
 const CreateProductPage = () => {
-  const [productData, setProductData] = useState({
-    title: "",
-    description: "",
-    category: "original",
-    medium: "",
-    year: new Date().getFullYear(),
-    price: "",
-    discountPrice: "",
-    size: "",
-    stock: 1,
-    images: [],
-  });
+const [productData, setProductData] = useState({
+  title: "",
+  description: "",
+  category: "original",
+  medium: "",
+  year: new Date().getFullYear(),
+  price: "",
+  discountPrice: "",
+  size: "",
+  stock: 1,
+  images: [],
+});
 
-  const [previewImages, setPreviewImages] = useState([]);
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadError, setUploadError] = useState("");
-  const fileInputRef = useRef(null);
+const [previewImages, setPreviewImages] = useState([]);
+const [selectedFile, setSelectedFile] = useState(null); // ✅ New state for actual file
+const [isUploading, setIsUploading] = useState(false);
+const [uploadError, setUploadError] = useState("");
+const fileInputRef = useRef(null);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setProductData((prev) => ({ ...prev, [name]: value }));
-  };
+const handleInputChange = (e) => {
+  const { name, value } = e.target;
+  setProductData((prev) => ({ ...prev, [name]: value }));
+};
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0]; // Get only the first file
-    
-    if (!file) return;
-    
-    // Validate file type and size
-    if (!file.type.startsWith("image/")) {
-      setUploadError("Please upload an image file");
-      return;
-    }
-    
-    if (file.size > 5 * 1024 * 1024) { // 5MB limit
-      setUploadError("Image size must be less than 5MB");
-      return;
-    }
-    
-    if (previewImages.length >= 1) {
-      setUploadError("You can only upload one image at a time");
-      return;
-    }
+const handleImageUpload = (e) => {
+  const file = e.target.files[0];
 
-    setIsUploading(true);
-    setUploadError("");
+  if (!file) return;
 
-    // Simulate upload process
-    setTimeout(() => {
-      const newPreview = {
-        name: file.name,
-        url: URL.createObjectURL(file),
-      };
+  if (!file.type.startsWith("image/")) {
+    setUploadError("Please upload an image file");
+    return;
+  }
 
-      setPreviewImages([newPreview]); // Replace any existing image
-      setIsUploading(false);
-      fileInputRef.current.value = ""; // Reset file input
-    }, 1000);
-  };
+  if (file.size > 5 * 1024 * 1024) {
+    setUploadError("Image size must be less than 5MB");
+    return;
+  }
 
-  const removeImage = (index) => {
-    const updatedPreviews = [...previewImages];
-    URL.revokeObjectURL(updatedPreviews[index].url);
-    updatedPreviews.splice(index, 1);
-    setPreviewImages(updatedPreviews);
-  };
+  if (previewImages.length >= 1) {
+    setUploadError("You can only upload one image at a time");
+    return;
+  }
 
-  const triggerFileInput = () => {
-    fileInputRef.current.click();
-  };
+  setIsUploading(true);
+  setUploadError("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Product data:", { ...productData, images: previewImages });
-    // Here you'll handle form submission to your backend/Firebase
-  };
+  setTimeout(() => {
+    const newPreview = {
+      name: file.name,
+      url: URL.createObjectURL(file),
+    };
+
+    setSelectedFile(file); // ✅ Store actual file
+    setPreviewImages([newPreview]);
+    setIsUploading(false);
+    fileInputRef.current.value = "";
+  }, 1000);
+};
+
+const removeImage = (index) => {
+  const updatedPreviews = [...previewImages];
+  URL.revokeObjectURL(updatedPreviews[index].url);
+  updatedPreviews.splice(index, 1);
+  setPreviewImages(updatedPreviews);
+  setSelectedFile(null); // ✅ Clear file if image removed
+};
+
+const triggerFileInput = () => {
+  fileInputRef.current.click();
+};
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!selectedFile) {
+    setUploadError("Please add an image before submitting.");
+    return;
+  }
+
+  setIsUploading(true);
+
+  try {
+    const formData = new FormData();
+    formData.append("file", selectedFile); // ✅ Correct file reference
+    formData.append("upload_preset", "Goodybliss");
+    formData.append("folder", "samples/ecommerce");
+
+    const cloudinaryRes = await axios.post(
+      "https://api.cloudinary.com/v1_1/dlyearrnf/image/upload",
+      formData
+    );
+
+    const imageUrl = cloudinaryRes.data.secure_url;
+
+    await addDoc(collection(db, "products"), {
+      ...productData,
+      imageUrl: imageUrl,
+      createdAt: serverTimestamp(),
+    });
+
+    alert("Artwork uploaded successfully!");
+
+    // Reset everything
+    setProductData({
+      title: "",
+      description: "",
+      category: "original",
+      medium: "",
+      year: new Date().getFullYear(),
+      price: "",
+      discountPrice: "",
+      size: "",
+      stock: 1,
+      images: [],
+    });
+    setPreviewImages([]);
+    setSelectedFile(null);
+  } catch (error) {
+    console.log("Error uploading or saving:", error);
+    setUploadError("Failed to upload image or save product. Try again.");
+  } finally {
+    setIsUploading(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f9f5ee] to-[#f0e8d8] py-8 px-4 sm:px-6 lg:px-8">
       {/* Sidebar */}
-      <Sidebar/>
+      <Sidebar />
       <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden border border-[#e8e2d6]">
         <div className="p-6 sm:p-8">
           <div className="flex items-center justify-between mb-6">
@@ -138,6 +191,7 @@ const CreateProductPage = () => {
                     onChange={handleImageUpload}
                     disabled={isUploading || previewImages.length > 0}
                   />
+
                   {isUploading ? (
                     <div className="animate-pulse flex flex-col items-center">
                       <div className="w-8 h-8 bg-[#C47E20] rounded-full animate-bounce"></div>

@@ -1,10 +1,10 @@
-import Abstract1 from "../assets/Images/Abstract.jpeg";
-import Landscape1 from "../assets/Images/Face1.jpeg";
-import Portrait1 from "../assets/Images/Fine.jpeg";
-import StillLife1 from "../assets/Images/Landscape.jpeg";
-import ModernArt1 from "../assets/Images/Complex.jpeg";
-import Watercolor1 from "../assets/Images/Face2.jpeg";
-import Impressionist1 from "../assets/Images/Face1.jpeg";
+// import Abstract1 from "../assets/Images/Abstract.jpeg";
+// import Landscape1 from "../assets/Images/Face1.jpeg";
+// import Portrait1 from "../assets/Images/Fine.jpeg";
+// import StillLife1 from "../assets/Images/Landscape.jpeg";
+// import ModernArt1 from "../assets/Images/Complex.jpeg";
+// import Watercolor1 from "../assets/Images/Face2.jpeg";
+// import Impressionist1 from "../assets/Images/Face1.jpeg";
 
 export const product = [
   {
