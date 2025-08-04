@@ -99,7 +99,7 @@ const Cards = ({
         id: product.id,
         title: product.title,
         price: product.discountPrice || product.regularPrice,
-        imageUrl: product.imageUrl, // ✅ This matches what you check when rendering
+        imageUrl: product.imageUrl,
         size: product.size,
         year: product.year,
         medium: product.medium,
@@ -110,7 +110,7 @@ const Cards = ({
       toast.success(
         (t) => (
           <span>
-            Added to wishlist!{" "}
+            Added to wishlist!
             <button
               onClick={() => {
                 navigate("/wishlist");
