@@ -1,22 +1,23 @@
-// store.js
 import { create } from 'zustand';
-import { product } from '../../data/product';
 
-const Details = create((set) => ({
-  // All products from your products.js
-  products: product,
-  
-  // Currently selected product (null by default)
+const useDetailsStore = create((set, get) => ({
+  // Initial products list — empty initially
+  products: [],
+
+  // Selected product
   selectedProduct: null,
-  
-  // Action: Set the selected product by ID
+
+  // Action: update products list (e.g., from Firestore)
+  setProducts: (products) => set({ products }),
+
+  // Action: set selected product by ID
   setSelectedProduct: (productId) => {
-    const selected = product.find(p => p.id === productId);
+    const selected = get().products.find((p) => p.id === productId);
     set({ selectedProduct: selected });
   },
-  
-  // Action: Clear selection
+
+  // Action: clear selected product
   clearSelectedProduct: () => set({ selectedProduct: null }),
 }));
 
-export default Details;
+export default useDetailsStore;

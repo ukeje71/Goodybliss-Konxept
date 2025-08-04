@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
 import "swiper/css";
@@ -12,6 +12,9 @@ import {
   MoveRight,
   ArrowRight,
 } from "lucide-react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../components/firebase";
+import Cards2 from "../components/Layouts/Cards2";
 
 // Assets
 import abstractImage from "../assets/Images/Abstract.jpeg";
@@ -19,8 +22,6 @@ import fineArtImage from "../assets/Images/Fine.jpeg";
 import Watercolor1 from "../assets/Images/Face2.jpeg";
 import Impressionist1 from "../assets/Images/Face1.jpeg";
 
-import Cards2 from "../components/Layouts/Cards2";
-import { product } from "../data/product";
 const SLIDES = [
   {
     image: abstractImage,
@@ -31,7 +32,6 @@ const SLIDES = [
   {
     image:
       "https://res.cloudinary.com/dlyearrnf/image/upload/v1753792136/Face1_pqpqrd.jpg",
-
     title: "Chromatic Harmony",
     subtitle: "Oil Painting • 2022",
     quote: "Color is my day-long obsession, joy and torment",
@@ -46,7 +46,6 @@ const SLIDES = [
   {
     image:
       "https://res.cloudinary.com/dlyearrnf/image/upload/v1753792044/Face2_nqgxcg.jpg",
-
     title: "The Doors are Open",
     subtitle: "Acrylic & Resin • 2023",
     quote: "The artist is a receptacle for emotions that come from everywhere",
@@ -57,7 +56,6 @@ const PRODUCT_CARDS = [
   {
     image:
       "https://res.cloudinary.com/dlyearrnf/image/upload/v1753792044/Face2_nqgxcg.jpg",
-
     title: "Most Popular",
     description: "Explore collector favourite works and best sellers",
     cta: "Explore",
@@ -65,7 +63,6 @@ const PRODUCT_CARDS = [
   {
     image:
       "https://res.cloudinary.com/dlyearrnf/image/upload/v1753792036/Admirer_bb4hnn.jpg",
-
     title: "Featured Artwork",
     description: '"The Beauty Of Imperfect Things" fine art print',
     cta: "Discover",
@@ -73,7 +70,6 @@ const PRODUCT_CARDS = [
   {
     image:
       "https://res.cloudinary.com/dlyearrnf/image/upload/v1753792028/Fine_jgueyn.jpg",
-
     title: "Available Originals",
     description: "Take your time to find the perfect heirloom",
     cta: "View Originals",
@@ -99,57 +95,7 @@ const TESTIMONIALS = [
     text: "I've purchased three pieces now and each one brings me so much joy. The colors are even more vibrant in person.",
     rating: 3,
   },
-  {
-    name: "Sarah J.",
-    location: "New York",
-    text: "The artwork arrived beautifully packaged and exceeded my expectations. It's the centerpiece of my living room now!",
-    rating: 4,
-  },
-  {
-    name: "Michael T.",
-    location: "London",
-    text: "Exceptional quality and the artist's attention to detail is remarkable. Will definitely purchase again.",
-    rating: 5,
-  },
-  {
-    name: "Emma L.",
-    location: "Sydney",
-    text: "I've purchased three pieces now and each one brings me so much joy. The colors are even more vibrant in person.",
-    rating: 6,
-  },
 ];
-
-// const FEATURED_PRODUCTS = [
-//   {
-//     id: 1,
-//     image: Watercolor1,
-//     title: "Golden Horizon",
-//     medium: "Oil on Canvas",
-//     price: 1200,
-//     discountPrice: 950,
-//     size: "24 × 36 inches",
-//     year: 2023,
-//   },
-//   {
-//     id: 2,
-//     image: Watercolor1,
-//     title: "Azure Reflections",
-//     medium: "Acrylic on Wood Panel",
-//     price: 850,
-//     size: "18 × 24 inches",
-//     year: 2022,
-//   },
-//   {
-//     id: 3,
-//     image: Watercolor1,
-//     title: "Whispering Pines",
-//     medium: "Watercolor on Paper",
-//     price: 650,
-//     discountPrice: 550,
-//     size: "16 × 20 inches",
-//     year: 2024,
-//   },
-// ];
 
 const SliderNavigation = ({ swiperRef, className = "" }) => {
   return (
@@ -175,11 +121,39 @@ const SliderNavigation = ({ swiperRef, className = "" }) => {
 };
 
 const Homepage = () => {
-  const produce = product.filter((product) => product);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const navigate = useNavigate();
   const heroSwiperRef = useRef(null);
   const testimonialSwiperRef = useRef(null);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const querySnapshot = await getDocs(collection(db, "products"));
+        const productsData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+          regularPrice: Number(doc.data().regularPrice) || 0,
+          discountPrice: doc.data().discountPrice
+            ? Number(doc.data().discountPrice)
+            : null,
+          inStock: doc.data().inStock !== false,
+        }));
+        setProducts(productsData);
+      } catch (err) {
+        console.error("Error fetching products:", err);
+        setError("Failed to load products. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const renderHeroSlide = ({ image, title, subtitle, quote }) => (
     <SwiperSlide className="relative">
@@ -291,10 +265,9 @@ const Homepage = () => {
           </p>
           <button
             onClick={() => navigate("/gallery")}
-            // className="text-gray-400 text-sm md:text-xl border border-[#74541e] hover:bg-[#74551e52] hover:text-white w-fit px-5 py-2.5 lg:py-3 rounded-sm transition-colors uppercase flex items-center mx-auto"
-            className="px-6 py-3 border border-[#74541e] text-[#74541e] rounded hover:bg-[#74541e] hover:text-white transition-colors flex items-center mx-auto"
+            className="px-6 py-3 border text-[13px] md:text-xl border-[#74541e] text-[#74541e] rounded hover:bg-[#74541e] hover:text-white transition-colors flex items-center mx-auto"
           >
-            Welcome your favourite Painting Home{" "}
+            Welcome your favourite Painting Home
             <MoveRight className="ml-2 w-4 h-4" />
           </button>
         </div>
@@ -315,7 +288,7 @@ const Homepage = () => {
         </div>
 
         <div className="flex flex-col lg:flex-row lg:h-[90vh] w-full">
-          <div className="hidden  lg:flex w-full lg:w-1/2 h-1/2 lg:h-full relative">
+          <div className="hidden lg:flex w-full lg:w-1/2 h-1/2 lg:h-full relative">
             <img
               className="object-cover w-full h-full"
               src={fineArtImage}
@@ -332,7 +305,7 @@ const Homepage = () => {
             />
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center p-8">
               <div className="text-white text-center max-w-md">
-                <h1 className="text-3xl md:text-5xl font-serif mb-4 uppercase tracking-wider">
+                <h1 className="text-3xl md:text-5xl font-serif mb-4 lg:uppercase tracking-wider">
                   Curate Your Home Gallery
                 </h1>
                 <div className="w-20 h-0.5 bg-white mx-auto my-6"></div>
@@ -356,30 +329,43 @@ const Homepage = () => {
           <h2 className="text-3xl font-serif text-center text-[#74541e] mb-12">
             Featured Artworks
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {produce.slice(0, 3).map((airline) => (
-              <Cards2
-                key={airline.id}
-                image={airline.image}
-                title={airline.title}
-                regularPrice={airline.regularPrice}
-                inStock={airline.inStock}
-                year={airline.year}
-                className="border border-gray-200"
-                size={airline.size}
-                medium={airline.medium}
-                discountPrice={airline.discountPrice}
-              />
-            ))}
-          </div>
-          <div className="text-center mt-10">
-            <button
-              onClick={() => navigate("/gallery")}
-              className="px-6 py-3 border border-[#74541e] text-[#74541e] rounded hover:bg-[#74541e] hover:text-white transition-colors flex items-center mx-auto"
-            >
-              View All Artworks <MoveRight className="ml-2 w-4 h-4" />
-            </button>
-          </div>
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500">Loading artworks...</p>
+            </div>
+          ) : error ? (
+            <div className="text-center py-12">
+              <p className="text-red-500">{error}</p>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {products.slice(0, 3).map((product) => (
+                  <Cards2
+                    key={product.id}
+                    id={product.id}
+                    imageUrl={product.imageUrl}
+                    title={product.title}
+                    regularPrice={product.regularPrice}
+                    inStock={product.inStock}
+                    year={product.year}
+                    className="border border-gray-200"
+                    size={product.size}
+                    medium={product.medium}
+                    discountPrice={product.discountPrice}
+                  />
+                ))}
+              </div>
+              <div className="text-center mt-10">
+                <button
+                  onClick={() => navigate("/gallery")}
+                  className="px-6 py-3 border border-[#74541e] text-[#74541e] rounded hover:bg-[#74541e] hover:text-white transition-colors flex items-center mx-auto"
+                >
+                  View All Artworks <MoveRight className="ml-2 w-4 h-4" />
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </section>
 
@@ -492,7 +478,7 @@ const Homepage = () => {
               </p>
               <button
                 onClick={() => navigate("/about")}
-                className="px-6 py-3 bg-[#74541e] text-white rounded hover:bg-[#5a4218]  transition-colors flex items-center w-fit"
+                className="px-6 py-3 bg-[#74541e] text-white rounded hover:bg-[#5a4218] transition-colors flex items-center w-fit"
               >
                 See Full Artist Bio <MoveRight className="ml-2 w-4 h-4" />
               </button>

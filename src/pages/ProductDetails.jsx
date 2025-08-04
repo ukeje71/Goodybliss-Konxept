@@ -1,23 +1,19 @@
 import React from "react";
-import Details from "../components/Store/Details";
+import useDetailsStore from "../components/Store/Details";
 import { useParams } from "react-router";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router";
 import useCartStore from "../components/Store/cartStore";
 
 const ProductDetails = () => {
-  const {
-    decreaseQuantity,
-    increaseQuantity,
-    addToCart,
-    cartItems,
-  } = useCartStore();
+  const { decreaseQuantity, increaseQuantity, addToCart, cartItems } =
+    useCartStore();
 
-  const { products } = Details(); // Zustand product list
+  const { products } = useDetailsStore(); // Zustand product list
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const productId = parseInt(id);
+  const productId = id;
   const product = products.find((p) => p.id === productId);
 
   if (!product) {
@@ -44,7 +40,8 @@ const ProductDetails = () => {
           {/* Image */}
           <div className="md:w-1/2">
             <img
-              src={product.image}
+              src={product.imageUrl
+}
               alt={product.title}
               className="w-full h-auto rounded-lg shadow-lg object-cover"
             />
@@ -62,11 +59,11 @@ const ProductDetails = () => {
             {/* Price */}
             <div className="flex items-center gap-4">
               <p className="text-2xl font-semibold text-[#74541e]">
-                ${product.discountPrice || product.regularPrice}
+                ${product.discountPrice || product.price}
               </p>
               {product.discountPrice && (
                 <p className="text-lg text-gray-500 line-through">
-                  ${product.regularPrice}
+                  ${product.price}
                 </p>
               )}
             </div>
@@ -74,10 +71,10 @@ const ProductDetails = () => {
             {/* Stock */}
             <p
               className={`text-sm ${
-                product.inStock ? "text-green-600" : "text-red-600"
+                product.stock ? "text-green-600" : "text-red-600"
               }`}
             >
-              {product.inStock ? "In Stock" : "Sold Out"}
+              {product.stock ? "In Stock" : "Sold Out"}
             </p>
 
             {/* Description */}
@@ -89,7 +86,7 @@ const ProductDetails = () => {
             </div>
 
             {/* Quantity Control */}
-            {product.inStock && itemInCart && (
+            {product.stock && itemInCart && (
               <div className="flex items-center space-x-4">
                 <span className="text-gray-700">Quantity:</span>
                 <div className="flex items-center border border-gray-300 rounded">
@@ -114,16 +111,16 @@ const ProductDetails = () => {
             <button
               onClick={() => addToCart(product)}
               className={`bg-[#74541e] text-white py-3 px-6 rounded hover:bg-[#5a4218] transition-colors ${
-                !product.inStock ? "opacity-50 cursor-not-allowed" : ""
+                !product.stock ? "opacity-50 cursor-not-allowed" : ""
               }`}
-              disabled={!product.inStock}
+              disabled={!product.stock}
             >
-              {product.inStock ? "Add to Cart" : "Out of Stock"}
+              {product.stock ? "Add to Cart" : "Out of Stock"}
             </button>
 
             {/* Tags */}
             <div className="flex flex-wrap gap-2 pt-4">
-              {product.tags.map((tag) => (
+              {product.tags?.map((tag) => (
                 <span
                   key={tag}
                   className="px-3 py-1 bg-gray-100 text-gray-800 text-sm rounded-full"

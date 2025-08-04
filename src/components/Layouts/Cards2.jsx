@@ -2,11 +2,10 @@ import React from "react";
 import { Heart, MoveRight } from "lucide-react";
 import { useNavigate } from "react-router";
 import useWishlistStore from "../Store/wishlistStore";
-// import useCartStore from "../Store/cartStore";
 const Cards2 = ({
   id,
   title,
-  image,
+  imageUrl,
   discountPrice,
   size,
   year,
@@ -27,20 +26,20 @@ const Cards2 = ({
       className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow"
     >
       <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden">
-        {image ? (
+        {imageUrl ? (
           <img
-            src={image}
+            src={imageUrl}
             alt={title || "Artwork"}
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
             loading="lazy"
             onError={(e) => {
               e.target.onerror = null;
-              e.target.src = "path/to/placeholder-image.jpg";
+              e.target.src = "path/to/placeholder-imageUrl.jpg";
             }}
           />
         ) : (
           <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-            <span className="text-gray-500">Image not available</span>
+            <span className="text-gray-500">ImageUrl not available</span>
           </div>
         )}
         {/* Heart icon (non-interactive) */}

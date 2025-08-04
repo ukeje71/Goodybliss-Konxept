@@ -15,136 +15,135 @@ import {
 } from "lucide-react";
 import Sidebar from "../components/Layouts/Dashboard/Sidebar";
 import axios from "axios";
-import { db } from "../components/Firebase";
+import { db } from "../components/firebase";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 
 const CreateProductPage = () => {
-const [productData, setProductData] = useState({
-  title: "",
-  description: "",
-  category: "original",
-  medium: "",
-  year: new Date().getFullYear(),
-  price: "",
-  discountPrice: "",
-  size: "",
-  stock: 1,
-  images: [],
-});
+  const [productData, setProductData] = useState({
+    title: "",
+    description: "",
+    category: "original",
+    medium: "",
+    year: new Date().getFullYear(),
+    price: "",
+    discountPrice: "",
+    size: "",
+    stock: true,
+    images: [],
+  });
 
-const [previewImages, setPreviewImages] = useState([]);
-const [selectedFile, setSelectedFile] = useState(null); // ✅ New state for actual file
-const [isUploading, setIsUploading] = useState(false);
-const [uploadError, setUploadError] = useState("");
-const fileInputRef = useRef(null);
+  const [previewImages, setPreviewImages] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null); // ✅ New state for actual file
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+  const fileInputRef = useRef(null);
 
-const handleInputChange = (e) => {
-  const { name, value } = e.target;
-  setProductData((prev) => ({ ...prev, [name]: value }));
-};
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setProductData((prev) => ({ ...prev, [name]: value }));
+  };
 
-const handleImageUpload = (e) => {
-  const file = e.target.files[0];
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
 
-  if (!file) return;
+    if (!file) return;
 
-  if (!file.type.startsWith("image/")) {
-    setUploadError("Please upload an image file");
-    return;
-  }
+    if (!file.type.startsWith("image/")) {
+      setUploadError("Please upload an image file");
+      return;
+    }
 
-  if (file.size > 5 * 1024 * 1024) {
-    setUploadError("Image size must be less than 5MB");
-    return;
-  }
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError("Image size must be less than 5MB");
+      return;
+    }
 
-  if (previewImages.length >= 1) {
-    setUploadError("You can only upload one image at a time");
-    return;
-  }
+    if (previewImages.length >= 1) {
+      setUploadError("You can only upload one image at a time");
+      return;
+    }
 
-  setIsUploading(true);
-  setUploadError("");
+    setIsUploading(true);
+    setUploadError("");
 
-  setTimeout(() => {
-    const newPreview = {
-      name: file.name,
-      url: URL.createObjectURL(file),
-    };
+    setTimeout(() => {
+      const newPreview = {
+        name: file.name,
+        url: URL.createObjectURL(file),
+      };
 
-    setSelectedFile(file); // ✅ Store actual file
-    setPreviewImages([newPreview]);
-    setIsUploading(false);
-    fileInputRef.current.value = "";
-  }, 1000);
-};
+      setSelectedFile(file);
+      setPreviewImages([newPreview]);
+      setIsUploading(false);
+      fileInputRef.current.value = "";
+    }, 1000);
+  };
 
-const removeImage = (index) => {
-  const updatedPreviews = [...previewImages];
-  URL.revokeObjectURL(updatedPreviews[index].url);
-  updatedPreviews.splice(index, 1);
-  setPreviewImages(updatedPreviews);
-  setSelectedFile(null); // ✅ Clear file if image removed
-};
+  const removeImage = (index) => {
+    const updatedPreviews = [...previewImages];
+    URL.revokeObjectURL(updatedPreviews[index].url);
+    updatedPreviews.splice(index, 1);
+    setPreviewImages(updatedPreviews);
+    setSelectedFile(null); // ✅ Clear file if image removed
+  };
 
-const triggerFileInput = () => {
-  fileInputRef.current.click();
-};
+  const triggerFileInput = () => {
+    fileInputRef.current.click();
+  };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (!selectedFile) {
-    setUploadError("Please add an image before submitting.");
-    return;
-  }
+    if (!selectedFile) {
+      setUploadError("Please add an image before submitting.");
+      return;
+    }
 
-  setIsUploading(true);
+    setIsUploading(true);
 
-  try {
-    const formData = new FormData();
-    formData.append("file", selectedFile); // ✅ Correct file reference
-    formData.append("upload_preset", "Goodybliss");
-    formData.append("folder", "samples/ecommerce");
+    try {
+      const formData = new FormData();
+      formData.append("file", selectedFile); // ✅ Correct file reference
+      formData.append("upload_preset", "Goodybliss");
+      formData.append("folder", "samples/ecommerce");
 
-    const cloudinaryRes = await axios.post(
-      "https://api.cloudinary.com/v1_1/dlyearrnf/image/upload",
-      formData
-    );
+      const cloudinaryRes = await axios.post(
+        "https://api.cloudinary.com/v1_1/dlyearrnf/image/upload",
+        formData
+      );
 
-    const imageUrl = cloudinaryRes.data.secure_url;
+      const imageUrl = cloudinaryRes.data.secure_url;
 
-    await addDoc(collection(db, "products"), {
-      ...productData,
-      imageUrl: imageUrl,
-      createdAt: serverTimestamp(),
-    });
+      await addDoc(collection(db, "products"), {
+        ...productData,
+        imageUrl: imageUrl,
+        createdAt: serverTimestamp(),
+      });
 
-    alert("Artwork uploaded successfully!");
+      alert("Artwork uploaded successfully!");
 
-    // Reset everything
-    setProductData({
-      title: "",
-      description: "",
-      category: "original",
-      medium: "",
-      year: new Date().getFullYear(),
-      price: "",
-      discountPrice: "",
-      size: "",
-      stock: 1,
-      images: [],
-    });
-    setPreviewImages([]);
-    setSelectedFile(null);
-  } catch (error) {
-    console.log("Error uploading or saving:", error);
-    setUploadError("Failed to upload image or save product. Try again.");
-  } finally {
-    setIsUploading(false);
-  }
-};
-
+      // Reset everything
+      setProductData({
+        title: "",
+        description: "",
+        category: "original",
+        medium: "",
+        year: new Date().getFullYear(),
+        price: "",
+        discountPrice: "",
+        size: "",
+        stock: 1,
+        images: [],
+      });
+      setPreviewImages([]);
+      setSelectedFile(null);
+    } catch (error) {
+      console.log("Error uploading or saving:", error);
+      setUploadError("Failed to upload image or save product. Try again.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f9f5ee] to-[#f0e8d8] py-8 px-4 sm:px-6 lg:px-8">
@@ -383,17 +382,18 @@ const handleSubmit = async (e) => {
 
                 <div>
                   <label className="block text-sm font-medium text-[#846C3B] mb-1">
-                    Stock Quantity <span className="text-red-500">*</span>
+                    In Stock <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="number"
+                  <select
                     name="stock"
-                    min="0"
                     value={productData.stock}
                     onChange={handleInputChange}
                     className="w-full px-4 py-2 border border-[#d4c9b5] rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]"
                     required
-                  />
+                  >
+                    <option value="true">True</option>
+                    <option value="false">False</option>
+                  </select>
                 </div>
               </div>
             </div>

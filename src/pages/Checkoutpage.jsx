@@ -44,7 +44,7 @@ const CheckoutPage = () => {
       // Process payment here
       // After successful payment:
       clearCart();
-      navigate("/order-confirmation");
+      // navigate("/order-confirmation");
     } else {
       setFormErrors(errors);
     }
@@ -237,7 +237,7 @@ const CheckoutPage = () => {
                     <div key={item.id} className="flex justify-between items-center">
                       <div className="flex items-center">
                         <img 
-                          src={item.image} 
+                          src={item.imageUrl} 
                           alt={item.title} 
                           className="w-12 h-12 object-cover rounded mr-3" 
                         />

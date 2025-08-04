@@ -6,6 +6,9 @@ import useWishlistStore from "../Store/wishlistStore";
 import toast from "react-hot-toast";
 import { Heart } from "lucide-react";
 import { useNavigate } from "react-router";
+import { db } from "../firebase";
+import { collection, getDocs } from "firebase/firestore";
+import useDetailsStore from "../Store/Details";
 
 const Cards = ({
   stockFilter = "all",
@@ -18,30 +21,34 @@ const Cards = ({
   const { addToCart } = useCartStore();
   const { wishlist, addToWishlist, removeFromWishlist } = useWishlistStore();
 
-  // 🟢 Fetch products from GitHub JSON file
+  // Fetch Firestore products
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch(
-          "https://raw.githubusercontent.com/ukeje71/json_file/main/products.json"
-        );
-        const data = await res.json();
-        setProducts(data);
+        const querySnapshot = await getDocs(collection(db, "products"));
+        const productsArray = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        setProducts(productsArray); // for local rendering
+        useDetailsStore.getState().setProducts(productsArray);
       } catch (error) {
-        console.error("Failed to fetch products:", error);
+        console.error("Failed to fetch products from Firestore:", error);
       }
     };
+
     fetchProducts();
   }, []);
-
   // Filter, sort, paginate
   const safeProducts = products || [];
 
   const filteredProducts = safeProducts.filter((item) => {
     if (!item || typeof item !== "object") return false;
     if (stockFilter === "all") return true;
-    if (stockFilter === "in-stock") return item.inStock !== false;
-    if (stockFilter === "out-of-stock") return item.inStock === false;
+    if (stockFilter === "in-stock") return item.stock !== false;
+    if (stockFilter === "out-of-stock") return item.stock === false;
     return item.category === stockFilter;
   });
 
@@ -92,12 +99,13 @@ const Cards = ({
         id: product.id,
         title: product.title,
         price: product.discountPrice || product.regularPrice,
-        image: product.image,
+        imageUrl: product.imageUrl, // ✅ This matches what you check when rendering
         size: product.size,
         year: product.year,
         medium: product.medium,
-        inStock: product.inStock,
+        stock: product.stock,
       };
+
       addToWishlist(wishlistProduct);
       toast.success(
         (t) => (
@@ -122,9 +130,7 @@ const Cards = ({
   if (productsToShow.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">
-          No products found matching your criteria
-        </p>
+        <p className="text-gray-500">Loading Artworks....</p>
       </div>
     );
   }
@@ -134,13 +140,12 @@ const Cards = ({
       {productsToShow.map((item) => {
         const discountPercent = item.discountPrice
           ? Math.round(
-              ((item.regularPrice - item.discountPrice) /
-                item.regularPrice) *
+              ((item.regularPrice - item.discountPrice) / item.regularPrice) *
                 100
             )
           : 0;
         const isInWishlist = wishlist.some(
-          (wishlistItem) => wishlistItem.id === item.id
+          (wishlistItem) => wishlistItem && wishlistItem.id === item.id
         );
 
         return (
@@ -150,9 +155,9 @@ const Cards = ({
             onClick={() => navigate(`/products/${item.id}`)}
           >
             <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden">
-              {item.image ? (
+              {item.imageUrl ? (
                 <img
-                  src={item.image}
+                  src={item.imageUrl}
                   alt={item.title || "Artwork"}
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                   loading="lazy"
@@ -186,7 +191,7 @@ const Cards = ({
                   On Sale
                 </div>
               )}
-              {item.inStock === false && (
+              {item.stock === false && (
                 <div className="absolute top-3 right-3 bg-gray-600 text-white text-xs font-medium px-2 py-1 rounded-full">
                   Sold Out
                 </div>
@@ -207,10 +212,10 @@ const Cards = ({
                 {item.discountPrice ? (
                   <div className="flex items-center gap-2">
                     <span className="text-lg font-bold text-[#74541e]">
-                      ${item.discountPrice.toFixed(2)}
+                      ${Number(item.discountPrice).toFixed(2)}
                     </span>
                     <span className="text-sm text-gray-400 line-through">
-                      ${item.regularPrice?.toFixed(2)}
+                      ${Number(item.price).toFixed(2)}
                     </span>
                     {discountPercent > 0 && (
                       <span className="ml-auto text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded">
@@ -220,10 +225,11 @@ const Cards = ({
                   </div>
                 ) : (
                   <span className="text-lg font-bold text-[#74541e]">
-                    ${item.regularPrice?.toFixed(2)}
+                    ${Number(item.regularPrice).toFixed(2)}
                   </span>
                 )}
               </div>
+
               <div className="flex gap-2">
                 <button
                   onClick={(e) => {
@@ -237,16 +243,16 @@ const Cards = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    item.inStock && handleAddToCart(item);
+                    item.stock && handleAddToCart(item);
                   }}
                   className={`flex-1 py-2 text-sm rounded transition-colors ${
-                    item.inStock
+                    item.stock
                       ? "bg-[#74541e] text-white hover:bg-[#5a4218]"
                       : "bg-gray-300 text-gray-500 cursor-not-allowed"
                   }`}
-                  disabled={item.inStock === false}
+                  disabled={item.stock === false}
                 >
-                  {item.inStock ? "Add to Cart" : "Sold Out"}
+                  {item.stock ? "Add to Cart" : "Sold Out"}
                 </button>
               </div>
             </div>
