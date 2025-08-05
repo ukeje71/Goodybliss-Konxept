@@ -1,5 +1,5 @@
 import React from "react";
-import { Heart, MoveRight } from "lucide-react";
+import { Heart } from "lucide-react";
 import { useNavigate } from "react-router";
 import useWishlistStore from "../Store/wishlistStore";
 import useCartStore from "../Store/cartStore";
@@ -17,15 +17,22 @@ const Cards2 = ({
   regularPrice,
   ...product // Capture all other product props
 }) => {
-  // Cart functionality
   const discountPercent = discountPrice
     ? Math.round(((regularPrice - discountPrice) / regularPrice) * 100)
     : 0;
-  // Routing
+
   const navigate = useNavigate();
-  const { addToWishlist } = useWishlistStore();
+
+  // Zustand store
+  const {
+    wishlist,
+    addToWishlist,
+    removeFromWishlist,
+  } = useWishlistStore();
+
   const { addToCart } = useCartStore();
 
+  // Add to cart handler
   const handleAddToCart = (e) => {
     e.stopPropagation();
     addToCart({
@@ -36,9 +43,34 @@ const Cards2 = ({
       size,
       year,
       medium,
-      ...product, // Include all other product props
+      ...product,
     });
-    toast.success("Added to Cart ")
+    toast.success("Added to Cart");
+  };
+
+  // Wishlist toggle
+  const isInWishlist = wishlist.some(
+    (item) => item && item.id === id
+  );
+
+  const handleWishlistToggle = (e) => {
+    e.stopPropagation();
+    if (isInWishlist) {
+      removeFromWishlist(id);
+      toast.error("Removed from Wishlist");
+    } else {
+      addToWishlist({
+        id,
+        title,
+        imageUrl,
+        price: discountPrice || regularPrice,
+        size,
+        year,
+        medium,
+        ...product,
+      });
+      toast.success("Added to Wishlist");
+    }
   };
 
   return (
@@ -55,30 +87,30 @@ const Cards2 = ({
             loading="lazy"
             onError={(e) => {
               e.target.onerror = null;
-              e.target.src = "path/to/placeholder-imageUrl.jpg";
+              e.target.src = "/placeholder.jpg"; // Replace with real fallback image
             }}
           />
         ) : (
           <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-            <span className="text-gray-500">ImageUrl not available</span>
+            <span className="text-gray-500">Image not available</span>
           </div>
         )}
-        {/* Heart icon */}
-        <button 
-          className="absolute top-3 left-3 p-2 rounded-full bg-white/80 hover:bg-white"
-          onClick={(e) => {
-            e.stopPropagation();
-            addToWishlist({
-              id,
-              title,
-              imageUrl,
-              price: discountPrice || regularPrice,
-              ...product
-            });
-          }}
+
+        {/* Wishlist Button */}
+        <button
+          onClick={handleWishlistToggle}
+          className="absolute top-3 left-3 p-2 rounded-full bg-white/80 hover:bg-white transition-colors z-10"
         >
-          <Heart size={20} />
+          <Heart
+            size={20}
+            className={
+              isInWishlist
+                ? "text-[#74541e] fill-[#74541e]"
+                : "text-gray-400 hover:text-[#74541e]"
+            }
+          />
         </button>
+
         {discountPrice && (
           <div className="absolute top-3 right-3 bg-[#aa9f8f] text-white text-xs font-medium px-2 py-1 rounded-full">
             On Sale
@@ -91,6 +123,8 @@ const Cards2 = ({
           </div>
         )}
       </div>
+
+      {/* Product Details */}
       <div className="p-4">
         <h3 className="text-xl font-medium text-gray-800">{title}</h3>
         <p className="text-sm text-gray-600 mt-1">
@@ -120,6 +154,7 @@ const Cards2 = ({
             </span>
           )}
         </div>
+
         {/* Buttons */}
         <div className="flex gap-2">
           <button
@@ -131,22 +166,23 @@ const Cards2 = ({
           >
             View Details
           </button>
-<button
-  onClick={(e) => {
-    e.stopPropagation();
-    if (inStock) {
-      handleAddToCart(e);  // Pass the event to handleAddToCart
-    }
-  }}
-  className={`flex-1 py-2 text-sm rounded transition-colors ${
-    inStock
-      ? "bg-[#74541e] text-white hover:bg-[#5a4218]"
-      : "bg-gray-300 text-gray-500 cursor-not-allowed"
-  }`}
-  disabled={inStock === false}
->
-  {inStock ? "Add to Cart" : "Sold Out"}
-</button>        </div>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              if (inStock) {
+                handleAddToCart(e);
+              }
+            }}
+            className={`flex-1 py-2 text-sm rounded transition-colors ${
+              inStock
+                ? "bg-[#74541e] text-white hover:bg-[#5a4218]"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+            }`}
+            disabled={inStock === false}
+          >
+            {inStock ? "Add to Cart" : "Sold Out"}
+          </button>
+        </div>
       </div>
     </div>
   );
