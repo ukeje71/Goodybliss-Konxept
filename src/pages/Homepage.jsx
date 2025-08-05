@@ -13,9 +13,8 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { collection, getDocs } from "firebase/firestore";
-import { db } from "../components/firebase";
 import Cards2 from "../components/Layouts/Cards2";
-
+import {db} from "../components/Firebase"
 // Assets
 import abstractImage from "../assets/Images/Abstract.jpeg";
 import fineArtImage from "../assets/Images/Fine.jpeg";
