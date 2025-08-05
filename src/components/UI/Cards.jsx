@@ -6,7 +6,7 @@ import useWishlistStore from "../Store/wishlistStore";
 import toast from "react-hot-toast";
 import { Heart } from "lucide-react";
 import { useNavigate } from "react-router";
-import { db } from "../firebase";
+import { db } from "../Firebase";
 import { collection, getDocs } from "firebase/firestore";
 import useDetailsStore from "../Store/Details";
 
