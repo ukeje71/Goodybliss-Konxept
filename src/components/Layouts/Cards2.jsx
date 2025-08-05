@@ -2,6 +2,9 @@ import React from "react";
 import { Heart, MoveRight } from "lucide-react";
 import { useNavigate } from "react-router";
 import useWishlistStore from "../Store/wishlistStore";
+import useCartStore from "../Store/cartStore";
+import toast from "react-hot-toast";
+
 const Cards2 = ({
   id,
   title,
@@ -12,6 +15,7 @@ const Cards2 = ({
   medium,
   inStock,
   regularPrice,
+  ...product // Capture all other product props
 }) => {
   // Cart functionality
   const discountPercent = discountPrice
@@ -19,7 +23,24 @@ const Cards2 = ({
     : 0;
   // Routing
   const navigate = useNavigate();
-  const {addToWishlist}= useWishlistStore();
+  const { addToWishlist } = useWishlistStore();
+  const { addToCart } = useCartStore();
+
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
+    addToCart({
+      id,
+      title,
+      imageUrl,
+      price: discountPrice || regularPrice,
+      size,
+      year,
+      medium,
+      ...product, // Include all other product props
+    });
+    toast.success("Added to Cart ")
+  };
+
   return (
     <div
       key={id}
@@ -42,9 +63,21 @@ const Cards2 = ({
             <span className="text-gray-500">ImageUrl not available</span>
           </div>
         )}
-        {/* Heart icon (non-interactive) */}
-        <button className="absolute top-3 left-3 p-2 rounded-full bg-white/80">
-          <Heart size={20} onClick={() => addToWishlist()} />
+        {/* Heart icon */}
+        <button 
+          className="absolute top-3 left-3 p-2 rounded-full bg-white/80 hover:bg-white"
+          onClick={(e) => {
+            e.stopPropagation();
+            addToWishlist({
+              id,
+              title,
+              imageUrl,
+              price: discountPrice || regularPrice,
+              ...product
+            });
+          }}
+        >
+          <Heart size={20} />
         </button>
         {discountPrice && (
           <div className="absolute top-3 right-3 bg-[#aa9f8f] text-white text-xs font-medium px-2 py-1 rounded-full">
@@ -98,18 +131,22 @@ const Cards2 = ({
           >
             View Details
           </button>
-          <button
-            // onClick={() => inStock && addToCart()}
-            className={`flex-1 py-2 text-sm rounded transition-colors ${
-              inStock
-                ? "bg-[#74541e] text-white rounded hover:bg-[#5a4218]"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
-            }`}
-            disabled={inStock === false}
-          >
-            {inStock ? "Add to Cart" : "Sold Out"}
-          </button>
-        </div>
+<button
+  onClick={(e) => {
+    e.stopPropagation();
+    if (inStock) {
+      handleAddToCart(e);  // Pass the event to handleAddToCart
+    }
+  }}
+  className={`flex-1 py-2 text-sm rounded transition-colors ${
+    inStock
+      ? "bg-[#74541e] text-white hover:bg-[#5a4218]"
+      : "bg-gray-300 text-gray-500 cursor-not-allowed"
+  }`}
+  disabled={inStock === false}
+>
+  {inStock ? "Add to Cart" : "Sold Out"}
+</button>        </div>
       </div>
     </div>
   );
