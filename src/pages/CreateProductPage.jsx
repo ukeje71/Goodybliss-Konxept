@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import Sidebar from "../components/Layouts/Dashboard/Sidebar";
 import axios from "axios";
-import { db } from "../components/firebase";
+import { db } from "../components/Firebase";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 
 const CreateProductPage = () => {
