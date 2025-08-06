@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { collection, getDocs } from "firebase/firestore";
 import Cards2 from "../components/Layouts/Cards2";
-import {db} from "../components/Firebase"
+import { db } from "../components/Firebase";
 // Assets
 import abstractImage from "../assets/Images/Abstract.jpeg";
 import fineArtImage from "../assets/Images/Fine.jpeg";
@@ -329,13 +329,27 @@ const Homepage = () => {
             Featured Artworks
           </h2>
           {loading ? (
-            <div className="text-center py-12">
-              <p className="text-gray-500">Loading artworks...</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-pulse">
+              {[...Array(3)].map((_, index) => (
+                <div
+                  key={index}
+                  className="bg-white rounded-lg overflow-hidden shadow-md"
+                >
+                  <div className="aspect-[4/3] bg-gray-300" />
+                  <div className="p-4">
+                    <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
+                    <div className="h-3 bg-gray-200 rounded w-1/2 mb-1"></div>
+                    <div className="h-3 bg-gray-200 rounded w-1/3 mb-4"></div>
+                    <div className="flex space-x-2">
+                      <div className="h-8 bg-gray-300 rounded w-1/2"></div>
+                      <div className="h-8 bg-gray-200 rounded w-1/2"></div>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           ) : error ? (
-            <div className="text-center py-12">
-              <p className="text-red-500">{error}</p>
-            </div>
+            <div className="text-center text-red-500 py-8">{error}</div>
           ) : (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

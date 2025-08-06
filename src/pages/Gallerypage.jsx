@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useLocation } from "react-router";
 import Artist from "../assets/Images/Face1.jpeg";
-import { product } from "../data/product"; 
+import { product } from "../data/product";
 import Cards from "../components/UI/Cards";
 
 const GalleryPage = () => {
@@ -12,6 +12,15 @@ const GalleryPage = () => {
   const [sortBy, setSortBy] = useState("alphabetical");
   const [currentPage, setCurrentPage] = useState(1);
   const photosPerPage = 12;
+  // Dummy loading state
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000); // Simulate 1s load; adjust or connect to your API loading logic
+
+    return () => clearTimeout(timer);
+  }, [category]);
 
   useEffect(() => {
     if (category && ["oils", "watercolors", "sketches"].includes(category)) {
@@ -60,7 +69,7 @@ const GalleryPage = () => {
   };
 
   // Filter
-  const filteredProducts = product.filter(item => {
+  const filteredProducts = product.filter((item) => {
     if (!item || typeof item !== "object") return false;
 
     if (stockFilter === "all") return true;
@@ -75,12 +84,18 @@ const GalleryPage = () => {
     const priceB = b.discountPrice ?? b.regularPrice ?? 0;
 
     switch (sortBy) {
-      case "alphabetical": return (a.title || "").localeCompare(b.title || "");
-      case "price-low-high": return priceA - priceB;
-      case "price-high-low": return priceB - priceA;
-      case "date-new-old": return new Date(b.year || 0) - new Date(a.year || 0);
-      case "date-old-new": return new Date(a.year || 0) - new Date(b.year || 0);
-      default: return 0;
+      case "alphabetical":
+        return (a.title || "").localeCompare(b.title || "");
+      case "price-low-high":
+        return priceA - priceB;
+      case "price-high-low":
+        return priceB - priceA;
+      case "date-new-old":
+        return new Date(b.year || 0) - new Date(a.year || 0);
+      case "date-old-new":
+        return new Date(a.year || 0) - new Date(b.year || 0);
+      default:
+        return 0;
     }
   });
 
@@ -111,10 +126,14 @@ const GalleryPage = () => {
             </h1>
             <div className="text-gray-800 space-y-4 md:space-y-6">
               <h3 className="text-lg md:text-xl">
-                Pack up the oils, wrap up the brushes and onto the next adventure...
+                Pack up the oils, wrap up the brushes and onto the next
+                adventure...
               </h3>
               <p className="leading-relaxed md:leading-8 text-base md:text-lg">
-                After two years in our warehouse studio, my creative practice is moving to Melbourne! <b>For the first time,</b> collector favourites and newly released works are available at a very special price.
+                After two years in our warehouse studio, my creative practice is
+                moving to Melbourne! <b>For the first time,</b> collector
+                favourites and newly released works are available at a very
+                special price.
               </p>
               <p className="text-[#74541e] italic text-lg md:text-xl">
                 Goodybliss - Konxept
@@ -187,7 +206,29 @@ const GalleryPage = () => {
         </div>
 
         {/* Product Grid */}
-        <Cards products={productsToShow} />
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
+            {[...Array(6)].map((_, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-lg overflow-hidden shadow-md"
+              >
+                <div className="aspect-[4/3] bg-gray-300" />
+                <div className="p-4">
+                  <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
+                  <div className="h-3 bg-gray-200 rounded w-1/2 mb-1"></div>
+                  <div className="h-3 bg-gray-200 rounded w-1/3 mb-4"></div>
+                  <div className="flex space-x-2">
+                    <div className="h-8 bg-gray-300 rounded w-1/2"></div>
+                    <div className="h-8 bg-gray-200 rounded w-1/2"></div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <Cards products={productsToShow} />
+        )}
 
         {/* Pagination */}
         <div className="flex justify-center mt-12">
