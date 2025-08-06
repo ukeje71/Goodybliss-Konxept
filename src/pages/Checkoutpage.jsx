@@ -6,7 +6,7 @@ import { useNavigate } from "react-router";
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const { cartItems, getTotalPrice, clearCart } = useCartStore();
-  
+
   const [formErrors, setFormErrors] = useState({});
   const [formData, setFormData] = useState({
     fullName: "",
@@ -28,8 +28,10 @@ const CheckoutPage = () => {
     const errors = {};
     if (!formData.fullName.trim()) errors.fullName = "Full name required";
     if (!formData.email.trim()) errors.email = "Email required";
-    if (!formData.phoneNumber.trim()) errors.phoneNumber = "Phone number required";
-    if (!formData.addressLine1.trim()) errors.addressLine1 = "Address line required";
+    if (!formData.phoneNumber.trim())
+      errors.phoneNumber = "Phone number required";
+    if (!formData.addressLine1.trim())
+      errors.addressLine1 = "Address line required";
     if (!formData.streetName.trim()) errors.streetName = "Street name required";
     if (!formData.city.trim()) errors.city = "City required";
     if (!formData.state.trim()) errors.state = "State required";
@@ -39,7 +41,7 @@ const CheckoutPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const errors = validateForm();
-    
+
     if (Object.keys(errors).length === 0) {
       // Process payment here
       // After successful payment:
@@ -52,13 +54,13 @@ const CheckoutPage = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
     <div className="min-h-screen bg-[#f5f0ea] py-8 px-4">
       <div className="max-w-6xl mx-auto">
-        <button 
+        <button
           onClick={() => navigate(-1)}
           className="flex items-center text-[#74541e] mb-6 hover:text-[#5a4218]"
         >
@@ -85,10 +87,14 @@ const CheckoutPage = () => {
                     name="fullName"
                     value={formData.fullName}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-2 border ${formErrors.fullName ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
+                    className={`w-full px-4 py-2 border ₦{formErrors.fullName ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
                     required
                   />
-                  {formErrors.fullName && <p className="text-red-500 text-xs mt-1">{formErrors.fullName}</p>}
+                  {formErrors.fullName && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {formErrors.fullName}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -100,10 +106,14 @@ const CheckoutPage = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-2 border ${formErrors.email ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
+                    className={`w-full px-4 py-2 border ₦{formErrors.email ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
                     required
                   />
-                  {formErrors.email && <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>}
+                  {formErrors.email && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {formErrors.email}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -115,10 +125,14 @@ const CheckoutPage = () => {
                     name="phoneNumber"
                     value={formData.phoneNumber}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-2 border ${formErrors.phoneNumber ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
+                    className={`w-full px-4 py-2 border ₦{formErrors.phoneNumber ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
                     required
                   />
-                  {formErrors.phoneNumber && <p className="text-red-500 text-xs mt-1">{formErrors.phoneNumber}</p>}
+                  {formErrors.phoneNumber && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {formErrors.phoneNumber}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -130,10 +144,14 @@ const CheckoutPage = () => {
                     name="addressLine1"
                     value={formData.addressLine1}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-2 border ${formErrors.addressLine1 ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
+                    className={`w-full px-4 py-2 border ₦{formErrors.addressLine1 ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
                     required
                   />
-                  {formErrors.addressLine1 && <p className="text-red-500 text-xs mt-1">{formErrors.addressLine1}</p>}
+                  {formErrors.addressLine1 && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {formErrors.addressLine1}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -145,10 +163,14 @@ const CheckoutPage = () => {
                     name="streetName"
                     value={formData.streetName}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-2 border ${formErrors.streetName ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
+                    className={`w-full px-4 py-2 border ₦{formErrors.streetName ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
                     required
                   />
-                  {formErrors.streetName && <p className="text-red-500 text-xs mt-1">{formErrors.streetName}</p>}
+                  {formErrors.streetName && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {formErrors.streetName}
+                    </p>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -161,10 +183,14 @@ const CheckoutPage = () => {
                       name="city"
                       value={formData.city}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-2 border ${formErrors.city ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
+                      className={`w-full px-4 py-2 border ₦{formErrors.city ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
                       required
                     />
-                    {formErrors.city && <p className="text-red-500 text-xs mt-1">{formErrors.city}</p>}
+                    {formErrors.city && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {formErrors.city}
+                      </p>
+                    )}
                   </div>
 
                   <div>
@@ -176,17 +202,21 @@ const CheckoutPage = () => {
                       name="state"
                       value={formData.state}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-2 border ${formErrors.state ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
+                      className={`w-full px-4 py-2 border ₦{formErrors.state ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
                       required
                     />
-                    {formErrors.state && <p className="text-red-500 text-xs mt-1">{formErrors.state}</p>}
+                    {formErrors.state && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {formErrors.state}
+                      </p>
+                    )}
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-[#846C3B] mb-1">
                       Country
                     </label>
-                    <select 
+                    <select
                       className="w-full px-4 py-2 border border-[#d4c9b5] rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]"
                       defaultValue="Nigeria"
                     >
@@ -234,56 +264,69 @@ const CheckoutPage = () => {
               <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
                 {cartItems.length > 0 ? (
                   cartItems.map((item) => (
-                    <div key={item.id} className="flex justify-between items-center">
+                    <div
+                      key={item.id}
+                      className="flex justify-between items-center"
+                    >
                       <div className="flex items-center">
-                        <img 
-                          src={item.imageUrl} 
-                          alt={item.title} 
-                          className="w-12 h-12 object-cover rounded mr-3" 
+                        <img
+                          src={item.imageUrl}
+                          alt={item.title}
+                          className="w-12 h-12 object-cover rounded mr-3"
                         />
                         <div>
-                          <h3 className="text-sm font-medium text-[#74541e]">{item.title}</h3>
-                          <p className="text-xs text-[#846C3B]">Qty: {item.quantity}</p>
+                          <h3 className="text-sm font-medium text-[#74541e]">
+                            {item.title}
+                          </h3>
+                          <p className="text-xs text-[#846C3B]">
+                            Qty: {item.quantity}
+                          </p>
                         </div>
                       </div>
                       <span className="text-sm font-medium text-[#74541e]">
-                        ${(item.price * item.quantity).toFixed(2)}
+                        ₦{(item.price * item.quantity).toFixed(2)}
                       </span>
                     </div>
                   ))
                 ) : (
-                  <p className="text-center text-gray-500 py-4">Your cart is empty</p>
+                  <p className="text-center text-gray-500 py-4">
+                    Your cart is empty
+                  </p>
                 )}
               </div>
 
               <div className="border-t border-[#e8e2d6] pt-4 space-y-2">
                 <div className="flex justify-between">
                   <span className="text-sm text-[#846C3B]">Subtotal</span>
-                  <span className="text-sm font-medium text-[#74541e]">${subtotal.toFixed(2)}</span>
+                  <span className="text-sm font-medium text-[#74541e]">
+                    ₦{subtotal.toFixed(2)}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-[#846C3B]">Shipping</span>
                   <span className="text-sm font-medium text-[#74541e]">
-                    {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
+                    {shipping === 0 ? "Free" : `₦₦{shipping.toFixed(2)}`}
                   </span>
                 </div>
                 <div className="flex justify-between pt-2 border-t border-[#e8e2d6] mt-2">
                   <span className="font-medium text-[#74541e]">Total</span>
-                  <span className="font-medium text-[#74541e]">${total.toFixed(2)}</span>
+                  <span className="font-medium text-[#74541e]">
+                    ₦{total.toFixed(2)}
+                  </span>
                 </div>
               </div>
 
               <button
                 onClick={handleSubmit}
                 disabled={cartItems.length === 0}
-                className={`w-full mt-6 py-3 px-4 rounded-lg text-white font-medium flex items-center justify-center ${
+                className={`w-full mt-6 py-3 px-4 rounded-lg text-white font-medium flex items-center justify-center ₦{
                   cartItems.length === 0 
                     ? 'bg-[#a8a095] cursor-not-allowed' 
                     : 'bg-[#74541e] hover:bg-[#5a4218]'
                 }`}
               >
                 <Lock className="mr-2" size={16} />
-                {cartItems.length === 0 ? 'Cart is Empty' : 'Complete Checkout'}
+                {cartItems.length === 0 ? "Cart is Empty" : "Complete Checkout"}
               </button>
 
               <p className="text-xs text-[#846C3B] mt-4 flex items-center">

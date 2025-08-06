@@ -52,7 +52,7 @@ const Cart = ({ isOpen, onClose }) => {
                   <p className="text-sm text-[#846C3B]/80">{item.size}</p>
                   <div className="flex justify-between items-center mt-1">
                     <span className="text-[#74541e] font-medium">
-                      {/* ${item.price.toFixed(2)} */}
+                      {/* ₦{item.price.toFixed(2)} */}
                     </span>
                     <div className="flex items-center gap-2">
                       <button
@@ -98,7 +98,7 @@ const Cart = ({ isOpen, onClose }) => {
           <div className="flex justify-between mb-4">
             <span className="text-[#846C3B]">Subtotal</span>
             <span className="text-[#74541e] font-medium">
-              ${getTotalPrice().toFixed(2)}
+              ₦{getTotalPrice().toFixed(2)}
             </span>
           </div>
           <Link

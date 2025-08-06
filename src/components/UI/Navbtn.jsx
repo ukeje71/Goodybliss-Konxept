@@ -1,9 +1,11 @@
 // components/UI/Navbtn.js
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const Navbtn = ({ swiperRef, className = '', iconSize = 24 }) => {
+const Navbtn = ({ swiperRef, className = "", iconSize = 24 }) => {
   return (
-    <div className={`flex justify-between w-full pointer-events-none ${className}`}>
+    <div
+      className={`flex justify-between w-full pointer-events-none ₦{className}`}
+    >
       <button
         onClick={() => swiperRef.current?.slidePrev()}
         className="w-12 h-12 rounded-full bg-white/80 text-[#74541e] flex items-center justify-center hover:bg-white transition-all duration-300 shadow-lg border border-[#d4c9b5] pointer-events-auto"

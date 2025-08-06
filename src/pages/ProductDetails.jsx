@@ -40,8 +40,7 @@ const ProductDetails = () => {
           {/* Image */}
           <div className="md:w-1/2">
             <img
-              src={product.imageUrl
-}
+              src={product.imageUrl}
               alt={product.title}
               className="w-full h-auto rounded-lg shadow-lg object-cover"
             />
@@ -59,11 +58,11 @@ const ProductDetails = () => {
             {/* Price */}
             <div className="flex items-center gap-4">
               <p className="text-2xl font-semibold text-[#74541e]">
-                ${product.discountPrice || product.price}
+                ₦{product.discountPrice || product.price}
               </p>
               {product.discountPrice && (
                 <p className="text-lg text-gray-500 line-through">
-                  ${product.price}
+                  ₦{product.price}
                 </p>
               )}
             </div>
@@ -110,7 +109,7 @@ const ProductDetails = () => {
             {/* Add to Cart */}
             <button
               onClick={() => addToCart(product)}
-              className={`bg-[#74541e] text-white py-3 px-6 rounded hover:bg-[#5a4218] transition-colors ${
+              className={`bg-[#74541e] text-white py-3 px-6 rounded hover:bg-[#5a4218] transition-colors ₦{
                 !product.stock ? "opacity-50 cursor-not-allowed" : ""
               }`}
               disabled={!product.stock}

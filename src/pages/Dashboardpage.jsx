@@ -116,7 +116,7 @@ const Dashboardpage = () => {
                 <h3 className="text-gray-500 font-medium">Total Sales</h3>
                 <DollarSign className="text-green-500 h-5 w-5" />
               </div>
-              <p className="text-2xl font-bold mt-2">$12,450</p>
+              <p className="text-2xl font-bold mt-2">₦12,450</p>
               <p className="text-sm text-green-500 mt-1 flex items-center">
                 <TrendingUp className="h-4 w-4 mr-1" /> 12% from last month
               </p>
@@ -158,7 +158,7 @@ const Dashboardpage = () => {
           {/* Quick Action Buttons */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <Link
-              to="/artworks/new"
+              to="/admin/newproduct"
               className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 flex flex-col items-center justify-center hover:bg-gray-50 transition-colors"
             >
               <PlusCircle className="h-8 w-8 text-blue-500 mb-2" />
@@ -256,11 +256,11 @@ const Dashboardpage = () => {
                           {new Date(sale.date).toLocaleDateString()}
                         </td>
                         <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                          ${sale.amount}
+                          ₦{sale.amount}
                         </td>
                         <td className="px-6 py-4">
                           <span
-                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ₦{
                               sale.status === "Completed"
                                 ? "bg-green-100 text-green-800"
                                 : sale.status === "Shipped"
@@ -285,7 +285,7 @@ const Dashboardpage = () => {
                 {recentActivities.map((activity) => (
                   <div key={activity.id} className="flex items-start">
                     <div
-                      className={`flex-shrink-0 rounded-full p-2 ${
+                      className={`flex-shrink-0 rounded-full p-2 ₦{
                         activity.type === "sale"
                           ? "bg-green-100 text-green-600"
                           : activity.type === "comment"
@@ -339,7 +339,7 @@ const Dashboardpage = () => {
                         className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                       />
                       <span
-                        className={`ml-3 ${
+                        className={`ml-3 ₦{
                           task.completed
                             ? "line-through text-gray-400"
                             : "text-gray-700"

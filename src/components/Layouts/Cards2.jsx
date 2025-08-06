@@ -24,11 +24,7 @@ const Cards2 = ({
   const navigate = useNavigate();
 
   // Zustand store
-  const {
-    wishlist,
-    addToWishlist,
-    removeFromWishlist,
-  } = useWishlistStore();
+  const { wishlist, addToWishlist, removeFromWishlist } = useWishlistStore();
 
   const { addToCart } = useCartStore();
 
@@ -49,9 +45,7 @@ const Cards2 = ({
   };
 
   // Wishlist toggle
-  const isInWishlist = wishlist.some(
-    (item) => item && item.id === id
-  );
+  const isInWishlist = wishlist.some((item) => item && item.id === id);
 
   const handleWishlistToggle = (e) => {
     e.stopPropagation();
@@ -137,10 +131,10 @@ const Cards2 = ({
           {discountPrice ? (
             <div className="flex items-center gap-2">
               <span className="text-lg font-bold text-[#74541e]">
-                ${discountPrice.toFixed(2)}
+                ₦{discountPrice.toFixed(2)}
               </span>
               <span className="text-sm text-gray-400 line-through">
-                ${regularPrice?.toFixed(2)}
+                ₦{regularPrice?.toFixed(2)}
               </span>
               {discountPercent > 0 && (
                 <span className="ml-auto text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded">
@@ -150,7 +144,7 @@ const Cards2 = ({
             </div>
           ) : (
             <span className="text-lg font-bold text-[#74541e]">
-              ${regularPrice?.toFixed(2)}
+              ₦{regularPrice?.toFixed(2)}
             </span>
           )}
         </div>

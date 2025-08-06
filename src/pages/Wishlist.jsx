@@ -18,12 +18,10 @@ const WishlistPage = () => {
       imageUrl: product.imageUrl,
       size: product.size,
       quantity: 1,
-      
     };
     addToCart(cartProduct);
     toast.success("Added to cart!");
   };
-
 
   return (
     <div className="min-h-screen bg-[#f5f0ea] py-12 px-4 sm:px-6 lg:px-8">
@@ -69,67 +67,69 @@ const WishlistPage = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            
-           {wishlist.map((product) => {
-  console.log("Rendering product:", product); // ✅ Your debug log
-console.log("Product imageUrl",product.imageUrl)
-  return (
-    <div
-      key={product.id}
-      className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow"
-    >
-      <div className="relative aspect-[4/3] overflow-hidden">
-        <img
-          src={product.imageUrl}
-          alt={product.title}
-          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-        />
-        <button
-          onClick={() => removeFromWishlist(product.id)}
-          className="absolute top-3 right-3 bg-white/80 p-2 rounded-full hover:bg-white transition-colors"
-          aria-label="Remove from wishlist"
-        >
-          <Heart size={20} className="text-[#C47E20]" fill="#C47E20" />
-        </button>
-      </div>
-      <div className="p-4">
-        <h3 className="text-xl font-medium text-gray-800">
-          {product.title}
-        </h3>
-        <p className="text-sm text-gray-600 mt-1">
-          {product.medium} • {product.year}
-        </p>
-        <p className="text-xs text-gray-500 mt-1">{product.size}</p>
-        <div className="mt-3">
-          {product.discountPrice ? (
-            <div className="flex products-center gap-2">
-              <span className="text-lg font-bold text-[#74541e]">
-                ${Number(product.discountPrice || 0).toFixed(2)}
-              </span>
-              <span className="text-sm text-gray-400 line-through">
-                ${Number(product.price || 0).toFixed(2)}
-              </span>
-            </div>
-          ) : (
-            <span className="text-lg font-bold text-[#74541e]">
-              ${Number(product.price || 0).toFixed(2)}
-            </span>
-          )}
-        </div>
+            {wishlist.map((product) => {
+              console.log("Rendering product:", product); // ✅ Your debug log
+              console.log("Product imageUrl", product.imageUrl);
+              return (
+                <div
+                  key={product.id}
+                  className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow"
+                >
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    <img
+                      src={product.imageUrl}
+                      alt={product.title}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    />
+                    <button
+                      onClick={() => removeFromWishlist(product.id)}
+                      className="absolute top-3 right-3 bg-white/80 p-2 rounded-full hover:bg-white transition-colors"
+                      aria-label="Remove from wishlist"
+                    >
+                      <Heart
+                        size={20}
+                        className="text-[#C47E20]"
+                        fill="#C47E20"
+                      />
+                    </button>
+                  </div>
+                  <div className="p-4">
+                    <h3 className="text-xl font-medium text-gray-800">
+                      {product.title}
+                    </h3>
+                    <p className="text-sm text-gray-600 mt-1">
+                      {product.medium} • {product.year}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">{product.size}</p>
+                    <div className="mt-3">
+                      {product.discountPrice ? (
+                        <div className="flex products-center gap-2">
+                          <span className="text-lg font-bold text-[#74541e]">
+                            ₦{Number(product.discountPrice || 0).toFixed(2)}
+                          </span>
+                          <span className="text-sm text-gray-400 line-through">
+                            ₦{Number(product.price || 0).toFixed(2)}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-lg font-bold text-[#74541e]">
+                          ₦{Number(product.price || 0).toFixed(2)}
+                        </span>
+                      )}
+                    </div>
 
-        <div className="flex gap-2 mt-4">
-          <button
-            onClick={() => handleAddToCart(product)}
-            className="flex-1 py-2 bg-[#74541e] text-white rounded hover:bg-[#5a421e] transition-colors flex products-center justify-center"
-          >
-            Add to Cart
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-})}
-
+                    <div className="flex gap-2 mt-4">
+                      <button
+                        onClick={() => handleAddToCart(product)}
+                        className="flex-1 py-2 bg-[#74541e] text-white rounded hover:bg-[#5a421e] transition-colors flex products-center justify-center"
+                      >
+                        Add to Cart
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

@@ -212,10 +212,10 @@ const Cards = ({
                 {item.discountPrice ? (
                   <div className="flex items-center gap-2">
                     <span className="text-lg font-bold text-[#74541e]">
-                      ${Number(item.discountPrice).toFixed(2)}
+                      ₦{Number(item.discountPrice).toFixed(2)}
                     </span>
                     <span className="text-sm text-gray-400 line-through">
-                      ${Number(item.price).toFixed(2)}
+                      ₦{Number(item.price).toFixed(2)}
                     </span>
                     {discountPercent > 0 && (
                       <span className="ml-auto text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded">
@@ -225,7 +225,7 @@ const Cards = ({
                   </div>
                 ) : (
                   <span className="text-lg font-bold text-[#74541e]">
-                    ${Number(item.regularPrice).toFixed(2)}
+                    ₦{Number(item.regularPrice).toFixed(2)}
                   </span>
                 )}
               </div>
@@ -234,7 +234,7 @@ const Cards = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    navigate(`/products/${item.id}`);
+                    navigate(`/products/₦{item.id}`);
                   }}
                   className="flex-1 py-2 text-sm border border-[#d4c9b5] text-[#74541e] rounded hover:bg-[#f0e9dd] transition-colors"
                 >

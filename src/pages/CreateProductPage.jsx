@@ -172,13 +172,13 @@ const CreateProductPage = () => {
                 {/* Image upload box - now only allows single image */}
                 <div
                   onClick={triggerFileInput}
-                  className={`relative w-full sm:w-48 h-48 rounded-lg border-2 border-dashed ${
+                  className={`relative w-full sm:w-48 h-48 rounded-lg border-2 border-dashed ₦{
                     isUploading
                       ? "border-[#a56d1a]"
                       : previewImages.length > 0
                       ? "border-green-500"
                       : "border-[#d4c9b5]"
-                  } flex flex-col items-center justify-center cursor-pointer hover:bg-[#f9f7f3] transition-all duration-300 ${
+                  } flex flex-col items-center justify-center cursor-pointer hover:bg-[#f9f7f3] transition-all duration-300 ₦{
                     previewImages.length > 0 ? "bg-green-50" : "bg-white"
                   }`}
                 >
@@ -407,7 +407,7 @@ const CreateProductPage = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-[#846C3B] mb-1">
-                    Price ($) <span className="text-red-500">*</span>
+                    Price (₦) <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -429,7 +429,7 @@ const CreateProductPage = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-[#846C3B] mb-1">
-                    Discount Price ($)
+                    Discount Price (₦)
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -471,7 +471,7 @@ const CreateProductPage = () => {
                   >
                     <span className="font-medium">Framing option</span>
                     <p className="text-xs text-[#846C3B]/60 mt-1">
-                      Offer custom framing for an additional $150
+                      Offer custom framing for an additional ₦150
                     </p>
                   </label>
                 </div>
