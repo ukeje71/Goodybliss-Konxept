@@ -1,6 +1,6 @@
 import React from "react";
 import { Calendar, Clock, MapPin, ArrowRight } from "lucide-react";
-
+import img from "../assets/Images/Face2.jpeg";
 const ArtClassPage = () => {
   // Sample class data
   const upcomingClasses = [
@@ -45,8 +45,11 @@ const ArtClassPage = () => {
   return (
     <div className="bg-white min-h-screen">
       {/* Hero Section */}
-      <div className="relative bg-[#f8f5f0] py-20">
-        <div className="container mx-auto px-6 text-center">
+      <div className="relative h-screen max-h-[80vh]">
+        <div className="absolute inset-0 bg-black/40 z-10">
+          <img src={img} alt="Artist" className="h-full w-full" />
+        </div>
+        <div className="absolute inset-0 bg-black/30 z-20 flex flex-col justify-center items-center text-center px-4">
           <h1 className="text-4xl md:text-5xl font-bold text-[#74541e] mb-4">
             GoodyBliss-Konxept Art Classes
           </h1>

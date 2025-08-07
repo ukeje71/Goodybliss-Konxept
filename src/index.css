@@ -21,5 +21,5 @@ button,
 input,
 textarea {
   outline: none;
-  /* background-image: url(./data/product.js); */
+cursor: pointer;
 }

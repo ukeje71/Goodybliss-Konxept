@@ -60,7 +60,7 @@ const App = () => {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/wishlist" element={<WishlistPage />} />
-          <Route path="/artclass" element={<Artclasspage />} />
+          <Route path="/art-classes" element={<Artclasspage />} />
           
 
           {/* Protected Admin Routes */}
