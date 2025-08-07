@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useLocation } from "react-router";
+import Artist from "../assets/Images/Face2.jpeg";
 import Cards from "../components/UI/Cards";
 
 const GalleryPage = () => {
@@ -42,9 +43,43 @@ const GalleryPage = () => {
 
   return (
     <div className="w-full min-h-screen bg-[#f5f0ea]">
-      {/* Hero Section (keep your existing hero section) */}
-      
-      {/* Controls Section */}
+      {/* Hero Section */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+        <div className="flex flex-col lg:flex-row items-center gap-8 md:gap-12 xl:gap-20">
+          <div className="w-full lg:w-1/2">
+            <div className="relative aspect-square md:aspect-[4/5] max-w-[630px] mx-auto overflow-hidden rounded-lg shadow-lg">
+              <img
+                src={Artist}
+                alt="Artist Goodybliss"
+                className="w-full h-full object-cover object-center transition-transform duration-500 hover:scale-105"
+                loading="lazy"
+              />
+            </div>
+          </div>
+          <div className="w-full lg:w-1/2 text-center lg:text-left max-w-[500px] mx-auto lg:mx-0">
+            <h1 className="text-[#74541e] text-3xl sm:text-4xl md:text-5xl font-serif mb-4 md:mb-6">
+              The Original Moving Sale
+            </h1>
+            <div className="text-gray-800 space-y-4 md:space-y-6">
+              <h3 className="text-lg md:text-xl">
+                Pack up the oils, wrap up the brushes and onto the next
+                adventure...
+              </h3>
+              <p className="leading-relaxed md:leading-8 text-base md:text-lg">
+                After two years in our warehouse studio, my creative practice is
+                moving to Melbourne! <b>For the first time,</b> collector
+                favourites and newly released works are available at a very
+                special price.
+              </p>
+              <p className="text-[#74541e] italic text-lg md:text-xl">
+                Goodybliss - Konxept
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Controls */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h2 className="text-center text-2xl md:text-3xl font-serif text-[#74541e] mb-8">
           Explore the Gallery
