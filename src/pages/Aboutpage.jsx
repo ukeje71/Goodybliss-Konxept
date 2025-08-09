@@ -3,7 +3,7 @@ import { Palette, Brush, Award, Heart, Sparkles } from 'lucide-react';
 import { Link } from 'react-router';
 
 // Assets
-import childhoodImage from "../assets/Images/Face1.jpeg";
+import childhoodImage from "../assets/Images/Goodybliss4.jpg";
 import studioImage from "../assets/Images/Face1.jpeg";
 import artworkProcess from "../assets/Images/Face1.jpeg";
 // import exhibitionImage from '../assets/about/exhibition.jpg';

@@ -18,8 +18,8 @@ import { db } from "../components/Firebase";
 // Assets
 import abstractImage from "../assets/Images/Abstract.jpeg";
 import fineArtImage from "../assets/Images/Fine.jpeg";
-import Watercolor1 from "../assets/Images/Face2.jpeg";
-import Impressionist1 from "../assets/Images/Face1.jpeg";
+import artist from "../assets/Images/Goodybliss3.jpg";
+import toast from "react-hot-toast";
 
 const SLIDES = [
   {
@@ -202,16 +202,43 @@ const Homepage = () => {
         {[...Array(5)].map((_, i) => (
           <Star
             key={i}
-            className={`w-4 h-4 ${
-              i < rating ? "text-amber-400 fill-amber-400" : "text-gray-300"
-            }`}
+            className={`w-4 h-4 ${i < rating ? "text-amber-400 fill-amber-400" : "text-gray-300"
+              }`}
             strokeWidth={1.5}
           />
         ))}
       </div>
     );
   };
+  // Fromspree intergration
+  const [formState, setFormState] = useState(false);
+  const [email, setEmail] = useState("");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("Subscription Recieved", { email });
+    toast.success("Email Sent")
+    setFormState(true);
 
+
+    try {
+      const response = await fetch("nttps://formspree.io/f/xblynllq",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email })
+        })
+      if (response.ok) {
+        setTimeout(() => {
+          setEmail();
+          setFormState(false);
+        }, 50000)
+      }
+    } catch (error) {
+      console.log("Not sent", error)
+    }
+  };
   return (
     <div className="overflow-hidden relative">
       {/* Hero Slider Section */}
@@ -424,9 +451,8 @@ const Homepage = () => {
               <SwiperSlide key={index}>
                 {({ isActive }) => (
                   <div
-                    className={`bg-[#f9f7f3] p-6 rounded-lg shadow-sm transition-all duration-300 ${
-                      isActive ? "scale-110" : "scale-90 opacity-80"
-                    }`}
+                    className={`bg-[#f9f7f3] p-6 rounded-lg shadow-sm transition-all duration-300 ${isActive ? "scale-110" : "scale-90 opacity-80"
+                      }`}
                   >
                     <div className="flex items-center mb-4">
                       <div className="w-12 h-12 rounded-full bg-[#e8ddd0] flex items-center justify-center text-[#74541e] font-bold">
@@ -463,7 +489,7 @@ const Homepage = () => {
             <div className="w-full lg:w-1/2">
               <div className="relative aspect-square overflow-hidden rounded-lg shadow-lg">
                 <img
-                  src={Watercolor1}
+                  src={artist}
                   alt="Artist Goodybliss"
                   className="w-full h-full object-cover"
                 />
@@ -510,22 +536,41 @@ const Homepage = () => {
             Subscribe to receive exclusive previews of new works, studio
             updates, and special offers.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
-            <div className="relative flex-grow">
-              <Mail
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#74541e]"
-                size={20}
-              />
-              <input
-                type="email"
-                placeholder="Your email address"
-                className="w-full pl-10 pr-4 py-3 border border-[#d4c9b5] rounded focus:outline-none focus:ring-2 focus:ring-[#C47E20]"
-              />
-            </div>
-            <button className="px-6 py-3 bg-[#74541e] text-white rounded hover:bg-[#5a4218] transition-colors whitespace-nowrap flex items-center justify-center">
-              Subscribe <MoveRight className="ml-2 w-4 h-4" />
-            </button>
-          </div>
+          {
+            formState ? (
+              <div className="bg-[#74541e] p-4 rounded-lg">
+                <p className="text-white font-medium">
+                  Thank you for subscribing!
+                </p>
+                <p className="text-sm text-white mt-1">
+                  You'll receive Update on our next Artworks Launch.
+                </p>
+              </div>
+            ) : (
+              <form
+                onSubmit={handleSubmit}
+                className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto"
+              >
+                <div className="relative flex-grow">
+                  <Mail
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-[#74541e]"
+                    size={20}
+                  />
+                  <input
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    type="email"
+                    placeholder="Your email address"
+                    className="w-full pl-10 pr-4 py-3 border border-[#d4c9b5] rounded focus:outline-none focus:ring-2 focus:ring-[#C47E20]"
+                  />
+                </div>
+                <button className="px-6 py-3 bg-[#74541e] text-white rounded hover:bg-[#5a4218] transition-colors whitespace-nowrap flex items-center justify-center">
+                  Subscribe <MoveRight className="ml-2 w-4 h-4" />
+                </button>
+              </form>
+            )
+          }
+
           <p className="text-xs text-gray-400 mt-4">
             We respect your privacy. Unsubscribe at any time.
           </p>

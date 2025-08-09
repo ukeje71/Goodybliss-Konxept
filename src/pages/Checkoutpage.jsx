@@ -284,7 +284,7 @@ const CheckoutPage = () => {
                         </div>
                       </div>
                       <span className="text-sm font-medium text-[#74541e]">
-                        ₦{(item.price * item.quantity).toFixed(2)}
+                        ${(item.price * item.quantity).toFixed(2)}
                       </span>
                     </div>
                   ))
@@ -319,7 +319,7 @@ const CheckoutPage = () => {
               <button
                 onClick={handleSubmit}
                 disabled={cartItems.length === 0}
-                className={`w-full mt-6 py-3 px-4 rounded-lg text-white font-medium flex items-center justify-center ₦{
+                className={`w-full mt-6 py-3 px-4 rounded-lg text-white font-medium flex items-center justify-center ${
                   cartItems.length === 0 
                     ? 'bg-[#a8a095] cursor-not-allowed' 
                     : 'bg-[#74541e] hover:bg-[#5a4218]'

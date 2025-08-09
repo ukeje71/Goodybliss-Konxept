@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useLocation } from "react-router";
-import Artist from "../assets/Images/Face2.jpeg";
+import Artist from "../assets/Images/Goodybliss1.jpg";
 import Cards from "../components/UI/Cards";
 
 const GalleryPage = () => {
