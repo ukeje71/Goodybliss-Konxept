@@ -213,32 +213,36 @@ const Homepage = () => {
   // Fromspree intergration
   const [formState, setFormState] = useState(false);
   const [email, setEmail] = useState("");
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Subscription Recieved", { email });
-    toast.success("Email Sent")
-    setFormState(true);
-
 
     try {
-      const response = await fetch("nttps://formspree.io/f/xblynllq",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ email })
-        })
+      const response = await fetch("https://formspree.io/f/xblkqaqr", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email })
+      });
+
       if (response.ok) {
+        toast.success("Email Sent");
+        setFormState(true);
+
         setTimeout(() => {
-          setEmail();
+          setEmail(""); // ✅ clear email
           setFormState(false);
-        }, 50000)
+        }, 3000);
       }
     } catch (error) {
-      console.log("Not sent", error)
+      console.log("Not sent", error);
+      toast.error("Email not Subscribed");
+      setFormState(false); // ✅ fixed
     }
   };
+
   return (
     <div className="overflow-hidden relative">
       {/* Hero Slider Section */}
@@ -547,8 +551,7 @@ const Homepage = () => {
                 </p>
               </div>
             ) : (
-              <form
-                onSubmit={handleSubmit}
+              <form onSubmit={handleSubmit}
                 className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto"
               >
                 <div className="relative flex-grow">
@@ -564,7 +567,7 @@ const Homepage = () => {
                     className="w-full pl-10 pr-4 py-3 border border-[#d4c9b5] rounded focus:outline-none focus:ring-2 focus:ring-[#C47E20]"
                   />
                 </div>
-                <button className="px-6 py-3 bg-[#74541e] text-white rounded hover:bg-[#5a4218] transition-colors whitespace-nowrap flex items-center justify-center">
+                <button onClick={handleSubmit} className="px-6 py-3 bg-[#74541e] text-white rounded hover:bg-[#5a4218] transition-colors whitespace-nowrap flex items-center justify-center">
                   Subscribe <MoveRight className="ml-2 w-4 h-4" />
                 </button>
               </form>
