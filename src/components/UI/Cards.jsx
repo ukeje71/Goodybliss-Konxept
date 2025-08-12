@@ -130,7 +130,7 @@ const Cards = ({
   if (productsToShow.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">Loading Artworks....</p>
+        <p className="text-gray-500">Connect to Internet ....</p>
       </div>
     );
   }
@@ -140,9 +140,9 @@ const Cards = ({
       {productsToShow.map((item) => {
         const discountPercent = item.discountPrice
           ? Math.round(
-              ((item.regularPrice - item.discountPrice) / item.regularPrice) *
-                100
-            )
+            ((item.regularPrice - item.discountPrice) / item.regularPrice) *
+            100
+          )
           : 0;
         const isInWishlist = wishlist.some(
           (wishlistItem) => wishlistItem && wishlistItem.id === item.id
@@ -245,11 +245,10 @@ const Cards = ({
                     e.stopPropagation();
                     item.stock && handleAddToCart(item);
                   }}
-                  className={`flex-1 py-2 text-sm rounded transition-colors ${
-                    item.stock
+                  className={`flex-1 py-2 text-sm rounded transition-colors ${item.stock
                       ? "bg-[#74541e] text-white hover:bg-[#5a4218]"
                       : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  }`}
+                    }`}
                   disabled={item.stock === false}
                 >
                   {item.stock ? "Add to Cart" : "Sold Out"}

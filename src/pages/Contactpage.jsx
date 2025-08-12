@@ -23,18 +23,27 @@ const ContactPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     try {
-      // Replace with your actual form submission logic
-      console.log('Form submitted:', formData);
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API call
-      setSubmitSuccess(true);
-      setFormData({
-        name: '',
-        email: '',
-        message: '',
-        subject: 'General Inquiry'
+      const response = await fetch("https://formspree.io/f/xblkqaqr", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ formData })
       });
+      if (response.ok) {
+        console.log('Form submitted:', formData);
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        setSubmitSuccess(true);
+        setFormData({
+          name: '',
+          email: '',
+          message: '',
+          subject: 'General Inquiry'
+        });
+      }
+
     } catch (error) {
       console.error('Submission error:', error);
     } finally {
@@ -56,12 +65,14 @@ const ContactPage = () => {
           {/* Contact Form */}
           <div className="bg-white p-8 rounded-lg shadow-md">
             <h2 className="text-2xl font-serif font-semibold text-[#74541e] mb-6">Send a Message</h2>
-            
+
             {submitSuccess ? (
-              <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                Thank you! Your message has been sent successfully. I'll get back to you soon.
+              <div className="bg-amber-50 border border-amber-300 text-[#74541e] px-4 py-3 rounded mb-4 shadow-sm">
+                <p className="font-medium">Message Sent!</p>
+                <p className="text-sm">Thank you for reaching out. I’ll get back to you as soon as possible.</p>
               </div>
             ) : (
+
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-[#74541e] mb-1">
@@ -151,10 +162,10 @@ const ContactPage = () => {
           </div>
 
           {/* Contact Information */}
-          <div className="space-y-8">
+          <div className="space-y-8 w-fit">
             <div className="bg-white p-8 rounded-lg shadow-md">
               <h2 className="text-2xl font-serif font-semibold text-[#74541e] mb-6">Contact Information</h2>
-              
+
               <div className="space-y-4">
                 <div className="flex items-start">
                   <div className="flex-shrink-0 bg-amber-100 p-3 rounded-full">
@@ -162,7 +173,7 @@ const ContactPage = () => {
                   </div>
                   <div className="ml-4">
                     <h3 className="text-lg font-medium text-[#74541e]">Email</h3>
-                    <p className="text-[#74541e]">artist@goodyblisskonxept.com</p>
+                    <p className="text-[#74541e]">goodyblisskonxept@gmail.com</p>
                     <p className="text-sm text-[#74541e] mt-1">Typically responds within 24 hours</p>
                   </div>
                 </div>
@@ -173,7 +184,7 @@ const ContactPage = () => {
                   </div>
                   <div className="ml-4">
                     <h3 className="text-lg font-medium text-[#74541e]">Phone</h3>
-                    <p className="text-[#74541e]">+1 (555) 123-4567</p>
+                    <p className="text-[#74541e]">+2348138562085</p>
                     <p className="text-sm text-[#74541e] mt-1">Available Mon-Fri, 10am-6pm</p>
                   </div>
                 </div>
@@ -184,7 +195,7 @@ const ContactPage = () => {
                   </div>
                   <div className="ml-4">
                     <h3 className="text-lg font-medium text-[#74541e]">Studio Location</h3>
-                    <p className="text-[#74541e]">123 Art Street, Creative City, CA 90210</p>
+                    <p className="text-[#74541e]">Obohia, Aba,Abia state</p>
                     <p className="text-sm text-[#74541e] mt-1">By appointment only</p>
                   </div>
                 </div>
@@ -195,29 +206,29 @@ const ContactPage = () => {
             <div className="bg-white p-8 rounded-lg shadow-md">
               <h2 className="text-2xl font-serif font-semibold text-[#74541e] mb-6">Connect With Me</h2>
               <p className="text-[#74541e] mb-4">Follow my work and creative process on social media:</p>
-              
+
               <div className="flex space-x-4">
-                <a 
-                  href="https://instagram.com" 
-                  target="_blank" 
+                <a
+                  href="https://www.instagram.com/goodybliss_konxept/"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="bg-amber-100 hover:bg-amber-200 p-3 rounded-full transition duration-300"
                   aria-label="Instagram"
                 >
                   <Instagram className="h-6 w-6 text-[#74541e]" />
                 </a>
-                <a 
-                  href="https://facebook.com" 
-                  target="_blank" 
+                <a
+                  href="https://www.facebook.com/p/Goodybliss-Konxept-100064522069196/"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="bg-amber-100 hover:bg-amber-200 p-3 rounded-full transition duration-300"
                   aria-label="Facebook"
                 >
                   <Facebook className="h-6 w-6 text-[#74541e]" />
                 </a>
-                <a 
-                  href="https://twitter.com" 
-                  target="_blank" 
+                <a
+                  href="https://twitter.com/goodybliss_konxept"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="bg-amber-100 hover:bg-amber-200 p-3 rounded-full transition duration-300"
                   aria-label="Twitter"
