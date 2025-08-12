@@ -130,7 +130,7 @@ const Cards = ({
   if (productsToShow.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">Connect to Internet ....</p>
+        <p className="text-gray-500">Trying to Connect ....</p>
       </div>
     );
   }
@@ -234,7 +234,7 @@ const Cards = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    navigate(`/products/₦{item.id}`);
+                    navigate(`/products/${item.id}`);
                   }}
                   className="flex-1 py-2 text-sm border border-[#d4c9b5] text-[#74541e] rounded hover:bg-[#f0e9dd] transition-colors"
                 >
