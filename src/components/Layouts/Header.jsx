@@ -180,7 +180,7 @@ const Header = () => {
             className="Parisienne md:text-3xl hover:text-[#74541e] transition-colors"
             aria-label="Home"
           >
-            Goodybliss Konxept
+            Goodybliss Konxeptz
           </Link>
 
           <div className="flex flex-row gap-4 relative">

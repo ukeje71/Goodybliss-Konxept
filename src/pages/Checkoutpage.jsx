@@ -21,7 +21,7 @@ const CheckoutPage = () => {
 
   // Calculate order values
   const subtotal = getTotalPrice();
-  const shipping = formData.deliveryOption === "Free Delivery" ? 0 : 10; // Example shipping cost
+  const shipping = formData.deliveryOption === "Free Delivery" ? 0 : 10;
   const total = subtotal + shipping;
 
   const validateForm = () => {
@@ -37,16 +37,35 @@ const CheckoutPage = () => {
     if (!formData.state.trim()) errors.state = "State required";
     return errors;
   };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     const errors = validateForm();
 
     if (Object.keys(errors).length === 0) {
-      // Process payment here
-      // After successful payment:
-      clearCart();
-      // navigate("/order-confirmation");
+      const paystack = new window.PaystackPop();
+      paystack.newTransaction({
+        key: import.meta.env.VITE_APP_PAYSTACK_PUBLIC_KEY,
+        email: formData.email,
+        amount: total * 100, // amount in kobo
+        currency: "NGN",
+        metadata: {
+          custom_fields: [
+            {
+              display_name: formData.fullName,
+              variable_name: "phone_number",
+              value: formData.phoneNumber,
+            },
+          ],
+        },
+        onSuccess: (transaction) => {
+          console.log("Payment successful:", transaction);
+          clearCart();
+          navigate("/order-confirmation");
+        },
+        onCancel: () => {
+          alert("Payment cancelled");
+        },
+      });
     } else {
       setFormErrors(errors);
     }
@@ -305,7 +324,7 @@ const CheckoutPage = () => {
                 <div className="flex justify-between">
                   <span className="text-sm text-[#846C3B]">Shipping</span>
                   <span className="text-sm font-medium text-[#74541e]">
-                    {shipping === 0 ? "Free" : `₦₦{shipping.toFixed(2)}`}
+                    {shipping === 0 ? "Free" : `₦{shipping.toFixed(2)}`}
                   </span>
                 </div>
                 <div className="flex justify-between pt-2 border-t border-[#e8e2d6] mt-2">
@@ -319,11 +338,10 @@ const CheckoutPage = () => {
               <button
                 onClick={handleSubmit}
                 disabled={cartItems.length === 0}
-                className={`w-full mt-6 py-3 px-4 rounded-lg text-white font-medium flex items-center justify-center ${
-                  cartItems.length === 0 
-                    ? 'bg-[#a8a095] cursor-not-allowed' 
+                className={`w-full mt-6 py-3 px-4 rounded-lg text-white font-medium flex items-center justify-center ${cartItems.length === 0
+                    ? 'bg-[#a8a095] cursor-not-allowed'
                     : 'bg-[#74541e] hover:bg-[#5a4218]'
-                }`}
+                  }`}
               >
                 <Lock className="mr-2" size={16} />
                 {cartItems.length === 0 ? "Cart is Empty" : "Complete Checkout"}
