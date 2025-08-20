@@ -518,6 +518,7 @@ const Homepage = () => {
                 "Each piece is a conversation between the materials and my
                 emotions at that moment in time. I hope they bring as much joy
                 to collectors as they brought me in creating them."
+                ''
               </p>
               <button
                 onClick={() => navigate("/about")}
