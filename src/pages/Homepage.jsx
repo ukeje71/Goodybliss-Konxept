@@ -17,7 +17,7 @@ import Cards2 from "../components/Layouts/Cards2";
 import { db } from "../components/Firebase";
 // Assets
 import abstractImage from "../assets/Images/Abstract.jpeg";
-import fineArtImage from "../assets/Images/Fine.jpeg";
+// import fineArtImage from "../assets/Images/Fine.jpeg";
 import artist from "../assets/Images/Goodybliss3.jpg";
 import toast from "react-hot-toast";
 
@@ -317,40 +317,47 @@ const Homepage = () => {
           </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row lg:h-[90vh] w-full">
-          <div className="hidden lg:flex w-full lg:w-1/2 h-1/2 lg:h-full relative">
-            <img
-              className="object-cover w-full h-full"
-              src={fineArtImage}
-              alt="Art gallery video"
-            />
-          </div>
+<div className="flex flex-col lg:flex-row lg:h-[90vh] w-full">
+  {/* LEFT: Video */}
+  <div className="hidden lg:flex w-full lg:w-1/2 h-1/2 lg:h-full relative">
+    <iframe
+      src="https://www.facebook.com/plugins/video.php?href=https://www.facebook.com/reel/584650501280494/&autoplay=true&mute=1"
+      className="absolute top-0 left-0 w-full h-full"
+      style={{ border: "none", overflow: "hidden" }}
+      scrolling="no"
+      frameBorder="0"
+      allowFullScreen={true}
+      allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+      autoplay loop
+    />
+  </div>
 
-          <div className="w-full lg:w-1/2 h-1/2 lg:h-full relative">
-            <img
-              src={abstractImage}
-              alt="Art gallery interior"
-              className="object-cover w-full h-full"
-              loading="lazy"
-            />
-            <div className="absolute inset-0 bg-black/50 flex items-center justify-center p-8">
-              <div className="text-white text-center max-w-md">
-                <h1 className="text-3xl md:text-5xl font-serif mb-4 lg:uppercase tracking-wider">
-                  Curate Your Home Gallery
-                </h1>
-                <div className="w-20 h-0.5 bg-white mx-auto my-6"></div>
-                <p className="text-lg md:text-xl mb-4 font-medium">
-                  Museum-grade Canvas Prints
-                </p>
-                <p className="text-base md:text-lg leading-relaxed">
-                  Add a personal touch with a bespoke Tasmanian oak frame.
-                  Gallery wrapped with an enchanting satin finish, each print is
-                  made to order.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+  {/* RIGHT: Image */}
+  <div className="w-full lg:w-1/2 h-1/2 lg:h-full relative">
+    <img
+      src={abstractImage}
+      alt="Art gallery interior"
+      className="object-cover w-full h-full"
+      loading="lazy"
+    />
+    <div className="absolute inset-0 bg-black/50 flex items-center justify-center p-8">
+      <div className="text-white text-center max-w-md">
+        <h1 className="text-3xl md:text-5xl font-serif mb-4 lg:uppercase tracking-wider">
+          Curate Your Home Gallery
+        </h1>
+        <div className="w-20 h-0.5 bg-white mx-auto my-6"></div>
+        <p className="text-lg md:text-xl mb-4 font-medium">
+          Museum-grade Canvas Prints
+        </p>
+        <p className="text-base md:text-lg leading-relaxed">
+          Add a personal touch with a bespoke Tasmanian oak frame.
+          Gallery wrapped with an enchanting satin finish, each print is made to order.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
       </section>
 
       {/* Featured Products Section */}
