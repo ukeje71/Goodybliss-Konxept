@@ -15,7 +15,7 @@ import WishlistPage from "./pages/Wishlist";
 import SignUpPage from "./pages/Signuppage";
 import CheckoutPage from "./pages/Checkoutpage";
 import ProductDetails from "./pages/ProductDetails";
-import Artclasspage from "./pages/Artclasspage";
+// import Artclasspage from "./pages/Artclasspage";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -60,7 +60,7 @@ const App = () => {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/wishlist" element={<WishlistPage />} />
-          <Route path="/art-classes" element={<Artclasspage />} />
+          {/* <Route path="/art-classes" element={<Artclasspage />} /> */}
           
 
           {/* Protected Admin Routes */}

@@ -57,7 +57,7 @@ const ContactPage = () => {
         <div className="text-center mb-12">
           <h1 className="text-4xl font-serif font-bold text-[#74541e] mb-4">Get In Touch</h1>
           <p className="text-lg text-[#74541e] max-w-2xl mx-auto">
-            Have questions about my artwork or interested in a commission? I'd love to hear from you!
+            Have questions about my artwork , interested in a commission or Looking for a customized Artwork ? I'd love to hear from you!
           </p>
         </div>
 
