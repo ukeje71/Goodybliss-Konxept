@@ -15,7 +15,7 @@ import WishlistPage from "./pages/Wishlist";
 import SignUpPage from "./pages/Signuppage";
 import CheckoutPage from "./pages/Checkoutpage";
 import ProductDetails from "./pages/ProductDetails";
-// import Artclasspage from "./pages/Artclasspage";
+import Artclasspage from "./pages/Artclasspage";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -60,11 +60,11 @@ const App = () => {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/wishlist" element={<WishlistPage />} />
-          {/* <Route path="/art-classes" element={<Artclasspage />} /> */}
+          <Route path="/art-classes" element={<Artclasspage />} />
           
 
           {/* Protected Admin Routes */}
-          <Route element={<ProtectedRoute />}>
+          {/* <Route element={<ProtectedRoute />}> */}
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<Dashboardpage />} />
               <Route path="dashboard" element={<Dashboardpage />} />
@@ -75,7 +75,7 @@ const App = () => {
               <Route path="account" element={<Dashboardpage />} />
               <Route path="settings" element={<Dashboardpage />} />
             </Route>
-          </Route>
+          {/* </Route> */}
 
           <Route path="*" element={<Error />} />
         </Routes>

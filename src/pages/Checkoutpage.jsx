@@ -42,30 +42,53 @@ const CheckoutPage = () => {
     const errors = validateForm();
 
     if (Object.keys(errors).length === 0) {
-      const paystack = new window.PaystackPop();
-      paystack.newTransaction({
+      const handler = window.PaystackPop.setup({
         key: import.meta.env.VITE_APP_PAYSTACK_PUBLIC_KEY,
         email: formData.email,
-        amount: total * 100, // amount in kobo
+        amount: total * 100, // kobo
         currency: "NGN",
-        metadata: {
-          custom_fields: [
-            {
-              display_name: formData.fullName,
-              variable_name: "phone_number",
-              value: formData.phoneNumber,
-            },
-          ],
+        ref: "" + Math.floor(Math.random() * 1000000000 + 1),
+
+        onClose: () => {
+          alert("Transaction was not completed, window closed.");
         },
-        onSuccess: (transaction) => {
-          console.log("Payment successful:", transaction);
+
+        callback: (response) => {
+          // ✅ Send details to Google Sheets
+              fetch("https://script.google.com/macros/s/AKfycbyA36VmthZ2u9th9KEpNQF-TEHiK51uCx64hCrxNDi4GzlbwPgOh4WFAFOAGYOEarxnhQ/exec", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    fullName: formData.fullName,
+    email: formData.email,
+    phone: formData.phoneNumber,
+    address: `${formData.addressLine1}, ${formData.streetName}, ${formData.city}, ${formData.state}`,
+    amount: total,
+    ref: response.reference,
+  }),
+})
+  .then((res) => res.text()) // 👈 get raw response first
+  .then((text) => {
+    console.log("Raw response from Sheets:", text);
+    try {
+      const data = JSON.parse(text);
+      console.log("Parsed JSON:", data);
+    } catch (err) {
+      console.error("JSON parse error:", err);
+    }
+  })
+  .catch((err) => {
+    console.error("Error saving to Google Sheets:", err);
+  });
+
+
+          // ✅ Clear cart + navigate
           clearCart();
           navigate("/order-confirmation");
         },
-        onCancel: () => {
-          alert("Payment cancelled");
-        },
       });
+
+      handler.openIframe();
     } else {
       setFormErrors(errors);
     }
@@ -107,7 +130,7 @@ const CheckoutPage = () => {
                     value={formData.fullName}
                     onChange={handleInputChange}
                     placeholder="Username"
-                    className={`w-full px-4 py-2 border ₦{formErrors.fullName ? 'border-red-500' : 'border-[#d4c9b5]'} w-full px-4 py-2 border border-amber-200 rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
+                    className={`w-full px-4 py-2 border ${formErrors.fullName ? 'border-red-500' : 'border-[#d4c9b5]'} w-full px-4 py-2 border border-amber-200 rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
                     required
                   />
                   {formErrors.fullName && (
@@ -127,7 +150,7 @@ const CheckoutPage = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     placeholder="someone@email.com"
-                    className={`w-full px-4 py-2 border ₦{formErrors.email ? 'border-red-500' : 'border-[#d4c9b5]'} w-full px-4 py-2 border border-amber-200 rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
+                    className={`w-full px-4 py-2 border ${formErrors.email ? 'border-red-500' : 'border-[#d4c9b5]'} w-full px-4 py-2 border border-amber-200 rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
                     required
                   />
                   {formErrors.email && (
@@ -147,8 +170,8 @@ const CheckoutPage = () => {
                     placeholder="+234 707 635 4937"
                     value={formData.phoneNumber}
                     onChange={handleInputChange}
-                    
-                    className={`w-full px-4 py-2 border ₦{formErrors.phoneNumber ? 'border-red-500' : 'border-[#d4c9b5]'} w-full px-4 py-2 border border-amber-200 rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
+
+                    className={`w-full px-4 py-2 border ${formErrors.phoneNumber ? 'border-red-500' : 'border-[#d4c9b5]'} w-full px-4 py-2 border border-amber-200 rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
                     required
                   />
                   {formErrors.phoneNumber && (
@@ -168,7 +191,7 @@ const CheckoutPage = () => {
                     value={formData.addressLine1}
                     onChange={handleInputChange}
                     placeholder="Ariara Junction"
-                    className={`w-full px-4 py-2 border ₦{formErrors.addressLine1 ? 'border-red-500' : 'border-[#d4c9b5]'} w-full px-4 py-2 border border-amber-200 rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
+                    className={`w-full px-4 py-2 border ${formErrors.addressLine1 ? 'border-red-500' : 'border-[#d4c9b5]'} w-full px-4 py-2 border border-amber-200 rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
                     required
                   />
                   {formErrors.addressLine1 && (
@@ -188,7 +211,7 @@ const CheckoutPage = () => {
                     value={formData.streetName}
                     onChange={handleInputChange}
                     placeholder="10 Osusu"
-                    className={`w-full px-4 py-2 border ₦{formErrors.streetName ? 'border-red-500' : 'border-[#d4c9b5]'} w-full px-4 py-2 border border-amber-200 rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
+                    className={`w-full px-4 py-2 border ${formErrors.streetName ? 'border-red-500' : 'border-[#d4c9b5]'} w-full px-4 py-2 border border-amber-200 rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
                     required
                   />
                   {formErrors.streetName && (
@@ -209,7 +232,7 @@ const CheckoutPage = () => {
                       value={formData.city}
                       placeholder="Aba"
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-2 border ₦{formErrors.city ? 'border-red-500' : 'border-[#d4c9b5]'} w-full px-4 py-2 border border-amber-200 rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
+                      className={`w-full px-4 py-2 border ${formErrors.city ? 'border-red-500' : 'border-[#d4c9b5]'} w-full px-4 py-2 border border-amber-200 rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
                       required
                     />
                     {formErrors.city && (
@@ -223,16 +246,17 @@ const CheckoutPage = () => {
                     <label className="block text-sm font-medium text-[#846C3B] mb-1">
                       State
                     </label>
-                    {/* <input
+                    <input
                       type="text"
                       name="state"
                       value={formData.state}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-2 border ₦{formErrors.state ? 'border-red-500' : 'border-[#d4c9b5]'} w-full px-4 py-2 border border-amber-200 rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
+                      className={`w-full px-4 py-2 border ${formErrors.state ? 'border-red-500' : 'border-[#d4c9b5]'} w-full px-4 py-2 border border-amber-200 rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
                       required
-                    /> */}
-                    <select className="w-full px-4 py-2 border outline-0 border-[#d4c9b5]   rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]"
-                      defaultValue="Abia State"
+                    />
+                    {/* <select
+                      value={formData.state}  
+                     onChange={handleInputChange} className="w-full px-4 py-2 border outline-0 border-[#d4c9b5]   rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]"
                     >
                       <option value="Abia">Abia</option>
                       <option value="Anambra">Anambra</option>
@@ -242,138 +266,135 @@ const CheckoutPage = () => {
                       <option value="Lagos">Lagos</option>
                       <option value="Ebonyi">Ebonyi</option>
                       <option value="Crossriver">Crossriver</option>
-                  </select>
-                  {formErrors.state && (
-                    <p className="text-red-500 text-xs mt-1">
-                      {formErrors.state}
-                    </p>
-                  )}
-                </div>
+                  </select> */}
+                    {formErrors.state && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {formErrors.state}
+                      </p>
+                    )}
+                  </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-[#846C3B] mb-1">
-                    Country
-                  </label>
-                  <select
-                    className="w-full px-4 py-2 border outline-0 border-[#d4c9b5] rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]"
-                    defaultValue="Nigeria"
+                  <div>
+                    <label className="block text-sm font-medium text-[#846C3B] mb-1">
+                      Country
+                    </label>
+                    <select
+                      className="w-full px-4 py-2 border outline-0 border-[#d4c9b5] rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]"
+                      defaultValue="Nigeria"
+                    >
+                      <option>Nigeria</option>
+                    </select>
+                  </div>
+                </div>
+              </form>
+
+              <h2 className="text-xl font-serif text-[#74541e] mt-8 mb-4 flex items-center">
+                <CreditCard className="mr-2" size={20} />
+                Payment Method
+              </h2>
+
+              <div className="space-y-3">
+                <div className="flex items-center p-4 border border-[#C47E20] rounded-lg cursor-pointer bg-[#f9f7f3]">
+                  <input
+                    type="radio"
+                    id="paystack"
+                    name="paymentMethod"
+                    className="h-4 w-4 text-[#C47E20] focus:ring-[#C47E20] border-[#d4c9b5]"
+                    defaultChecked
+                  />
+                  <label
+                    htmlFor="paystack"
+                    className="ml-3 block text-sm font-medium text-[#846C3B]"
                   >
-                    <option>Nigeria</option>
-                    <option>Ghana</option>
-                    <option>Kenya</option>
-                    <option>South Africa</option>
-                  </select>
+                    Paystack (Card, Bank Transfer, USSD)
+                  </label>
                 </div>
-            </div>
-          </form>
-
-          <h2 className="text-xl font-serif text-[#74541e] mt-8 mb-4 flex items-center">
-            <CreditCard className="mr-2" size={20} />
-            Payment Method
-          </h2>
-
-          <div className="space-y-3">
-            <div className="flex items-center p-4 border border-[#C47E20] rounded-lg cursor-pointer bg-[#f9f7f3]">
-              <input
-                type="radio"
-                id="paystack"
-                name="paymentMethod"
-                className="h-4 w-4 text-[#C47E20] focus:ring-[#C47E20] border-[#d4c9b5]"
-                defaultChecked
-              />
-              <label
-                htmlFor="paystack"
-                className="ml-3 block text-sm font-medium text-[#846C3B]"
-              >
-                Paystack (Card, Bank Transfer, USSD)
-              </label>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Right Column - Order Summary */}
-      <div>
-        <div className="bg-white rounded-xl shadow-sm border border-[#e8e2d6] p-6 sticky top-8">
-          <h2 className="text-xl font-serif text-[#74541e] mb-4">
-            Order Summary
-          </h2>
+          {/* Right Column - Order Summary */}
+          <div>
+            <div className="bg-white rounded-xl shadow-sm border border-[#e8e2d6] p-6 sticky top-8">
+              <h2 className="text-xl font-serif text-[#74541e] mb-4">
+                Order Summary
+              </h2>
 
-          <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
-            {cartItems.length > 0 ? (
-              cartItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex justify-between items-center"
-                >
-                  <div className="flex items-center">
-                    <img
-                      src={item.imageUrl}
-                      alt={item.title}
-                      className="w-12 h-12 object-cover rounded mr-3"
-                    />
-                    <div>
-                      <h3 className="text-sm font-medium text-[#74541e]">
-                        {item.title}
-                      </h3>
-                      <p className="text-xs text-[#846C3B]">
-                        Qty: {item.quantity}
-                      </p>
+              <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
+                {cartItems.length > 0 ? (
+                  cartItems.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex justify-between items-center"
+                    >
+                      <div className="flex items-center">
+                        <img
+                          src={item.imageUrl}
+                          alt={item.title}
+                          className="w-12 h-12 object-cover rounded mr-3"
+                        />
+                        <div>
+                          <h3 className="text-sm font-medium text-[#74541e]">
+                            {item.title}
+                          </h3>
+                          <p className="text-xs text-[#846C3B]">
+                            Qty: {item.quantity}
+                          </p>
+                        </div>
+                      </div>
+                      <span className="text-sm font-medium text-[#74541e]">
+                        ₦{(item.price * item.quantity).toFixed(2)}
+                      </span>
                     </div>
-                  </div>
+                  ))
+                ) : (
+                  <p className="text-center text-gray-500 py-4">
+                    Your cart is empty
+                  </p>
+                )}
+              </div>
+
+              <div className="border-t border-[#e8e2d6] pt-4 space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-sm text-[#846C3B]">Subtotal</span>
                   <span className="text-sm font-medium text-[#74541e]">
-                    ₦{(item.price * item.quantity).toFixed(2)}
+                    ₦{subtotal.toFixed(2)}
                   </span>
                 </div>
-              ))
-            ) : (
-              <p className="text-center text-gray-500 py-4">
-                Your cart is empty
+                <div className="flex justify-between">
+                  <span className="text-sm text-[#846C3B]">Shipping</span>
+                  <span className="text-sm font-medium text-[#74541e]">
+                    {shipping === 0 ? "Free" : `₦{shipping.toFixed(2)}`}
+                  </span>
+                </div>
+                <div className="flex justify-between pt-2 border-t border-[#e8e2d6] mt-2">
+                  <span className="font-medium text-[#74541e]">Total</span>
+                  <span className="font-medium text-[#74541e]">
+                    ₦{total.toFixed(2)}
+                  </span>
+                </div>
+              </div>
+
+              <button
+                onClick={handleSubmit}
+                disabled={cartItems.length === 0}
+                className={`w-full mt-6 py-3 px-4 rounded-lg text-white font-medium flex items-center justify-center ${cartItems.length === 0
+                  ? 'bg-[#a8a095] cursor-not-allowed'
+                  : 'bg-[#74541e] hover:bg-[#5a4218]'
+                  }`}
+              >
+                <Lock className="mr-2" size={16} />
+                {cartItems.length === 0 ? "Cart is Empty" : "Complete Checkout"}
+              </button>
+
+              <p className="text-xs text-[#846C3B] mt-4 flex items-center">
+                <Lock className="mr-1" size={12} />
+                Your payment is securely processed by Paystack. We don't store
+                your card details.
               </p>
-            )}
-          </div>
-
-          <div className="border-t border-[#e8e2d6] pt-4 space-y-2">
-            <div className="flex justify-between">
-              <span className="text-sm text-[#846C3B]">Subtotal</span>
-              <span className="text-sm font-medium text-[#74541e]">
-                ₦{subtotal.toFixed(2)}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm text-[#846C3B]">Shipping</span>
-              <span className="text-sm font-medium text-[#74541e]">
-                {shipping === 0 ? "Free" : `₦{shipping.toFixed(2)}`}
-              </span>
-            </div>
-            <div className="flex justify-between pt-2 border-t border-[#e8e2d6] mt-2">
-              <span className="font-medium text-[#74541e]">Total</span>
-              <span className="font-medium text-[#74541e]">
-                ₦{total.toFixed(2)}
-              </span>
             </div>
           </div>
-
-          <button
-            onClick={handleSubmit}
-            disabled={cartItems.length === 0}
-            className={`w-full mt-6 py-3 px-4 rounded-lg text-white font-medium flex items-center justify-center ${cartItems.length === 0
-              ? 'bg-[#a8a095] cursor-not-allowed'
-              : 'bg-[#74541e] hover:bg-[#5a4218]'
-              }`}
-          >
-            <Lock className="mr-2" size={16} />
-            {cartItems.length === 0 ? "Cart is Empty" : "Complete Checkout"}
-          </button>
-
-          <p className="text-xs text-[#846C3B] mt-4 flex items-center">
-            <Lock className="mr-1" size={12} />
-            Your payment is securely processed by Paystack. We don't store
-            your card details.
-          </p>
         </div>
-      </div>
-    </div>
       </div >
     </div >
   );

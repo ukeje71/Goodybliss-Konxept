@@ -31,6 +31,7 @@ const useCartStore = create(
       },
 
       removeFromCart: (productId) => {
+          alert("You are about to remove a product from cart ")
         set({
           cartItems: get().cartItems.filter((item) => item.id !== productId),
         });

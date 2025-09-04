@@ -25,7 +25,7 @@ const AboutPage = () => {
     {
       year: "2010",
       title: "Art School",
-      description: "Graduated from Melbourne Art Institute with honors in Fine Arts",
+      description: "Graduated from  Art Institute with honors in Fine Arts",
       icon: <Brush className="text-[#C47E20] w-8 h-8" />
     },
     {

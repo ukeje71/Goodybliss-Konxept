@@ -160,7 +160,7 @@ const Homepage = () => {
       <img
         src={image}
         alt={title}
-        className="w-full h-full object-cover"
+        className="w-rfull h-full object-cove"
         loading="lazy"
       />
       <div className="absolute inset-0 z-20 flex items-center justify-center text-center px-8">
@@ -290,7 +290,7 @@ const Homepage = () => {
           <h1 className="text-2xl font-serif">The Original Moving Sale</h1>
           <p>
             After two years in the warehouse studio, my creative practice is
-            moving to <strong>Melbourne!</strong> For the first time, original
+            moving to <strong>a Website</strong> For the first time, original
             pieces are available at a generous discount.
           </p>
           <button
@@ -316,47 +316,48 @@ const Homepage = () => {
             ))}
           </div>
         </div>
+        <div className="flex flex-col lg:flex-row w-full lg:h-[90vh]">
+          {/* LEFT: Video */}
+          <div className="w-full lg:w-1/2 h-[50vh] lg:h-full relative">
+            <video
+              className="object-cover w-full h-full"
+              autoPlay
+              loop
+              muted
+              id="Video"
+            >
+              <source
+                src="https://res.cloudinary.com/dlyearrnf/video/upload/v1756993101/Goodyblissunfolds_hdhhxz.mp4"
+                type="video/mp4"
+              />
+            </video>
+          </div>
 
-<div className="flex flex-col lg:flex-row lg:h-[90vh] w-full">
-  {/* LEFT: Video */}
-  <div className="hidden lg:flex w-full lg:w-1/2 h-1/2 lg:h-full relative">
-    <iframe
-      src="https://www.facebook.com/plugins/video.php?href=https://www.facebook.com/reel/584650501280494/&autoplay=true&mute=1"
-      className="absolute top-0 left-0 w-full h-full"
-      style={{ border: "none", overflow: "hidden" }}
-      scrolling="no"
-      frameBorder="0"
-      allowFullScreen={true}
-      allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-      autoplay loop
-    />
-  </div>
-
-  {/* RIGHT: Image */}
-  <div className="w-full lg:w-1/2 h-1/2 lg:h-full relative">
-    <img
-      src={abstractImage}
-      alt="Art gallery interior"
-      className="object-cover w-full h-full"
-      loading="lazy"
-    />
-    <div className="absolute inset-0 bg-black/50 flex items-center justify-center p-8">
-      <div className="text-white text-center max-w-md">
-        <h1 className="text-3xl md:text-5xl font-serif mb-4 lg:uppercase tracking-wider">
-          Curate Your Home Gallery
-        </h1>
-        <div className="w-20 h-0.5 bg-white mx-auto my-6"></div>
-        <p className="text-lg md:text-xl mb-4 font-medium">
-          Museum-grade Canvas Prints
-        </p>
-        <p className="text-base md:text-lg leading-relaxed">
-          Add a personal touch with a bespoke Tasmanian oak frame.
-          Gallery wrapped with an enchanting satin finish, each print is made to order.
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
+          {/* RIGHT: Image */}
+          <div className="w-full lg:w-1/2 h-[50vh] lg:h-full relative">
+            <img
+              src={abstractImage}
+              alt="Art gallery interior"
+              className="object-cover w-full h-full"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-black/50 flex items-center justify-center p-8">
+              <div className="text-white text-center max-w-md">
+                <h1 className="text-3xl md:text-5xl font-serif mb-4 lg:uppercase tracking-wider">
+                  Curate Your Home Gallery
+                </h1>
+                <div className="w-20 h-0.5 bg-white mx-auto my-6"></div>
+                <p className="text-lg md:text-xl mb-4 font-medium">
+                  Museum-grade Canvas Prints
+                </p>
+                <p className="text-base md:text-lg leading-relaxed">
+                  Add a personal touch with a bespoke Tasmanian oak frame. Gallery wrapped
+                  with an enchanting satin finish, each print is made to order.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
 
       </section>
 
@@ -512,20 +513,18 @@ const Homepage = () => {
               </h2>
               <p className="text-gray-700 mb-4">
                 Goodybliss is a contemporary artist known for her vibrant use of
-                color and expressive brushwork. With over 15 years of
+                color and expressive brushwork. With over 10 years of
                 experience, her work has been exhibited in galleries across
-                Australia and internationally.
+                Nigeria and internationally.
               </p>
               <p className="text-gray-700 mb-4">
                 Her current collection explores the intersection of memory and
-                landscape, drawing inspiration from the rugged Tasmanian
-                coastline where she spent her formative years.
+                landscape, drawing inspiration from the where she spent her formative years.
               </p>
               <p className="text-gray-700 mb-6">
                 "Each piece is a conversation between the materials and my
                 emotions at that moment in time. I hope they bring as much joy
                 to collectors as they brought me in creating them."
-                ''
               </p>
               <button
                 onClick={() => navigate("/about")}
