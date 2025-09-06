@@ -8,6 +8,7 @@ const CheckoutPage = () => {
   const { cartItems, getTotalPrice, clearCart } = useCartStore();
 
   const [formErrors, setFormErrors] = useState({});
+  const [isProcessing, setIsProcessing] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -37,11 +38,13 @@ const CheckoutPage = () => {
     if (!formData.state.trim()) errors.state = "State required";
     return errors;
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const errors = validateForm();
 
     if (Object.keys(errors).length === 0) {
+      setIsProcessing(true);
       const handler = window.PaystackPop.setup({
         key: import.meta.env.VITE_APP_PAYSTACK_PUBLIC_KEY,
         email: formData.email,
@@ -50,42 +53,49 @@ const CheckoutPage = () => {
         ref: "" + Math.floor(Math.random() * 1000000000 + 1),
 
         onClose: () => {
+          setIsProcessing(false);
           alert("Transaction was not completed, window closed.");
         },
-
         callback: (response) => {
-          // ✅ Send details to Google Sheets
-              fetch("https://script.google.com/macros/s/AKfycbyA36VmthZ2u9th9KEpNQF-TEHiK51uCx64hCrxNDi4GzlbwPgOh4WFAFOAGYOEarxnhQ/exec", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    fullName: formData.fullName,
-    email: formData.email,
-    phone: formData.phoneNumber,
-    address: `${formData.addressLine1}, ${formData.streetName}, ${formData.city}, ${formData.state}`,
-    amount: total,
-    ref: response.reference,
-  }),
-})
-  .then((res) => res.text()) // 👈 get raw response first
-  .then((text) => {
-    console.log("Raw response from Sheets:", text);
-    try {
-      const data = JSON.parse(text);
-      console.log("Parsed JSON:", data);
-    } catch (err) {
-      console.error("JSON parse error:", err);
-    }
-  })
-  .catch((err) => {
-    console.error("Error saving to Google Sheets:", err);
-  });
+          const url = "https://script.google.com/macros/s/AKfycbzJRUz2fEz3aVmXg_XwxKY4jyQ2pY5oysBL7FD0sTuZe2LgQSbUbDzxqaPKnPhkZnfj_A/exec";
 
+          // Prepare form data for Google Sheets
+          const formDataForSheets = new URLSearchParams();
+          formDataForSheets.append('fullName', formData.fullName);
+          formDataForSheets.append('email', formData.email);
+          formDataForSheets.append('phone', formData.phoneNumber);
+          formDataForSheets.append('address', `${formData.addressLine1}, ${formData.streetName}, ${formData.city}, ${formData.state}`);
+          formDataForSheets.append('amount', total);
+          formDataForSheets.append('ref', response.reference);
 
-          // ✅ Clear cart + navigate
-          clearCart();
-          navigate("/order-confirmation");
-        },
+          fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: formDataForSheets
+          })
+            .then(response => response.text())
+            .then(data => {
+              console.log("Google Sheets response:", data);
+              // Check if the response indicates success
+              if (data.includes("Added")) {
+                alert("Transaction successful. Details saved.");
+                clearCart();
+                setTimeout(() => navigate("/order-confirmation"), 100);
+              } else {
+                alert("Google Sheets error: " + data);
+              }
+
+            })
+            .catch(error => {
+              console.error("Error saving to Google Sheets:", error);
+              alert("Transaction was successful but there was an error saving details. Please contact support with reference: " + response.reference);
+            })
+            .finally(() => {
+              setIsProcessing(false);
+            });
+        }
       });
 
       handler.openIframe();
@@ -130,7 +140,7 @@ const CheckoutPage = () => {
                     value={formData.fullName}
                     onChange={handleInputChange}
                     placeholder="Username"
-                    className={`w-full px-4 py-2 border ${formErrors.fullName ? 'border-red-500' : 'border-[#d4c9b5]'} w-full px-4 py-2 border border-amber-200 rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
+                    className={`w-full px-4 py-2 border ${formErrors.fullName ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
                     required
                   />
                   {formErrors.fullName && (
@@ -150,7 +160,7 @@ const CheckoutPage = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     placeholder="someone@email.com"
-                    className={`w-full px-4 py-2 border ${formErrors.email ? 'border-red-500' : 'border-[#d4c9b5]'} w-full px-4 py-2 border border-amber-200 rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
+                    className={`w-full px-4 py-2 border ${formErrors.email ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
                     required
                   />
                   {formErrors.email && (
@@ -170,8 +180,7 @@ const CheckoutPage = () => {
                     placeholder="+234 707 635 4937"
                     value={formData.phoneNumber}
                     onChange={handleInputChange}
-
-                    className={`w-full px-4 py-2 border ${formErrors.phoneNumber ? 'border-red-500' : 'border-[#d4c9b5]'} w-full px-4 py-2 border border-amber-200 rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
+                    className={`w-full px-4 py-2 border ${formErrors.phoneNumber ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
                     required
                   />
                   {formErrors.phoneNumber && (
@@ -191,7 +200,7 @@ const CheckoutPage = () => {
                     value={formData.addressLine1}
                     onChange={handleInputChange}
                     placeholder="Ariara Junction"
-                    className={`w-full px-4 py-2 border ${formErrors.addressLine1 ? 'border-red-500' : 'border-[#d4c9b5]'} w-full px-4 py-2 border border-amber-200 rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
+                    className={`w-full px-4 py-2 border ${formErrors.addressLine1 ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
                     required
                   />
                   {formErrors.addressLine1 && (
@@ -211,7 +220,7 @@ const CheckoutPage = () => {
                     value={formData.streetName}
                     onChange={handleInputChange}
                     placeholder="10 Osusu"
-                    className={`w-full px-4 py-2 border ${formErrors.streetName ? 'border-red-500' : 'border-[#d4c9b5]'} w-full px-4 py-2 border border-amber-200 rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
+                    className={`w-full px-4 py-2 border ${formErrors.streetName ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
                     required
                   />
                   {formErrors.streetName && (
@@ -232,7 +241,7 @@ const CheckoutPage = () => {
                       value={formData.city}
                       placeholder="Aba"
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-2 border ${formErrors.city ? 'border-red-500' : 'border-[#d4c9b5]'} w-full px-4 py-2 border border-amber-200 rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
+                      className={`w-full px-4 py-2 border ${formErrors.city ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
                       required
                     />
                     {formErrors.city && (
@@ -251,22 +260,9 @@ const CheckoutPage = () => {
                       name="state"
                       value={formData.state}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-2 border ${formErrors.state ? 'border-red-500' : 'border-[#d4c9b5]'} w-full px-4 py-2 border border-amber-200 rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
+                      className={`w-full px-4 py-2 border ${formErrors.state ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
                       required
                     />
-                    {/* <select
-                      value={formData.state}  
-                     onChange={handleInputChange} className="w-full px-4 py-2 border outline-0 border-[#d4c9b5]   rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]"
-                    >
-                      <option value="Abia">Abia</option>
-                      <option value="Anambra">Anambra</option>
-                      <option value="Enugu">Enugu</option>
-                      <option value="Portharcout">Portharcout</option>
-                      <option value="Imo">Imo</option>
-                      <option value="Lagos">Lagos</option>
-                      <option value="Ebonyi">Ebonyi</option>
-                      <option value="Crossriver">Crossriver</option>
-                  </select> */}
                     {formErrors.state && (
                       <p className="text-red-500 text-xs mt-1">
                         {formErrors.state}
@@ -364,7 +360,7 @@ const CheckoutPage = () => {
                 <div className="flex justify-between">
                   <span className="text-sm text-[#846C3B]">Shipping</span>
                   <span className="text-sm font-medium text-[#74541e]">
-                    {shipping === 0 ? "Free" : `₦{shipping.toFixed(2)}`}
+                    {shipping === 0 ? "Free" : `₦${shipping.toFixed(2)}`}
                   </span>
                 </div>
                 <div className="flex justify-between pt-2 border-t border-[#e8e2d6] mt-2">
@@ -377,14 +373,20 @@ const CheckoutPage = () => {
 
               <button
                 onClick={handleSubmit}
-                disabled={cartItems.length === 0}
-                className={`w-full mt-6 py-3 px-4 rounded-lg text-white font-medium flex items-center justify-center ${cartItems.length === 0
+                disabled={cartItems.length === 0 || isProcessing}
+                className={`w-full mt-6 py-3 px-4 rounded-lg text-white font-medium flex items-center justify-center ${cartItems.length === 0 || isProcessing
                   ? 'bg-[#a8a095] cursor-not-allowed'
                   : 'bg-[#74541e] hover:bg-[#5a4218]'
                   }`}
               >
-                <Lock className="mr-2" size={16} />
-                {cartItems.length === 0 ? "Cart is Empty" : "Complete Checkout"}
+                {isProcessing ? (
+                  <>Processing...</>
+                ) : (
+                  <>
+                    <Lock className="mr-2" size={16} />
+                    {cartItems.length === 0 ? "Cart is Empty" : "Complete Checkout"}
+                  </>
+                )}
               </button>
 
               <p className="text-xs text-[#846C3B] mt-4 flex items-center">
@@ -395,8 +397,8 @@ const CheckoutPage = () => {
             </div>
           </div>
         </div>
-      </div >
-    </div >
+      </div>
+    </div>
   );
 };
 
