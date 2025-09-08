@@ -131,10 +131,10 @@ const Cards2 = ({
           {discountPrice ? (
             <div className="flex items-center gap-2">
               <span className="text-lg font-bold text-[#74541e]">
-                ₦{discountPrice.toFixed(2)}
+                ${discountPrice.toFixed(2)}
               </span>
               <span className="text-sm text-gray-400 line-through">
-                ₦{regularPrice?.toFixed(2)}
+                ${regularPrice?.toFixed(2)}
               </span>
               {discountPercent > 0 && (
                 <span className="ml-auto text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded">
@@ -144,7 +144,7 @@ const Cards2 = ({
             </div>
           ) : (
             <span className="text-lg font-bold text-[#74541e]">
-              ₦{regularPrice?.toFixed(2)}
+              ${regularPrice?.toFixed(2)}
             </span>
           )}
         </div>
@@ -167,11 +167,10 @@ const Cards2 = ({
                 handleAddToCart(e);
               }
             }}
-            className={`flex-1 py-2 text-sm rounded transition-colors ${
-              inStock
+            className={`flex-1 py-2 text-sm rounded transition-colors ${inStock
                 ? "bg-[#74541e] text-white hover:bg-[#5a4218]"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
-            }`}
+              }`}
             disabled={inStock === false}
           >
             {inStock ? "Add to Cart" : "Sold Out"}

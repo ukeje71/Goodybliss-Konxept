@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 const Navbtn = ({ swiperRef, className = "", iconSize = 24 }) => {
   return (
     <div
-      className={`flex justify-between w-full pointer-events-none ₦{className}`}
+      className={`flex justify-between w-full pointer-events-none ${className}`}
     >
       <button
         onClick={() => swiperRef.current?.slidePrev()}

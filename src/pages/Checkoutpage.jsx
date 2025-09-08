@@ -4,6 +4,8 @@ import useCartStore from "../components/Store/cartStore";
 import { useNavigate } from "react-router";
 
 const CheckoutPage = () => {
+  // Signature
+  console.log("8e1ef8dc7c6b5e5363b83da1cf3809c0b093b5b07fa13aaf4c9bfc0a44b2fc8a")
   const navigate = useNavigate();
   const { cartItems, getTotalPrice, clearCart } = useCartStore();
 
@@ -57,7 +59,7 @@ const CheckoutPage = () => {
           alert("Transaction was not completed, window closed.");
         },
         callback: (response) => {
-          const url = "https://script.google.com/macros/s/AKfycbzJRUz2fEz3aVmXg_XwxKY4jyQ2pY5oysBL7FD0sTuZe2LgQSbUbDzxqaPKnPhkZnfj_A/exec";
+          const url = "https://script.google.com/macros/s/AKfycbyWbWeZwA2pW3SxCWbq2KKaamdkYLndl3kujB7DVrSmd9_MG5QokmxbOnapnj71p2TJgQ/exec";
 
           // Prepare form data for Google Sheets
           const formDataForSheets = new URLSearchParams();
@@ -67,6 +69,7 @@ const CheckoutPage = () => {
           formDataForSheets.append('address', `${formData.addressLine1}, ${formData.streetName}, ${formData.city}, ${formData.state}`);
           formDataForSheets.append('amount', total);
           formDataForSheets.append('ref', response.reference);
+          formDataForSheets.append('products', cartItems.map(item => `${item.title} (x${item.quantity})`).join(', '));
 
           fetch(url, {
             method: "POST",
@@ -82,7 +85,7 @@ const CheckoutPage = () => {
               if (data.includes("Added")) {
                 alert("Transaction successful. Details saved.");
                 clearCart();
-                setTimeout(() => navigate("/order-confirmation"), 100);
+                setTimeout(() => navigate(`/order-confirmation?ref=${response.reference}`), 100);
               } else {
                 alert("Google Sheets error: " + data);
               }
@@ -339,7 +342,7 @@ const CheckoutPage = () => {
                         </div>
                       </div>
                       <span className="text-sm font-medium text-[#74541e]">
-                        ₦{(item.price * item.quantity).toFixed(2)}
+                        ${(item.price * item.quantity).toFixed(2)}
                       </span>
                     </div>
                   ))
@@ -354,19 +357,19 @@ const CheckoutPage = () => {
                 <div className="flex justify-between">
                   <span className="text-sm text-[#846C3B]">Subtotal</span>
                   <span className="text-sm font-medium text-[#74541e]">
-                    ₦{subtotal.toFixed(2)}
+                    ${subtotal.toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-[#846C3B]">Shipping</span>
                   <span className="text-sm font-medium text-[#74541e]">
-                    {shipping === 0 ? "Free" : `₦${shipping.toFixed(2)}`}
+                    {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
                   </span>
                 </div>
                 <div className="flex justify-between pt-2 border-t border-[#e8e2d6] mt-2">
                   <span className="font-medium text-[#74541e]">Total</span>
                   <span className="font-medium text-[#74541e]">
-                    ₦{total.toFixed(2)}
+                    ${total.toFixed(2)}
                   </span>
                 </div>
               </div>

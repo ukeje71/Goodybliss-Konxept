@@ -9,23 +9,104 @@ import {
     ArrowRight,
     Home,
     Phone,
-    Mail
+    Mail,
+    Loader
 } from 'lucide-react';
 
 const OrderConfirmation = () => {
-    const [orderDetails, setOrderDetails] = useState({
-        orderNumber: '#123456',
-        orderDate: 'October 15, 2023',
-        deliveryDate: 'October 17, 2023',
-        paymentMethod: 'Paystack (Card)',
-        transactionId: 'PS-7890XYZ123',
-        totalAmount: '₦18,500.00',
-        shippingAddress: 'Ariara Junction, 10 Osusu, Aba, Abia State',
-        customerName: 'John Doe',
-        customerEmail: 'john.doe@example.com',
-        customerPhone: '+234 707 635 4937'
-    });
+    const [orderDetails, setOrderDetails] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
+    // Get order reference from URL parameters
+    const getOrderRefFromURL = () => {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('ref');
+    };
+
+    // Fetch order data from Google Sheets
+    useEffect(() => {
+        const fetchOrderData = async () => {
+            try {
+                const orderRef = getOrderRefFromURL();
+
+                if (!orderRef) {
+                    throw new Error('No order reference found in URL');
+                }
+
+                // Your Google Apps Script URL for GET requests
+                const scriptURL = 'https://script.google.com/macros/s/AKfycbyWbWeZwA2pW3SxCWbq2KKaamdkYLndl3kujB7DVrSmd9_MG5QokmxbOnapnj71p2TJgQ/exec';
+
+                const response = await fetch(scriptURL);
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch order data');
+                }
+
+                const result = await response.json();
+                console.log("Google Sheets Response:", result); // 👈 add this for debugging
+
+                if (!Array.isArray(result.data)) {
+                    throw new Error("Invalid response format from Google Sheets");
+                }
+
+                const orders = result.data;
+                const order = orders.find(o => String(o.ref) === String(orderRef));
+
+                if (!order) {
+                    console.error("Order not found with ref:", orderRef, orders);
+                    throw new Error(`Order with ref ${orderRef} not found`);
+                }
+
+                setOrderDetails({
+                    orderNumber: order.ref || '#123456',
+                    orderDate: new Date(order.timestamp || Date.now()).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    }),
+                    deliveryDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    }),
+                    paymentMethod: 'Paystack (Card)',
+                    transactionId: order.ref || 'PS-7890XYZ123',
+                    totalAmount: `₦${parseInt(order.amount || 0).toLocaleString()}`,
+                    shippingAddress: order.address || 'Address not available',
+                    customerName: order.fullName || 'Customer',
+                    customerEmail: order.email || 'No email provided',
+                    customerPhone: order.phone || 'No phone provided'
+                });
+
+
+                setLoading(false);
+            } catch (err) {
+                console.error('Error fetching order data:', err);
+                setError(err.message);
+                setLoading(false);
+
+                // Fallback to sample data if fetch fails
+                setOrderDetails({
+                    orderNumber: '#123456',
+                    orderDate: 'October 15, 2023',
+                    deliveryDate: 'October 17, 2023',
+                    paymentMethod: 'Paystack (Card)',
+                    transactionId: 'PS-7890XYZ123',
+                    totalAmount: '₦18,500.00',
+                    shippingAddress: 'Ariara Junction, 10 Osusu, Aba, Abia State',
+                    customerName: 'John Doe',
+                    customerEmail: 'john.doe@example.com',
+                    customerPhone: '+234 707 635 4937'
+                });
+            }
+        };
+
+        fetchOrderData();
+    }, []);
+
+    // Rest of your component remains the same...
+    // [Keep all your existing JSX code here]
     const [cartItems, setCartItems] = useState([
         {
             id: 1,
@@ -63,6 +144,9 @@ const OrderConfirmation = () => {
 
             if (!confettiContainer) return;
 
+            // Clear existing confetti
+            confettiContainer.innerHTML = '';
+
             for (let i = 0; i < confettiCount; i++) {
                 const confetti = document.createElement('div');
                 confetti.className = 'confetti';
@@ -77,7 +161,31 @@ const OrderConfirmation = () => {
         };
 
         createConfetti();
-    }, [], 1000);
+    }, [orderDetails]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-[#f5f0ea] flex items-center justify-center">
+                <div className="text-center">
+                    <Loader className="w-12 h-12 text-[#C47E20] animate-spin mx-auto mb-4" />
+                    <p className="text-[#74541e]">Loading your order details...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="min-h-screen bg-[#f5f0ea] flex items-center justify-center">
+                <div className="text-center">
+                    <div className="bg-white rounded-xl shadow-sm border border-[#e8e2d6] p-8 max-w-md">
+                        <p className="text-red-500 mb-4">Error: {error}</p>
+                        <p className="text-[#846C3B] mb-4">Showing sample order data</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-[#f5f0ea] py-8 px-4">
@@ -142,6 +250,7 @@ const OrderConfirmation = () => {
                             <p className="text-[#5a4218]">{orderDetails.customerName}</p>
                             <p className="text-[#846C3B]">{orderDetails.shippingAddress}</p>
                             <p className="text-[#846C3B]">{orderDetails.customerPhone}</p>
+                            <p className="text-[#846C3B]">{orderDetails.customerEmail}</p>
                         </div>
                     </div>
 
@@ -182,24 +291,24 @@ const OrderConfirmation = () => {
 
                         <h2 className="text-xl font-serif text-[#74541e] mt-6 mb-4 flex items-center">
                             <ShoppingBag className="mr-2" size={20} />
-                            Order Items
+                            Order Summary
                         </h2>
 
-                        <div className="space-y-4">
-                            {cartItems.map(item => (
-                                <div key={item.id} className="flex items-center">
-                                    <img
-                                        src={item.image}
-                                        alt={item.name}
-                                        className="w-16 h-16 rounded-lg object-cover border border-[#e8e2d6]"
-                                    />
-                                    <div className="ml-4 flex-1">
-                                        <h3 className="font-medium text-[#74541e]">{item.name}</h3>
-                                        <p className="text-sm text-[#846C3B]">Qty: {item.quantity}</p>
-                                    </div>
-                                    <span className="font-medium text-[#74541e]">₦{(item.price * item.quantity).toLocaleString()}</span>
-                                </div>
-                            ))}
+                        <div className="space-y-2">
+                            <div className="flex justify-between">
+                                <span className="text-[#846C3B]">Subtotal</span>
+                                <span className="font-medium text-[#74541e]">${subtotal.toLocaleString()}</span>
+                            </div>
+
+                            <div className="flex justify-between">
+                                <span className="text-[#846C3B]">Shipping</span>
+                                <span className="font-medium text-[#74541e]">Free</span>
+                            </div>
+
+                            <div className="flex justify-between pt-2 border-t border-[#e8e2d6]">
+                                <span className="text-lg font-medium text-[#74541e]">Total</span>
+                                <span className="text-lg font-medium text-[#74541e]">${total.toLocaleString()}</span>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -120,6 +120,8 @@ const SliderNavigation = ({ swiperRef, className = "" }) => {
 };
 
 const Homepage = () => {
+  // Signature
+  console.log("8e1ef8dc7c6b5e5363b83da1cf3809c0b093b5b07fa13aaf4c9bfc0a44b2fc8a")
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

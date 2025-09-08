@@ -112,7 +112,7 @@ const ArtClassPage = () => {
 
                 <div className="flex justify-between items-center">
                   <span className="text-xl font-bold text-[#74541e]">
-                    ₦{classItem.price.toLocaleString()}
+                    ${classItem.price.toLocaleString()}
                   </span>
                   <button className="bg-[#74541e] text-white hover:bg-[#5a4218] px-6 py-2 rounded-full flex items-center transition duration-300">
                     Book Now <ArrowRight className="ml-2 h-4 w-4" />

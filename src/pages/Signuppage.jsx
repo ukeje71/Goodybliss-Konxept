@@ -60,7 +60,7 @@ const SignUpPage = () => {
       // Redirect based on role
       navigate(isAdmin ? "/admin/dashboard" : "/gallery", { replace: true });
       toast.success(
-        `Account created successfully! Welcome ₦{isAdmin ? "Admin" : "User"}!`
+        `Account created successfully! Welcome ${isAdmin ? "Admin" : "User"}!`
       );
     } catch (err) {
       console.error("Signup error:", err);
@@ -217,9 +217,8 @@ const SignUpPage = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className={`w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#C47E20] ${
-                  isLoading ? "bg-[#74541e]" : "bg-[#74541e] hover:bg-[#5a4218]"
-                }`}
+                className={`w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#C47E20] ${isLoading ? "bg-[#74541e]" : "bg-[#74541e] hover:bg-[#5a4218]"
+                  }`}
               >
                 {isLoading ? (
                   <>

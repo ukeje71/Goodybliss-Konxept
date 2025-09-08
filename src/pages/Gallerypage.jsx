@@ -40,7 +40,9 @@ const GalleryPage = () => {
     if (cat.id === "all") return !category || location.pathname === "/gallery";
     return category === cat.id;
   };
-console.log("f5e4b35f243a317fbaadfdd2450b949b81c0a13ff8b3d093e5f63717aee274ff");
+
+  // Signature
+  console.log("8e1ef8dc7c6b5e5363b83da1cf3809c0b093b5b07fa13aaf4c9bfc0a44b2fc8a")
   return (
     <div className="w-full min-h-screen bg-[#f5f0ea]">
       {/* Hero Section */}

@@ -58,20 +58,19 @@ const ProductDetails = () => {
             {/* Price */}
             <div className="flex items-center gap-4">
               <p className="text-2xl font-semibold text-[#74541e]">
-                ₦{product.discountPrice || product.price}
+                ${product.discountPrice || product.price}
               </p>
               {product.discountPrice && (
                 <p className="text-lg text-gray-500 line-through">
-                  ₦{product.price}
+                  ${product.price}
                 </p>
               )}
             </div>
 
             {/* Stock */}
             <p
-              className={`text-sm ${
-                product.stock ? "text-green-600" : "text-red-600"
-              }`}
+              className={`text-sm ${product.stock ? "text-green-600" : "text-red-600"
+                }`}
             >
               {product.stock ? "In Stock" : "Sold Out"}
             </p>
@@ -109,9 +108,8 @@ const ProductDetails = () => {
             {/* Add to Cart */}
             <button
               onClick={() => addToCart(product)}
-              className={`bg-[#74541e] text-white py-3 px-6 rounded hover:bg-[#5a4218] transition-colors ₦{
-                !product.stock ? "opacity-50 cursor-not-allowed" : ""
-              }`}
+              className={`bg-[#74541e] text-white py-3 px-6 rounded hover:bg-[#5a4218] transition-colors ${!product.stock ? "opacity-50 cursor-not-allowed" : ""
+                }`}
               disabled={!product.stock}
             >
               {product.stock ? "Add to Cart" : "Out of Stock"}

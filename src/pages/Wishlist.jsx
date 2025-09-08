@@ -105,15 +105,15 @@ const WishlistPage = () => {
                       {product.discountPrice ? (
                         <div className="flex products-center gap-2">
                           <span className="text-lg font-bold text-[#74541e]">
-                            ₦{Number(product.discountPrice || 0).toFixed(2)}
+                            ${Number(product.discountPrice || 0).toFixed(2)}
                           </span>
                           <span className="text-sm text-gray-400 line-through">
-                            ₦{Number(product.price || 0).toFixed(2)}
+                            ${Number(product.price || 0).toFixed(2)}
                           </span>
                         </div>
                       ) : (
                         <span className="text-lg font-bold text-[#74541e]">
-                          ₦{Number(product.price || 0).toFixed(2)}
+                          ${Number(product.price || 0).toFixed(2)}
                         </span>
                       )}
                     </div>
