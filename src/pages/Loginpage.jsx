@@ -56,7 +56,7 @@ const Loginpage = () => {
       localStorage.removeItem("authToken");
       localStorage.removeItem("userRole");
       localStorage.removeItem("userEmail");
-      toast.error("Login failed. Please check your credentials.");
+      toast.error(`Login failed. ${err}.`);
     } finally {
       setIsLoading(false);
     }

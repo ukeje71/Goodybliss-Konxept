@@ -2,6 +2,7 @@ import { Lock, CreditCard, Truck, ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import useCartStore from "../components/Store/cartStore";
 import { useNavigate } from "react-router";
+import toast from "react-hot-toast";
 
 const CheckoutPage = () => {
   // Signature
@@ -19,6 +20,7 @@ const CheckoutPage = () => {
     streetName: "",
     city: "",
     state: "",
+    country: "",
     deliveryOption: "Free Delivery",
   });
 
@@ -38,6 +40,8 @@ const CheckoutPage = () => {
     if (!formData.streetName.trim()) errors.streetName = "Street name required";
     if (!formData.city.trim()) errors.city = "City required";
     if (!formData.state.trim()) errors.state = "State required";
+    if (!formData.country.trim()) errors.country = "Country required";
+
     return errors;
   };
 
@@ -56,7 +60,7 @@ const CheckoutPage = () => {
 
         onClose: () => {
           setIsProcessing(false);
-          alert("Transaction was not completed, window closed.");
+          toast.error("Transaction was not completed, window closed.");
         },
         callback: (response) => {
           const url = "https://script.google.com/macros/s/AKfycbyWbWeZwA2pW3SxCWbq2KKaamdkYLndl3kujB7DVrSmd9_MG5QokmxbOnapnj71p2TJgQ/exec";
@@ -66,7 +70,7 @@ const CheckoutPage = () => {
           formDataForSheets.append('fullName', formData.fullName);
           formDataForSheets.append('email', formData.email);
           formDataForSheets.append('phone', formData.phoneNumber);
-          formDataForSheets.append('address', `${formData.addressLine1}, ${formData.streetName}, ${formData.city}, ${formData.state}`);
+          formDataForSheets.append('address', `${formData.addressLine1}, ${formData.streetName}, ${formData.city}, ${formData.state}, ${formData.country}`);
           formDataForSheets.append('amount', total);
           formDataForSheets.append('ref', response.reference);
           formDataForSheets.append('products', cartItems.map(item => `${item.title} (x${item.quantity})`).join(', '));
@@ -83,17 +87,17 @@ const CheckoutPage = () => {
               console.log("Google Sheets response:", data);
               // Check if the response indicates success
               if (data.includes("Added")) {
-                alert("Transaction successful. Details saved.");
+                toast.success("Transaction successful. Details saved.");
                 clearCart();
                 setTimeout(() => navigate(`/order-confirmation?ref=${response.reference}`), 100);
               } else {
-                alert("Google Sheets error: " + data);
+                toast.error("Google Sheets error: " + data);
               }
 
             })
             .catch(error => {
               console.error("Error saving to Google Sheets:", error);
-              alert("Transaction was successful but there was an error saving details. Please contact support with reference: " + response.reference);
+              toast.error("Transaction was successful but there was an error saving details. Please contact support with reference: " + response.reference);
             })
             .finally(() => {
               setIsProcessing(false);
@@ -277,12 +281,14 @@ const CheckoutPage = () => {
                     <label className="block text-sm font-medium text-[#846C3B] mb-1">
                       Country
                     </label>
-                    <select
-                      className="w-full px-4 py-2 border outline-0 border-[#d4c9b5] rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]"
-                      defaultValue="Nigeria"
-                    >
-                      <option>Nigeria</option>
-                    </select>
+                    <input
+                      type="text"
+                      name="country"
+                      value={formData.country}
+                      onChange={handleInputChange}
+                      className={`w-full px-4 py-2 border ${formErrors.country ? 'border-red-500' : 'border-[#d4c9b5]'} rounded-md focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]`}
+                      placeholder="Nigeria"
+                    />
                   </div>
                 </div>
               </form>

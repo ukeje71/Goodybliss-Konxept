@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 import {
     CheckCircle,
     Truck,
@@ -6,23 +8,33 @@ import {
     MapPin,
     Download,
     ShoppingBag,
-    ArrowRight,
     Home,
     Phone,
     Mail,
     Loader
 } from 'lucide-react';
+import useCartStore from "../components/Store/cartStore";
+import { useNavigate } from 'react-router';
 
 const OrderConfirmation = () => {
+    const invoiceRef = useRef(null);
     const [orderDetails, setOrderDetails] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
+    // Cart state
+    const { cartItems } = useCartStore();
+    // Navigation
+    const navigate = useNavigate();
     // Get order reference from URL parameters
     const getOrderRefFromURL = () => {
         const params = new URLSearchParams(window.location.search);
         return params.get('ref');
     };
+
+    // Calculate total
+    const subtotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+    const shipping = 0; // Free delivery
+    const total = subtotal + shipping;
 
     // Fetch order data from Google Sheets
     useEffect(() => {
@@ -44,7 +56,6 @@ const OrderConfirmation = () => {
                 }
 
                 const result = await response.json();
-                console.log("Google Sheets Response:", result); // 👈 add this for debugging
 
                 if (!Array.isArray(result.data)) {
                     throw new Error("Invalid response format from Google Sheets");
@@ -72,7 +83,7 @@ const OrderConfirmation = () => {
                     }),
                     paymentMethod: 'Paystack (Card)',
                     transactionId: order.ref || 'PS-7890XYZ123',
-                    totalAmount: `₦${parseInt(order.amount || 0).toLocaleString()}`,
+                    totalAmount: `$${parseInt(order.amount || 0).toLocaleString()}`,
                     shippingAddress: order.address || 'Address not available',
                     customerName: order.fullName || 'Customer',
                     customerEmail: order.email || 'No email provided',
@@ -93,10 +104,10 @@ const OrderConfirmation = () => {
                     deliveryDate: 'October 17, 2023',
                     paymentMethod: 'Paystack (Card)',
                     transactionId: 'PS-7890XYZ123',
-                    totalAmount: '₦18,500.00',
+                    totalAmount: '$18,500.00',
                     shippingAddress: 'Ariara Junction, 10 Osusu, Aba, Abia State',
-                    customerName: 'John Doe',
-                    customerEmail: 'john.doe@example.com',
+                    customerName: 'Anonimous User',
+                    customerEmail: 'someone@example.com',
                     customerPhone: '+234 707 635 4937'
                 });
             }
@@ -105,63 +116,6 @@ const OrderConfirmation = () => {
         fetchOrderData();
     }, []);
 
-    // Rest of your component remains the same...
-    // [Keep all your existing JSX code here]
-    const [cartItems, setCartItems] = useState([
-        {
-            id: 1,
-            name: 'Premium Coffee Beans',
-            price: 4500,
-            quantity: 2,
-            image: 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80'
-        },
-        {
-            id: 2,
-            name: 'Coffee Mug Set',
-            price: 7500,
-            quantity: 1,
-            image: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80'
-        },
-        {
-            id: 3,
-            name: 'Coffee Filter',
-            price: 2000,
-            quantity: 1,
-            image: 'https://images.unsplash.com/photo-1611854778588-eec2c565f3b6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80'
-        }
-    ]);
-
-    // Calculate total
-    const subtotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
-    const shipping = 0; // Free delivery
-    const total = subtotal + shipping;
-
-    // Confetti effect
-    useEffect(() => {
-        const createConfetti = () => {
-            const confettiCount = 100;
-            const confettiContainer = document.querySelector('.confetti-container');
-
-            if (!confettiContainer) return;
-
-            // Clear existing confetti
-            confettiContainer.innerHTML = '';
-
-            for (let i = 0; i < confettiCount; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.animationDelay = Math.random() * 3 + 's';
-                confetti.style.backgroundColor = [
-                    '#C47E20', '#74541e', '#5a4218', '#846C3B'
-                ][Math.floor(Math.random() * 4)];
-
-                confettiContainer.appendChild(confetti);
-            }
-        };
-
-        createConfetti();
-    }, [orderDetails]);
 
     if (loading) {
         return (
@@ -179,15 +133,17 @@ const OrderConfirmation = () => {
             <div className="min-h-screen bg-[#f5f0ea] flex items-center justify-center">
                 <div className="text-center">
                     <div className="bg-white rounded-xl shadow-sm border border-[#e8e2d6] p-8 max-w-md">
-                        <p className="text-red-500 mb-4">Error: {error}</p>
-                        <p className="text-[#846C3B] mb-4">Showing sample order data</p>
+                        <p className="text-red-500 mb-4">Error: {error} data</p>
+                        <p className="text-[#846C3B] mb-4">Connect to the Internet to view and track order </p>
                     </div>
                 </div>
             </div>
         );
     }
 
+
     return (
+
         <div className="min-h-screen bg-[#f5f0ea] py-8 px-4">
             {/* Confetti container */}
             <div className="confetti-container fixed top-0 left-0 w-full h-full pointer-events-none z-50"></div>
@@ -206,7 +162,7 @@ const OrderConfirmation = () => {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div ref={invoiceRef} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Order Details */}
                     <div className="bg-white rounded-xl shadow-sm border border-[#e8e2d6] p-6">
                         <h2 className="text-xl font-serif text-[#74541e] mb-4 flex items-center">
@@ -297,9 +253,43 @@ const OrderConfirmation = () => {
                         <div className="space-y-2">
                             <div className="flex justify-between">
                                 <span className="text-[#846C3B]">Subtotal</span>
-                                <span className="font-medium text-[#74541e]">${subtotal.toLocaleString()}</span>
+                                {/* <span className="font-medium text-[#74541e]">${subtotal.toLocaleString()}</span> */}
                             </div>
 
+                            {/* Cart */}
+                            <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
+                                {cartItems.length > 0 ? (
+                                    cartItems.map((item) => (
+                                        <div
+                                            key={item.id}
+                                            className="flex justify-between items-center"
+                                        >
+                                            <div className="flex items-center">
+                                                <img
+                                                    src={item.imageUrl}
+                                                    alt={item.title}
+                                                    className="w-12 h-12 object-cover rounded mr-3"
+                                                />
+                                                <div>
+                                                    <h3 className="text-sm font-medium text-[#74541e]">
+                                                        {item.title}
+                                                    </h3>
+                                                    <p className="text-xs text-[#846C3B]">
+                                                        Qty: {item.quantity}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <span className="text-sm font-medium text-[#74541e]">
+                                                ${(item.price * item.quantity).toFixed(2)}
+                                            </span>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-center text-gray-500 py-4">
+                                        Your cart is empty
+                                    </p>
+                                )}
+                            </div>
                             <div className="flex justify-between">
                                 <span className="text-[#846C3B]">Shipping</span>
                                 <span className="font-medium text-[#74541e]">Free</span>
@@ -316,17 +306,22 @@ const OrderConfirmation = () => {
                 {/* Action Buttons */}
                 <div className="bg-white rounded-xl shadow-sm border border-[#e8e2d6] p-6 mt-6">
                     <div className="flex flex-col sm:flex-row gap-4">
-                        <button className="flex-1 py-3 px-4 bg-[#74541e] hover:bg-[#5a4218] text-white rounded-lg font-medium flex items-center justify-center transition-colors">
+                        <button  className="flex-1 py-3 apx-4 bg-[#74541e] hover:bg-[#5a4218] text-white rounded-lg font-medium flex items-center justify-center transition-colors">
                             <Download className="mr-2" size={18} />
                             Download Invoice
                         </button>
+                        <a
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href="https://wa.me/2348138562085">
+                            <button className="flex-1 py-3 px-4 bg-[#f5f0ea] hover:bg-[#e8e2d6] text-[#74541e] rounded-lg font-medium flex items-center justify-center transition-colors border border-[#e8e2d6]">
+                                <ShoppingBag className="mr-2" size={18} />
+                                Track Order
+                            </button>
+                        </a>
 
-                        <button className="flex-1 py-3 px-4 bg-[#f5f0ea] hover:bg-[#e8e2d6] text-[#74541e] rounded-lg font-medium flex items-center justify-center transition-colors border border-[#e8e2d6]">
-                            <ShoppingBag className="mr-2" size={18} />
-                            Track Order
-                        </button>
 
-                        <button className="flex-1 py-3 px-4 bg-[#f5f0ea] hover:bg-[#e8e2d6] text-[#74541e] rounded-lg font-medium flex items-center justify-center transition-colors border border-[#e8e2d6]">
+                        <button onClick={() => navigate("/`gallery")} className="flex-1 py-3 px-4 bg-[#f5f0ea] hover:bg-[#e8e2d6] text-[#74541e] rounded-lg font-medium flex items-center justify-center transition-colors border border-[#e8e2d6]">
                             <Home className="mr-2" size={18} />
                             Continue Shopping
                         </button>
@@ -340,7 +335,7 @@ const OrderConfirmation = () => {
                     <div className="flex flex-col md:flex-row justify-center items-center gap-6">
                         <div className="flex items-center">
                             <Phone className="text-[#C47E20] mr-2" size={18} />
-                            <span className="text-[#846C3B]">+234 707 635 4937</span>
+                            <span className="text-[#846C3B]">+234 813 8562 085</span>
                         </div>
 
                         <div className="flex items-center">

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import useWishlistStore from "./wishlistStore";
+import toast from "react-hot-toast";
 
 // Utility function to ensure price is always a number
 const ensureNumericPrice = (price) => {
@@ -48,7 +49,7 @@ const useCartStore = create(
       },
 
       removeFromCart: (productId) => {
-        alert("You are about to remove a product from cart ")
+        toast.error(`You hace successfully removed ${productId?.title}`)
         set({
           cartItems: get().cartItems.filter((item) => item.id !== productId),
         });

@@ -102,7 +102,7 @@ const Footer = () => {
               <p className="text-[#beac98]">
                 Studio visits by appointment only
               </p>
-              <p className="text-[#beac98] mt-1"> Obohia ,Aba ,Abia state</p>
+              <p className="text-[#beac98] mt-1">No.16 Jubilee,Aba ,Abia state</p>
             </div>
           </div>
           <div className="border-t border-[#3e3327] mt-8 pt-8 text-center text-[#beac98] text-sm">
