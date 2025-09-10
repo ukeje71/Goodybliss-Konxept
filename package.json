@@ -17,6 +17,7 @@
     "framer-motion": "^12.23.12",
     "googleapis": "^159.0.0",
     "html2canvas": "^1.4.1",
+    "html2canvas-pro": "^1.5.11",
     "jspdf": "^3.0.2",
     "lucide-react": "^0.525.0",
     "react": "^19.1.1",

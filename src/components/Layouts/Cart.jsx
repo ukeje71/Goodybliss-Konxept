@@ -17,6 +17,8 @@ const Cart = ({ isOpen, onClose }) => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [itemToRemove, setItemToRemove] = useState(null);
   const [isIncreasing, setIsIncreasing] = useState(false);
+  const [isDecreasing, setIsDecreasing] = useState(false);
+
 
   // Handle remove item with confirmation
   const handleRemoveClick = (itemId) => {
@@ -44,6 +46,14 @@ const Cart = ({ isOpen, onClose }) => {
     setTimeout(() => {
       increaseQuantity(itemId);
       setIsIncreasing(false);
+    }, 500); // 300ms delay
+  };
+// Handle quantity Reduce with delay
+    const handleDecreaseQuantity = (itemId) => {
+    setIsDecreasing(true);
+    setTimeout(() => {
+      decreaseQuantity(itemId);
+      setIsDecreasing(false);
     }, 500); // 300ms delay
   };
 
@@ -91,7 +101,7 @@ const Cart = ({ isOpen, onClose }) => {
                       </span>
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() => decreaseQuantity(item.id)}
+                          onClick={() => handleDecreaseQuantity(item.id)}
                           className="text-xs px-2 border rounded text-[#846C3B] hover:bg-gray-100"
                           aria-label="Decrease quantity"
                         >

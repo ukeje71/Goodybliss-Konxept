@@ -32,7 +32,7 @@ const CheckoutPage = () => {
   const validateForm = () => {
     const errors = {};
     if (!formData.fullName.trim()) errors.fullName = "Full name required";
-    if (!formData.email.trim()) errors.email = "Email required";
+    if (!formData.email.trim()) errors.email = `Email must have "@gmail.com"`;
     if (!formData.phoneNumber.trim())
       errors.phoneNumber = "Phone number required";
     if (!formData.addressLine1.trim())

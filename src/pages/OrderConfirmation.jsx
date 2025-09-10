@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import html2canvas from 'html2canvas';
+import html2canvas from 'html2canvas-pro';
 import jsPDF from 'jspdf';
 import {
     CheckCircle,
@@ -31,10 +31,32 @@ const OrderConfirmation = () => {
         return params.get('ref');
     };
 
-    // Calculate total
-    const subtotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
-    const shipping = 0; // Free delivery
-    const total = subtotal + shipping;
+    // Confetti effect
+    useEffect(() => {
+        const createConfetti = () => {
+            const confettiCount = 100;
+            const confettiContainer = document.querySelector('.confetti-container');
+
+            if (!confettiContainer) return;
+
+            // Clear existing confetti
+            confettiContainer.innerHTML = '';
+
+            for (let i = 0; i < confettiCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.animationDelay = Math.random() * 3 + 's';
+                confetti.style.backgroundColor = [
+                    '#C47E20', '#74541e', '#5a4218', '#846C3B'
+                ][Math.floor(Math.random() * 4)];
+
+                confettiContainer.appendChild(confetti);
+            }
+        };
+
+        createConfetti();
+    }, []);
 
     // Fetch order data from Google Sheets
     useEffect(() => {
@@ -90,7 +112,6 @@ const OrderConfirmation = () => {
                     customerPhone: order.phone || 'No phone provided'
                 });
 
-
                 setLoading(false);
             } catch (err) {
                 console.error('Error fetching order data:', err);
@@ -106,7 +127,7 @@ const OrderConfirmation = () => {
                     transactionId: 'PS-7890XYZ123',
                     totalAmount: '$18,500.00',
                     shippingAddress: 'Ariara Junction, 10 Osusu, Aba, Abia State',
-                    customerName: 'Anonimous User',
+                    customerName: 'Anonymous User',
                     customerEmail: 'someone@example.com',
                     customerPhone: '+234 707 635 4937'
                 });
@@ -115,7 +136,6 @@ const OrderConfirmation = () => {
 
         fetchOrderData();
     }, []);
-
 
     if (loading) {
         return (
@@ -128,22 +148,35 @@ const OrderConfirmation = () => {
         );
     }
 
-    if (error) {
-        return (
-            <div className="min-h-screen bg-[#f5f0ea] flex items-center justify-center">
-                <div className="text-center">
-                    <div className="bg-white rounded-xl shadow-sm border border-[#e8e2d6] p-8 max-w-md">
-                        <p className="text-red-500 mb-4">Error: {error} data</p>
-                        <p className="text-[#846C3B] mb-4">Connect to the Internet to view and track order </p>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+    // Downloading function - FIXED
+    const handleInvoiceDownload = () => {
+        const input = invoiceRef.current;
 
+        // Temporarily override unsupported Tailwind colors
+        input.style.backgroundColor = "#ffffff";
+        input.style.color = "#000000";
+
+        html2canvas(input, {
+            scale: 2,
+            backgroundColor: "#ffffff" // fallback
+        }).then((canvas) => {
+            const imgData = canvas.toDataURL("image/png");
+            const pdf = new jsPDF("p", "mm", "a4");
+
+            const imgProps = pdf.getImageProperties(imgData);
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+            pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+            pdf.save(`invoice-${orderDetails.orderNumber}.pdf`);
+
+            // Reset styles after capture
+            input.style.backgroundColor = "";
+            input.style.color = "";
+        });
+    };
 
     return (
-
         <div className="min-h-screen bg-[#f5f0ea] py-8 px-4">
             {/* Confetti container */}
             <div className="confetti-container fixed top-0 left-0 w-full h-full pointer-events-none z-50"></div>
@@ -162,7 +195,12 @@ const OrderConfirmation = () => {
                     </div>
                 </div>
 
-                <div ref={invoiceRef} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div
+                    ref={invoiceRef}
+                    style={{ backgroundColor: "#ffffff", color: "#000000" }}
+                    className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+                >
+
                     {/* Order Details */}
                     <div className="bg-white rounded-xl shadow-sm border border-[#e8e2d6] p-6">
                         <h2 className="text-xl font-serif text-[#74541e] mb-4 flex items-center">
@@ -250,55 +288,38 @@ const OrderConfirmation = () => {
                             Order Summary
                         </h2>
 
-                        <div className="space-y-2">
-                            <div className="flex justify-between">
-                                <span className="text-[#846C3B]">Subtotal</span>
-                                {/* <span className="font-medium text-[#74541e]">${subtotal.toLocaleString()}</span> */}
-                            </div>
-
-                            {/* Cart */}
-                            <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
-                                {cartItems.length > 0 ? (
-                                    cartItems.map((item) => (
-                                        <div
-                                            key={item.id}
-                                            className="flex justify-between items-center"
-                                        >
-                                            <div className="flex items-center">
-                                                <img
-                                                    src={item.imageUrl}
-                                                    alt={item.title}
-                                                    className="w-12 h-12 object-cover rounded mr-3"
-                                                />
-                                                <div>
-                                                    <h3 className="text-sm font-medium text-[#74541e]">
-                                                        {item.title}
-                                                    </h3>
-                                                    <p className="text-xs text-[#846C3B]">
-                                                        Qty: {item.quantity}
-                                                    </p>
-                                                </div>
+                        <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
+                            {cartItems.length > 0 ? (
+                                cartItems.map((item) => (
+                                    <div
+                                        key={item.id}
+                                        className="flex justify-between items-center"
+                                    >
+                                        <div className="flex items-center">
+                                            <img
+                                                src={item.imageUrl}
+                                                alt={item.title}
+                                                className="w-12 h-12 object-cover rounded mr-3"
+                                            />
+                                            <div>
+                                                <h3 className="text-sm font-medium text-[#74541e]">
+                                                    {item.title}
+                                                </h3>
+                                                <p className="text-xs text-[#846C3B]">
+                                                    Qty: {item.quantity}
+                                                </p>
                                             </div>
-                                            <span className="text-sm font-medium text-[#74541e]">
-                                                ${(item.price * item.quantity).toFixed(2)}
-                                            </span>
                                         </div>
-                                    ))
-                                ) : (
-                                    <p className="text-center text-gray-500 py-4">
-                                        Your cart is empty
-                                    </p>
-                                )}
-                            </div>
-                            <div className="flex justify-between">
-                                <span className="text-[#846C3B]">Shipping</span>
-                                <span className="font-medium text-[#74541e]">Free</span>
-                            </div>
-
-                            <div className="flex justify-between pt-2 border-t border-[#e8e2d6]">
-                                <span className="text-lg font-medium text-[#74541e]">Total</span>
-                                <span className="text-lg font-medium text-[#74541e]">${total.toLocaleString()}</span>
-                            </div>
+                                        <span className="text-sm font-medium text-[#74541e]">
+                                            ${(item.price * item.quantity).toFixed(2)}
+                                        </span>
+                                    </div>
+                                ))
+                            ) : (
+                                <p className="text-center text-gray-500 py-4">
+                                    Your cart is empty
+                                </p>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -306,7 +327,7 @@ const OrderConfirmation = () => {
                 {/* Action Buttons */}
                 <div className="bg-white rounded-xl shadow-sm border border-[#e8e2d6] p-6 mt-6">
                     <div className="flex flex-col sm:flex-row gap-4">
-                        <button  className="flex-1 py-3 apx-4 bg-[#74541e] hover:bg-[#5a4218] text-white rounded-lg font-medium flex items-center justify-center transition-colors">
+                        <button onClick={handleInvoiceDownload} className="flex-1 py-3 px-4 bg-[#74541e] hover:bg-[#5a4218] text-white rounded-lg font-medium flex items-center justify-center transition-colors">
                             <Download className="mr-2" size={18} />
                             Download Invoice
                         </button>
@@ -314,14 +335,13 @@ const OrderConfirmation = () => {
                             target="_blank"
                             rel="noopener noreferrer"
                             href="https://wa.me/2348138562085">
-                            <button className="flex-1 py-3 px-4 bg-[#f5f0ea] hover:bg-[#e8e2d6] text-[#74541e] rounded-lg font-medium flex items-center justify-center transition-colors border border-[#e8e2d6]">
+                            <button className="flex-1 py-3 px-4 w-full bg-[#f5f0ea] hover:bg-[#e8e2d6] text-[#74541e] rounded-lg font-medium flex items-center justify-center transition-colors border border-[#e8e2d6]">
                                 <ShoppingBag className="mr-2" size={18} />
                                 Track Order
                             </button>
                         </a>
 
-
-                        <button onClick={() => navigate("/`gallery")} className="flex-1 py-3 px-4 bg-[#f5f0ea] hover:bg-[#e8e2d6] text-[#74541e] rounded-lg font-medium flex items-center justify-center transition-colors border border-[#e8e2d6]">
+                        <button onClick={() => navigate("/gallery")} className="flex-1 py-3 px-4 bg-[#f5f0ea] hover:bg-[#e8e2d6] text-[#74541e] rounded-lg font-medium flex items-center justify-center transition-colors border border-[#e8e2d6]">
                             <Home className="mr-2" size={18} />
                             Continue Shopping
                         </button>
@@ -349,42 +369,6 @@ const OrderConfirmation = () => {
                     </p>
                 </div>
             </div>
-
-            <style jsx>{`
-        @keyframes confettiFall {
-          0% {
-            transform: translateY(-100px) rotate(0deg);
-            opacity: 1;
-          }
-          100% {
-            transform: translateY(100vh) rotate(360deg);
-            opacity: 0;
-          }
-        }
-        
-        .confetti {
-          position: absolute;
-          width: 10px;
-          height: 10px;
-          opacity: 0.7;
-          animation: confettiFall 5s linear infinite;
-        }
-        
-        .confetti:nth-child(5n) {
-          width: 12px;
-          height: 4px;
-        }
-        
-        .confetti:nth-child(3n) {
-          width: 7px;
-          height: 7px;
-        }
-        
-        .confetti:nth-child(7n) {
-          width: 15px;
-          height: 5px;
-        }
-      `}</style>
         </div>
     );
 };
