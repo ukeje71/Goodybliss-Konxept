@@ -11,7 +11,8 @@ import {
     Home,
     Phone,
     Mail,
-    Loader
+    Loader,
+    X
 } from 'lucide-react';
 import useCartStore from "../components/Store/cartStore";
 import { useNavigate } from 'react-router';
@@ -21,10 +22,13 @@ const OrderConfirmation = () => {
     const [orderDetails, setOrderDetails] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [showPopup, setShowPopup] = useState(true); // State to control popup visibility
+
     // Cart state
     const { cartItems } = useCartStore();
     // Navigation
     const navigate = useNavigate();
+
     // Get order reference from URL parameters
     const getOrderRefFromURL = () => {
         const params = new URLSearchParams(window.location.search);
@@ -69,7 +73,7 @@ const OrderConfirmation = () => {
                 }
 
                 // Your Google Apps Script URL for GET requests
-                const scriptURL = 'https://script.google.com/macros/s/AKfycbyWbWeZwA2pW3SxCWbq2KKaamdkYLndl3kujB7DVrSmd9_MG5QokmxbOnapnj71p2TJgQ/exec';
+                const scriptURL = 'https://script.google.com/macros/s/AKfycbzPVP5TL_zfhRlRlrk_IQiWAyo3ILWnM7iyqFnKMBWFE8vpXasK0k7El6yCNXVdhSP6aw/exec';
 
                 const response = await fetch(scriptURL);
 
@@ -173,6 +177,9 @@ const OrderConfirmation = () => {
             // Reset styles after capture
             input.style.backgroundColor = "";
             input.style.color = "";
+
+            // Close popup after download
+            setShowPopup(false);
         });
     };
 
@@ -181,7 +188,75 @@ const OrderConfirmation = () => {
             {/* Confetti container */}
             <div className="confetti-container fixed top-0 left-0 w-full h-full pointer-events-none z-50"></div>
 
+            {/* Welcome Popup */}
+            {showPopup && (
+                <div className="fixed inset-0 bg-white/10 backdrop-blur-sm  shadow-2xl flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-xl shadow-lg max-w-md w-full p-6 relative">
+                        {/* Close button */}
+                        <button
+                            onClick={() => setShowPopup(false)}
+                            className="absolute top-4 right-4 text-[#846C3B] hover:text-[#74541e] transition-colors"
+                        >
+                            <X size={24} />
+                        </button>
+
+                        {/* Popup content */}
+                        <div className="text-center">
+                            <CheckCircle className="w-16 h-16 text-[#C47E20] mx-auto mb-4" />
+                            <h2 className="text-2xl font-serif font-bold text-[#74541e] mb-4">
+                                Welcome to Your Order Confirmation!
+                            </h2>
+
+                            <div className="space-y-4 text-[#846C3B] mb-6">
+                                <p className="text-lg">
+                                    Thank you for your purchase! We're delighted to have you as our customer.
+                                </p>
+
+                                <div className="bg-[#f9f7f3] p-4 rounded-lg text-left">
+                                    <h3 className="font-semibold text-[#74541e] mb-2">Next Steps:</h3>
+                                    <ol className="list-decimal list-inside space-y-2">
+                                        <li>
+                                            <span className="font-medium">Download your invoice</span> for your records
+                                        </li>
+                                        <li>
+                                            <span className="font-medium">Track your order</span> to stay updated on delivery status
+                                        </li>
+                                        <li>
+                                            <span className="font-medium">Save our contact information</span> for any questions
+                                        </li>
+                                    </ol>
+                                </div>
+
+                                <p className="text-sm">
+                                    Your order reference: <span className="font-medium text-[#74541e]">{orderDetails.orderNumber}</span>
+                                </p>
+                            </div>
+
+                            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                                <button
+                                    onClick={handleInvoiceDownload}
+                                    className="bg-[#74541e] hover:bg-[#5a4218] text-white px-6 py-3 rounded-lg font-medium md:text-sm flex items-center justify-center transition-colors"
+                                >
+                                    <Download className="mr-2" size={18} />
+                                    Download Invoice
+                                </button>
+                                <button
+                                    onClick={() => setShowPopup(false)}
+                                    className="bg-white border border-[#74541e] text-sm text-[#74541e] px-6 py-3 rounded-lg hover:bg-[#74541e] hover:text-white transition-colors"
+                                >
+                                    Continue to Order Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="max-w-4xl mx-auto">
+                <section 
+                 ref={invoiceRef}
+                    style={{ backgroundColor: "#ffffff", color: "#000000" }}>
+
                 {/* Header */}
                 <div className="bg-white rounded-xl shadow-sm border border-[#e8e2d6] p-6 mb-6 text-center relative overflow-hidden">
                     <div className="absolute inset-0 flex items-center justify-center">
@@ -196,11 +271,9 @@ const OrderConfirmation = () => {
                 </div>
 
                 <div
-                    ref={invoiceRef}
-                    style={{ backgroundColor: "#ffffff", color: "#000000" }}
+    
                     className="grid grid-cols-1 lg:grid-cols-2 gap-6"
                 >
-
                     {/* Order Details */}
                     <div className="bg-white rounded-xl shadow-sm border border-[#e8e2d6] p-6">
                         <h2 className="text-xl font-serif text-[#74541e] mb-4 flex items-center">
@@ -323,6 +396,7 @@ const OrderConfirmation = () => {
                         </div>
                     </div>
                 </div>
+                </section>
 
                 {/* Action Buttons */}
                 <div className="bg-white rounded-xl shadow-sm border border-[#e8e2d6] p-6 mt-6">

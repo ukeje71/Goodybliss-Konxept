@@ -45,72 +45,78 @@ const CheckoutPage = () => {
     return errors;
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const errors = validateForm();
+const handleSubmit = (e) => {
+  e.preventDefault();
+  const errors = validateForm();
 
-    if (Object.keys(errors).length === 0) {
-      setIsProcessing(true);
-      const handler = window.PaystackPop.setup({
-        key: import.meta.env.VITE_APP_PAYSTACK_PUBLIC_KEY,
-        email: formData.email,
-        amount: total * 100, // kobo
-        currency: "NGN",
-        ref: "" + Math.floor(Math.random() * 1000000000 + 1),
+  if (Object.keys(errors).length === 0) {
+    setIsProcessing(true);
+    const handler = window.PaystackPop.setup({
+      key: import.meta.env.VITE_APP_PAYSTACK_PUBLIC_KEY,
+      email: formData.email,
+      amount: total * 100, // kobo
+      currency: "NGN",
+      ref: "" + Math.floor(Math.random() * 1000000000 + 1),
 
-        onClose: () => {
-          setIsProcessing(false);
-          toast.error("Transaction was not completed, window closed.");
-        },
-        callback: (response) => {
-          const url = "https://script.google.com/macros/s/AKfycbyWbWeZwA2pW3SxCWbq2KKaamdkYLndl3kujB7DVrSmd9_MG5QokmxbOnapnj71p2TJgQ/exec";
+      onClose: () => {
+        setIsProcessing(false);
+        toast.error("Transaction was not completed, window closed.");
+      },
+      callback: (response) => {
+        const url = "https://script.google.com/macros/s/AKfycbzPVP5TL_zfhRlRlrk_IQiWAyo3ILWnM7iyqFnKMBWFE8vpXasK0k7El6yCNXVdhSP6aw/exec";
 
-          // Prepare form data for Google Sheets
-          const formDataForSheets = new URLSearchParams();
-          formDataForSheets.append('fullName', formData.fullName);
-          formDataForSheets.append('email', formData.email);
-          formDataForSheets.append('phone', formData.phoneNumber);
-          formDataForSheets.append('address', `${formData.addressLine1}, ${formData.streetName}, ${formData.city}, ${formData.state}, ${formData.country}`);
-          formDataForSheets.append('amount', total);
-          formDataForSheets.append('ref', response.reference);
-          formDataForSheets.append('products', cartItems.map(item => `${item.title} (x${item.quantity})`).join(', '));
+        // Prepare form data for Google Sheets
+        const formDataForSheets = new URLSearchParams();
+        formDataForSheets.append('fullName', formData.fullName);
+        formDataForSheets.append('email', formData.email);
+        formDataForSheets.append('phone', formData.phoneNumber);
+        formDataForSheets.append('address', `${formData.addressLine1}, ${formData.streetName}, ${formData.city}, ${formData.state}, ${formData.country}`);
+        formDataForSheets.append('amount', total);
+        formDataForSheets.append('ref', response.reference);
+        formDataForSheets.append('products', cartItems.map(item => `${item.title} (x${item.quantity})`).join(', '));
 
-          fetch(url, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: formDataForSheets
+        // Filter valid image URLs and encode them
+        const validImageUrls = cartItems
+          .filter(item => item.imageUrl && typeof item.imageUrl === 'string' && item.imageUrl.trim() !== '')
+          .map(item => item.imageUrl.trim());
+        const productImages = validImageUrls.length > 0 ? validImageUrls.join(', ') : 'No valid image URLs';
+        console.log("Cart Items:", cartItems); // Debug log
+        console.log("Product Images to Send:", productImages); // Debug log
+        formDataForSheets.append('productImages', encodeURIComponent(productImages));
+
+        fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          body: formDataForSheets
+        })
+          .then(response => response.text())
+          .then(data => {
+            console.log("Google Sheets response:", data);
+            if (data.includes("Added")) {
+              toast.success("Transaction successful. Details saved.");
+              clearCart();
+              setTimeout(() => navigate(`/order-confirmation?ref=${response.reference}`), 100);
+            } else {
+              toast.error("Google Sheets error: " + data);
+            }
           })
-            .then(response => response.text())
-            .then(data => {
-              console.log("Google Sheets response:", data);
-              // Check if the response indicates success
-              if (data.includes("Added")) {
-                toast.success("Transaction successful. Details saved.");
-                clearCart();
-                setTimeout(() => navigate(`/order-confirmation?ref=${response.reference}`), 100);
-              } else {
-                toast.error("Google Sheets error: " + data);
-              }
+          .catch(error => {
+            console.error("Error saving to Google Sheets:", error.message);
+            toast.error("Transaction was successful but there was an error saving details. Please contact support with reference: " + response.reference);
+          })
+          .finally(() => {
+            setIsProcessing(false);
+          });
+      }
+    });
 
-            })
-            .catch(error => {
-              console.error("Error saving to Google Sheets:", error);
-              toast.error("Transaction was successful but there was an error saving details. Please contact support with reference: " + response.reference);
-            })
-            .finally(() => {
-              setIsProcessing(false);
-            });
-        }
-      });
-
-      handler.openIframe();
-    } else {
-      setFormErrors(errors);
-    }
-  };
-
+    handler.openIframe();
+  } else {
+    setFormErrors(errors);
+  }
+};
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -334,7 +340,7 @@ const CheckoutPage = () => {
                     >
                       <div className="flex items-center">
                         <img
-                          src={item.imageUrl}
+                          src={item.imageUrl || null}
                           alt={item.title}
                           className="w-12 h-12 object-cover rounded mr-3"
                         />

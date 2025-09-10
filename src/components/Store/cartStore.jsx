@@ -17,39 +17,40 @@ const useCartStore = create(
       selectedProduct: null,
 
       // Actions
-      addToCart: (product) => {
-        // Ensure price is a number before adding to cart
-        const productWithNumericPrice = {
-          ...product,
-          price: ensureNumericPrice(product.price)
-        };
-        
-        const existingItem = get().cartItems.find(
-          (item) => item.id === productWithNumericPrice.id
-        );
-        useWishlistStore.getState().removeFromWishlist(productWithNumericPrice.id);
+addToCart: (product) => {
+  const productWithNormalizedData = {
+    ...product,
+    price: ensureNumericPrice(product.price),
+    imageUrl: product.imageUrl || ""   // explicitly store imageUrl
+  };
 
-        if (existingItem) {
-          set({
-            cartItems: get().cartItems.map((item) =>
-              item.id === productWithNumericPrice.id
-                ? { 
-                    ...item, 
-                    quantity: item.quantity + 1,
-                    price: ensureNumericPrice(item.price) // Ensure price is number
-                  }
-                : item
-            ),
-          });
-        } else {
-          set({
-            cartItems: [...get().cartItems, { ...productWithNumericPrice, quantity: 1 }],
-          });
-        }
-      },
+  const existingItem = get().cartItems.find(
+    (item) => item.id === productWithNormalizedData.id
+  );
+  useWishlistStore.getState().removeFromWishlist(productWithNormalizedData.id);
+
+  if (existingItem) {
+    set({
+      cartItems: get().cartItems.map((item) =>
+        item.id === productWithNormalizedData.id
+          ? { 
+              ...item, 
+              quantity: item.quantity + 1,
+              price: ensureNumericPrice(item.price)
+            }
+          : item
+      ),
+    });
+  } else {
+    set({
+      cartItems: [...get().cartItems, { ...productWithNormalizedData, quantity: 1 }],
+    });
+  }
+},
 
       removeFromCart: (productId) => {
-        toast.error(`You hace successfully removed ${productId?.title}`)
+               toast.error(`You have successfully removed ${productId?.title || 'item'}`);
+
         set({
           cartItems: get().cartItems.filter((item) => item.id !== productId),
         });

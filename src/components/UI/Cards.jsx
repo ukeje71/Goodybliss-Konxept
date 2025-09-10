@@ -1,5 +1,3 @@
-// src/components/Cards.jsx (or wherever your Cards file is)
-
 import React, { useEffect, useState } from "react";
 import useCartStore from "../Store/cartStore";
 import useWishlistStore from "../Store/wishlistStore";
@@ -21,8 +19,10 @@ const Cards = ({
   const { addToCart } = useCartStore();
   const { wishlist, addToWishlist, removeFromWishlist } = useWishlistStore();
 
-  // Fetch Firestore products
+  // Default image URL for fallback
+  const DEFAULT_IMAGE_URL = "https://via.placeholder.com/300x200"; // Use the same placeholder as in onError
 
+  // Fetch Firestore products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -31,16 +31,18 @@ const Cards = ({
           id: doc.id,
           ...doc.data(),
         }));
-
-        setProducts(productsArray); // for local rendering
+        console.log("Fetched products:", productsArray); // Debug log
+        setProducts(productsArray);
         useDetailsStore.getState().setProducts(productsArray);
       } catch (error) {
         console.error("Failed to fetch products from Firestore:", error);
+        toast.error("Failed to load products");
       }
     };
 
     fetchProducts();
   }, []);
+
   // Filter, sort, paginate
   const safeProducts = products || [];
 
@@ -80,10 +82,13 @@ const Cards = ({
       id: product.id,
       title: product.title,
       price: product.discountPrice || product.regularPrice,
-      image: product.image,
+      imageUrl: product.imageUrl && typeof product.imageUrl === 'string' && product.imageUrl.trim() !== ''
+        ? product.imageUrl
+        : DEFAULT_IMAGE_URL, // Use default if imageUrl is invalid
       size: product.size,
       quantity: 1,
     };
+    console.log("Adding to cart:", cartProduct); // Debug log
     addToCart(cartProduct);
     toast.success("Item added to cart!");
   };
@@ -99,13 +104,12 @@ const Cards = ({
         id: product.id,
         title: product.title,
         price: product.discountPrice || product.regularPrice,
-        imageUrl: product.imageUrl,
+        imageUrl: product.imageUrl || DEFAULT_IMAGE_URL,
         size: product.size,
         year: product.year,
         medium: product.medium,
         stock: product.stock,
       };
-
       addToWishlist(wishlistProduct);
       toast.success(
         (t) => (
@@ -140,9 +144,8 @@ const Cards = ({
       {productsToShow.map((item) => {
         const discountPercent = item.discountPrice
           ? Math.round(
-            ((item.regularPrice - item.discountPrice) / item.regularPrice) *
-            100
-          )
+              ((item.regularPrice - item.discountPrice) / item.regularPrice) * 100
+            )
           : 0;
         const isInWishlist = wishlist.some(
           (wishlistItem) => wishlistItem && wishlistItem.id === item.id
@@ -163,7 +166,7 @@ const Cards = ({
                   loading="lazy"
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = "https://via.placeholder.com/300x200";
+                    e.target.src = DEFAULT_IMAGE_URL;
                   }}
                 />
               ) : (
@@ -215,7 +218,7 @@ const Cards = ({
                       ${Number(item.discountPrice).toFixed(2)}
                     </span>
                     <span className="text-sm text-gray-400 line-through">
-                      ${Number(item.price).toFixed(2)}
+                      ${Number(item.regularPrice).toFixed(2)}
                     </span>
                     {discountPercent > 0 && (
                       <span className="ml-auto text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded">
@@ -245,10 +248,11 @@ const Cards = ({
                     e.stopPropagation();
                     item.stock && handleAddToCart(item);
                   }}
-                  className={`flex-1 py-2 text-sm rounded transition-colors ${item.stock
-                    ? "bg-[#74541e] text-white hover:bg-[#5a4218]"
-                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    }`}
+                  className={`flex-1 py-2 text-sm rounded transition-colors ${
+                    item.stock
+                      ? "bg-[#74541e] text-white hover:bg-[#5a4218]"
+                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  }`}
                   disabled={item.stock === false}
                 >
                   {item.stock ? "Add to Cart" : "Sold Out"}

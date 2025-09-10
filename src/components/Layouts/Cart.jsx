@@ -87,7 +87,7 @@ const Cart = ({ isOpen, onClose }) => {
                 >
                   <div className="w-16 h-16 bg-gray-100 rounded-md overflow-hidden">
                     <img
-                      src={item.imageUrl}
+                      src={item.imageUrl||null}
                       alt={item.title}
                       className="w-full h-full object-cover"
                     />
