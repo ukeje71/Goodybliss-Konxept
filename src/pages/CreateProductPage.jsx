@@ -26,22 +26,26 @@ const CreateProductPage = () => {
     category: "original",
     medium: "",
     year: new Date().getFullYear(),
-    price: "",
-    discountPrice: "",
+    price: 0,
+    discountPrice: 0,
     size: "",
     stock: true,
     images: [],
   });
 
   const [previewImages, setPreviewImages] = useState([]);
-  const [selectedFile, setSelectedFile] = useState(null); // ✅ New state for actual file
+  const [selectedFile, setSelectedFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const fileInputRef = useRef(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setProductData((prev) => ({ ...prev, [name]: value }));
+    // Convert stock to boolean, price and discountPrice to numbers
+    setProductData((prev) => ({
+      ...prev,
+      [name]: name === "stock" ? value === "true" : name === "price" || name === "discountPrice" ? value === "" ? "" : Number(value) : value,
+    }));
   };
 
   const handleImageUpload = (e) => {
@@ -85,7 +89,7 @@ const CreateProductPage = () => {
     URL.revokeObjectURL(updatedPreviews[index].url);
     updatedPreviews.splice(index, 1);
     setPreviewImages(updatedPreviews);
-    setSelectedFile(null); // ✅ Clear file if image removed
+    setSelectedFile(null);
   };
 
   const triggerFileInput = () => {
@@ -104,7 +108,7 @@ const CreateProductPage = () => {
 
     try {
       const formData = new FormData();
-      formData.append("file", selectedFile); // ✅ Correct file reference
+      formData.append("file", selectedFile);
       formData.append("upload_preset", "Goodybliss");
       formData.append("folder", "samples/ecommerce");
 
@@ -115,11 +119,17 @@ const CreateProductPage = () => {
 
       const imageUrl = cloudinaryRes.data.secure_url;
 
-      await addDoc(collection(db, "products"), {
+      // Convert price, discountPrice to numbers and stock to boolean
+      const productToSave = {
         ...productData,
+        price: productData.price ? Number(productData.price) : null,
+        discountPrice: productData.discountPrice ? Number(productData.discountPrice) : null,
+        stock: productData.stock === "true" || productData.stock === true,
         imageUrl: imageUrl,
         createdAt: serverTimestamp(),
-      });
+      };
+
+      await addDoc(collection(db, "products"), productToSave);
 
       toast.success("Artwork uploaded successfully!");
 
@@ -133,13 +143,13 @@ const CreateProductPage = () => {
         price: "",
         discountPrice: "",
         size: "",
-        stock: 1,
+        stock: true,
         images: [],
       });
       setPreviewImages([]);
       setSelectedFile(null);
     } catch (error) {
-      console.log("Error uploading or saving:", error);
+      console.error("Error uploading or saving:", error);
       setUploadError("Failed to upload image or save product. Try again.");
     } finally {
       setIsUploading(false);
@@ -173,13 +183,15 @@ const CreateProductPage = () => {
                 {/* Image upload box - now only allows single image */}
                 <div
                   onClick={triggerFileInput}
-                  className={`relative w-full sm:w-48 h-48 rounded-lg border-2 border-dashed ${isUploading
+                  className={`relative w-full sm:w-48 h-48 rounded-lg border-2 border-dashed ${
+                    isUploading
                       ? "border-[#a56d1a]"
                       : previewImages.length > 0
-                        ? "border-green-500"
-                        : "border-[#d4c9b5]"
-                    } flex flex-col items-center justify-center cursor-pointer hover:bg-[#f9f7f3] transition-all duration-300 ${previewImages.length > 0 ? "bg-green-50" : "bg-white"
-                    }`}
+                      ? "border-green-500"
+                      : "border-[#d4c9b5]"
+                  } flex flex-col items-center justify-center cursor-pointer hover:bg-[#f9f7f3] transition-all duration-300 ${
+                    previewImages.length > 0 ? "bg-green-50" : "bg-white"
+                  }`}
                 >
                   <input
                     type="file"
@@ -385,13 +397,13 @@ const CreateProductPage = () => {
                   </label>
                   <select
                     name="stock"
-                    value={productData.stock}
+                    value={productData.stock.toString()}
                     onChange={handleInputChange}
                     className="w-full px-4 py-2 border border-[#d4c9b5] rounded-lg focus:ring-2 focus:ring-[#C47E20] focus:border-[#C47E20]"
                     required
                   >
-                    <option value="true">True</option>
-                    <option value="false">False</option>
+                    <option value="true">In Stock</option>
+                    <option value="false">Out of Stock</option>
                   </select>
                 </div>
               </div>

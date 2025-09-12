@@ -10,35 +10,58 @@ const Cards2 = ({
   title,
   imageUrl,
   discountPrice,
+  price,        // 👈 get from Firestore
   size,
   year,
   medium,
-  inStock,
-  regularPrice,
-  ...product // Capture all other product props
+  stock,        // 👈 boolean
+  ...product
 }) => {
-  const discountPercent = discountPrice
-    ? Math.round(((regularPrice - discountPrice) / regularPrice) * 100)
-    : 0;
+  // Normalize prices
+  const parsedRegularPrice = Number(price) || 0;  
+  const parsedDiscountPrice = discountPrice ? Number(discountPrice) : null;
+
+  // Stock is already a boolean in Firestore
+  const isInStock = Boolean(stock);
+
+  console.log("Cards2 props:", {
+    id,
+    title,
+    price,
+    parsedRegularPrice,
+    discountPrice,
+    parsedDiscountPrice,
+    stock,
+    isInStock
+  });
+
+  const discountPercent =
+    parsedDiscountPrice && parsedRegularPrice > 0
+      ? Math.round(
+          ((parsedRegularPrice - parsedDiscountPrice) / parsedRegularPrice) * 100
+        )
+      : 0;
 
   const navigate = useNavigate();
-
-  // Zustand store
   const { wishlist, addToWishlist, removeFromWishlist } = useWishlistStore();
-
   const { addToCart } = useCartStore();
 
   // Add to cart handler
   const handleAddToCart = (e) => {
     e.stopPropagation();
+    if (!isInStock) {
+      toast.error("This item is out of stock");
+      return;
+    }
     addToCart({
       id,
       title,
       imageUrl,
-      price: discountPrice || regularPrice,
+      price: parsedDiscountPrice || parsedRegularPrice,
       size,
       year,
       medium,
+      stock: isInStock,
       ...product,
     });
     toast.success("Added to Cart");
@@ -57,10 +80,11 @@ const Cards2 = ({
         id,
         title,
         imageUrl,
-        price: discountPrice || regularPrice,
+        price: parsedDiscountPrice || parsedRegularPrice,
         size,
         year,
         medium,
+        stock: isInStock,
         ...product,
       });
       toast.success("Added to Wishlist");
@@ -71,6 +95,7 @@ const Cards2 = ({
     <div
       key={id}
       className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow"
+      onClick={() => navigate(`/products/${id}`)}
     >
       <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden">
         {imageUrl ? (
@@ -81,7 +106,7 @@ const Cards2 = ({
             loading="lazy"
             onError={(e) => {
               e.target.onerror = null;
-              e.target.src = "/placeholder.jpg"; // Replace with real fallback image
+              e.target.src = "/placeholder.jpg";
             }}
           />
         ) : (
@@ -105,13 +130,13 @@ const Cards2 = ({
           />
         </button>
 
-        {discountPrice && (
+        {parsedDiscountPrice && (
           <div className="absolute top-3 right-3 bg-[#aa9f8f] text-white text-xs font-medium px-2 py-1 rounded-full">
             On Sale
           </div>
         )}
 
-        {inStock === false && (
+        {!isInStock && (
           <div className="absolute top-3 right-3 bg-gray-600 text-white text-xs font-medium px-2 py-1 rounded-full">
             Sold Out
           </div>
@@ -120,21 +145,21 @@ const Cards2 = ({
 
       {/* Product Details */}
       <div className="p-4">
-        <h3 className="text-xl font-medium text-gray-800">{title}</h3>
+        <h3 className="text-xl font-medium text-gray-800">{title || "Untitled"}</h3>
         <p className="text-sm text-gray-600 mt-1">
-          {medium} • {year}
+          {[medium, year].filter(Boolean).join(" • ")}
         </p>
-        <p className="text-xs text-gray-500 mt-1">{size}</p>
+        {size && <p className="text-xs text-gray-500 mt-1">{size}</p>}
 
         {/* Price */}
         <div className="mb-4">
-          {discountPrice ? (
+          {parsedDiscountPrice ? (
             <div className="flex items-center gap-2">
               <span className="text-lg font-bold text-[#74541e]">
-                ${discountPrice.toFixed(2)}
+                ${parsedDiscountPrice.toFixed(2)}
               </span>
               <span className="text-sm text-gray-400 line-through">
-                ${regularPrice?.toFixed(2)}
+                ${parsedRegularPrice.toFixed(2)}
               </span>
               {discountPercent > 0 && (
                 <span className="ml-auto text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded">
@@ -144,7 +169,7 @@ const Cards2 = ({
             </div>
           ) : (
             <span className="text-lg font-bold text-[#74541e]">
-              ${regularPrice?.toFixed(2)}
+              ${parsedRegularPrice.toFixed(2)}
             </span>
           )}
         </div>
@@ -161,19 +186,15 @@ const Cards2 = ({
             View Details
           </button>
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              if (inStock) {
-                handleAddToCart(e);
-              }
-            }}
-            className={`flex-1 py-2 text-sm rounded transition-colors ${inStock
+            onClick={handleAddToCart}
+            className={`flex-1 py-2 text-sm rounded transition-colors ${
+              isInStock
                 ? "bg-[#74541e] text-white hover:bg-[#5a4218]"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}
-            disabled={inStock === false}
+            }`}
+            disabled={!isInStock}
           >
-            {inStock ? "Add to Cart" : "Sold Out"}
+            {isInStock ? "Add to Cart" : "Sold Out"}
           </button>
         </div>
       </div>

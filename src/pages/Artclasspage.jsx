@@ -17,6 +17,7 @@ import {
   Twitter,
   Youtube
 } from 'lucide-react';
+import { useNavigate } from "react-router";
 
 const ArtGalleryPage = () => {
   const [isPlaying, setIsPlaying] = useState(true);
@@ -109,7 +110,8 @@ const ArtGalleryPage = () => {
     }, 5000);
     return () => clearInterval(timer);
   }, []);
-
+// Routing
+const navigate= useNavigate
   return (
     <div className="min-h-screen bg-[#f5f0ea] text-[#5a4218]">
       
@@ -138,7 +140,7 @@ const ArtGalleryPage = () => {
             <button className="bg-[#74541e] hover:bg-[#5a4218] text-white px-8 py-4 rounded-full font-medium flex items-center justify-center gap-2 transition-colors">
               Explore Collection <ArrowRight size={20} />
             </button>
-            <button className="bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm px-8 py-4 rounded-full font-medium transition-colors">
+            <button  onClick={()=>navigate("/gallery")} className="bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm px-8 py-4 rounded-full font-medium transition-colors">
               View Exhibitions
             </button>
           </div>

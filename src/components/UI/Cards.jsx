@@ -42,6 +42,7 @@ const Cards = ({
 
     fetchProducts();
   }, []);
+  console.log("Fetched product:", products);
 
   // Filter, sort, paginate
   const safeProducts = products || [];
@@ -55,8 +56,8 @@ const Cards = ({
   });
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
-    const priceA = a.discountPrice ?? a.regularPrice ?? 0;
-    const priceB = b.discountPrice ?? b.regularPrice ?? 0;
+    const priceA = a.discountPrice ?? a.price ?? 0;
+    const priceB = b.discountPrice ?? b.price ?? 0;
     switch (sortBy) {
       case "alphabetical":
         return (a.title || "").localeCompare(b.title || "");
@@ -81,7 +82,7 @@ const Cards = ({
     const cartProduct = {
       id: product.id,
       title: product.title,
-      price: product.discountPrice || product.regularPrice,
+      price: product.discountPrice || product.price,
       imageUrl: product.imageUrl && typeof product.imageUrl === 'string' && product.imageUrl.trim() !== ''
         ? product.imageUrl
         : DEFAULT_IMAGE_URL, // Use default if imageUrl is invalid
@@ -103,7 +104,7 @@ const Cards = ({
       const wishlistProduct = {
         id: product.id,
         title: product.title,
-        price: product.discountPrice || product.regularPrice,
+        price: product.discountPrice || product.price,
         imageUrl: product.imageUrl || DEFAULT_IMAGE_URL,
         size: product.size,
         year: product.year,
@@ -134,7 +135,7 @@ const Cards = ({
   if (productsToShow.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">Trying to Connect ....</p>
+        <p className="text-gray-500">Artwork not available ....</p>
       </div>
     );
   }
@@ -144,8 +145,8 @@ const Cards = ({
       {productsToShow.map((item) => {
         const discountPercent = item.discountPrice
           ? Math.round(
-              ((item.regularPrice - item.discountPrice) / item.regularPrice) * 100
-            )
+            ((item.price - item.discountPrice) / item.price) * 100
+          )
           : 0;
         const isInWishlist = wishlist.some(
           (wishlistItem) => wishlistItem && wishlistItem.id === item.id
@@ -154,10 +155,10 @@ const Cards = ({
         return (
           <div
             key={item.id}
-            className="border border-[#e8e2d6] rounded-lg overflow-hidden bg-white hover:shadow-md transition-all cursor-pointer"
+            className="border border-[#e8e2d6] rounded-lg overflow-hidden bg-white hover:shadow-md transition-all "
             onClick={() => navigate(`/products/${item.id}`)}
           >
-            <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden">
+            <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden  cursor-pointer">
               {item.imageUrl ? (
                 <img
                   src={item.imageUrl}
@@ -215,10 +216,10 @@ const Cards = ({
                 {item.discountPrice ? (
                   <div className="flex items-center gap-2">
                     <span className="text-lg font-bold text-[#74541e]">
-                      ${Number(item.discountPrice).toFixed(2)}
+                      ${parseFloat(item.discountPrice || 0).toFixed(2)}   {/* ✅ Correct */}
                     </span>
                     <span className="text-sm text-gray-400 line-through">
-                      ${Number(item.regularPrice).toFixed(2)}
+                      ${parseFloat(item.price || 0).toFixed(2)}
                     </span>
                     {discountPercent > 0 && (
                       <span className="ml-auto text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded">
@@ -228,10 +229,11 @@ const Cards = ({
                   </div>
                 ) : (
                   <span className="text-lg font-bold text-[#74541e]">
-                    ${Number(item.regularPrice).toFixed(2)}
+                    ${parseFloat(item.price || 0).toFixed(2)}
                   </span>
                 )}
               </div>
+
 
               <div className="flex gap-2">
                 <button
@@ -248,11 +250,10 @@ const Cards = ({
                     e.stopPropagation();
                     item.stock && handleAddToCart(item);
                   }}
-                  className={`flex-1 py-2 text-sm rounded transition-colors ${
-                    item.stock
+                  className={`flex-1 py-2 text-sm rounded transition-colors ${item.stock
                       ? "bg-[#74541e] text-white hover:bg-[#5a4218]"
                       : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  }`}
+                    }`}
                   disabled={item.stock === false}
                 >
                   {item.stock ? "Add to Cart" : "Sold Out"}

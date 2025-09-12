@@ -400,15 +400,16 @@ const Homepage = () => {
                     id={product.id}
                     imageUrl={product.imageUrl}
                     title={product.title}
-                    regularPrice={product.regularPrice}
-                    inStock={product.inStock}
+                    price={product.price}               
+                    stock={product.stock}     
                     year={product.year}
-                    className="border border-gray-200"
                     size={product.size}
                     medium={product.medium}
                     discountPrice={product.discountPrice}
+                    className="border border-gray-200"
                   />
                 ))}
+
               </div>
               <div className="text-center mt-10">
                 <button
